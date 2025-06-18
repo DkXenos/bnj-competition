@@ -1,37 +1,23 @@
 "use client";
 import supabase from "@/lib/db";
-import { useUser } from "@/context/UserContext";
 
-export async function GetChat(other_user_id: number) {
-  const { loggedInUser } = useUser();
+export async function GetChat(loggedInUser: number, receiver_id: number) {
   if (!loggedInUser) {
     throw new Error("User not logged in");
   }
-  if (!other_user_id) {
-    throw new Error("Other user ID is required");
-  }
+
   const { data: chat } = await supabase
     .from("chats")
     .select("*")
-    .eq("other_user_id", other_user_id)
-    .eq("user_id", loggedInUser.id)
+    .eq("receiver_id", receiver_id)
+    .eq("sender_id", loggedInUser)
     .order("waktu", { ascending: true });
-  if (!chat) {
-    throw new Error("No chat found for the given mentor user ID");
-  }
-  if (chat.length === 0) {
-    return { chat: [] };
-  }
-  const { data: user } = await supabase
+
+  const { data: receiver } = await supabase
     .from("users")
     .select("*")
-    .eq("id", loggedInUser?.id)
+    .eq("id", receiver_id)
     .single();
 
-  const { data: other_user} = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", other_user_id)
-    .single();
-  return { user, other_user , chat};
+  return { chat, receiver };
 }

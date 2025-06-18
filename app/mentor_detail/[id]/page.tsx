@@ -1,6 +1,5 @@
-import { notFound } from "next/navigation";
 import supabase from "@/lib/db";
-import Navbar from "@/components/navbar";
+import ChatButton from "@/components/chat-mentor-button"
 
 export default async function MentorDetailPage({
   params,
@@ -32,6 +31,7 @@ export default async function MentorDetailPage({
           <div className="flex flex-col gap-2 w-full">
             <div className="flex flex-col pb-4 md:flex-row gap-2 md:items-center justify-between w-full">
             <h1 className="text-3xl text-white font-bold mb-4">{data_lengkap_mentor.username}</h1>
+            <ChatButton receiver_id={mentor.user_id}/>
             </div>
             <div className="mb-2">
               Deskripsi: <br className="mb-4"></br>

@@ -96,6 +96,7 @@ export default function Navbar() {
                                 </div>
                                 {dropdownVisible && (
                                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200">
+                                        <Link href="/all_chats_page" className=""><h1 className="hover:bg-gray-100 w-full text-black text-lg text-center">Chats</h1></Link>
                                         <LogoutButton />
                                     </div>
                                 )}

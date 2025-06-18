@@ -1,37 +1,25 @@
 "use client";
 import supabase from "@/lib/db";
-import { useUser } from "@/context/UserContext";
 
-export async function AddChat(other_user_id: number, text: string) {
-  const { loggedInUser } = useUser();
+export async function AddChat(loggedInUser: number, receiver_id: number, text: string) {
   if (!loggedInUser) {
     throw new Error("User not logged in");
   }
-  if (!other_user_id) {
-    throw new Error("Mentor user ID is required");
-  }
 
-  const { data: user } = await supabase
+  const { data: receiver } = await supabase
     .from("users")
     .select("*")
-    .eq("id", loggedInUser?.id)
+    .eq("id", receiver_id)
     .single();
 
-  const { data: other_user } = await supabase
-    .from("users")
-    .select("*")
-    .eq("user_id", other_user_id)
-    .single();
-
-    const { } = await supabase
+  await supabase
     .from("chats")
     .insert({
-      user_id: loggedInUser.id,
-      mentor_id: other_user_id,
+      sender_id: loggedInUser,
+      receiver_id: receiver_id,
       text: text,
       waktu: new Date().toISOString(),
-    })
+    });
 
-    window.location.reload()
-  return { user, other_user };
+  return { receiver };
 }
