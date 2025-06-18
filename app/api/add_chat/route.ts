@@ -2,12 +2,12 @@
 import supabase from "@/lib/db";
 import { useUser } from "@/context/UserContext";
 
-export async function AddChat(mentor_user_id: number, text: string) {
+export async function AddChat(other_user_id: number, text: string) {
   const { loggedInUser } = useUser();
   if (!loggedInUser) {
     throw new Error("User not logged in");
   }
-  if (!mentor_user_id) {
+  if (!other_user_id) {
     throw new Error("Mentor user ID is required");
   }
 
@@ -17,19 +17,21 @@ export async function AddChat(mentor_user_id: number, text: string) {
     .eq("id", loggedInUser?.id)
     .single();
 
-  const { data: mentor } = await supabase
-    .from("mentors")
+  const { data: other_user } = await supabase
+    .from("users")
     .select("*")
-    .eq("user_id", mentor_user_id)
+    .eq("user_id", other_user_id)
     .single();
 
-    const {data: chat } = await supabase
+    const { } = await supabase
     .from("chats")
     .insert({
       user_id: loggedInUser.id,
-      mentor_id: mentor_user_id,
+      mentor_id: other_user_id,
       text: text,
       waktu: new Date().toISOString(),
     })
-  return { user, mentor };
+
+    window.location.reload()
+  return { user, other_user };
 }
