@@ -1,0 +1,185 @@
+"use client";
+import { useState } from "react";
+import { IUser } from "@/types/user.md";
+
+// Sample user data - replace with your actual backend data later
+const sampleUsers: IUser[] = [
+  {
+    id: 1,
+    username: "jesti",
+    email: "jesti@gmail.com",
+    phone_number: "+1234567890",
+    password: "", // Don't display passwords
+    created_at: "2024-01-15T10:30:00Z",
+    role: "user"
+  },
+  {
+    id: 2,
+    username: "bryan",
+    email: "bryan@gmail.com", 
+    phone_number: "+1234567891",
+    password: "",
+    created_at: "2024-01-16T14:20:00Z",
+    role: "admin"
+  },
+  {
+    id: 3,
+    username: "nicho",
+    email: "nicho@gmail.com",
+    phone_number: "+1234567892", 
+    password: "",
+    created_at: "2024-01-17T09:15:00Z",
+    role: "staff"
+  }
+];
+
+export default function Carousel() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [users] = useState<IUser[]>(sampleUsers);
+
+  const goToPrevious = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? users.length - 1 : prevIndex - 1
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === users.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  const currentUser = users[currentIndex];
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('id-ID', {
+      year: 'numeric',
+      month: 'long', 
+      day: 'numeric'
+    });
+  };
+
+  const getRoleBadgeColor = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return 'bg-red-100 text-red-800';
+      case 'staff':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-green-100 text-green-800';
+    }
+  };
+
+  return (
+    <div className="relative top-10 w-full h-96 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden shadow-lg">
+      {/* Carousel Content */}
+      <div className="w-full h-full flex items-center justify-center p-8">
+        <div className="text-center">
+          {/* Profile Avatar */}
+          <div className="mb-4">
+            <div className="w-20 h-20 bg-gray-300 rounded-full mx-auto flex items-center justify-center">
+              <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+          </div>
+
+          {/* User Info */}
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            {currentUser?.username}
+          </h2>
+          
+          <div className="space-y-2 mb-4">
+            <p className="text-gray-600 flex items-center justify-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              {currentUser?.email}
+            </p>
+            
+            <p className="text-gray-600 flex items-center justify-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              {currentUser?.phone_number}
+            </p>
+          </div>
+
+          {/* Role Badge */}
+          <div className="mb-4">
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRoleBadgeColor(currentUser?.role)}`}>
+              {currentUser?.role.toUpperCase()}
+            </span>
+          </div>
+
+          {/* Join Date */}
+          <p className="text-sm text-gray-500">
+            Bergabung sejak {formatDate(currentUser?.created_at)}
+          </p>
+        </div>
+      </div>
+
+      {/* Previous Button */}
+      <button
+        onClick={goToPrevious}
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+        aria-label="Previous user"
+      >
+        <svg 
+          className="w-6 h-6 text-gray-600" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M15 19l-7-7 7-7" 
+          />
+        </svg>
+      </button>
+
+      {/* Next Button */}
+      <button
+        onClick={goToNext}
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+        aria-label="Next user"
+      >
+        <svg 
+          className="w-6 h-6 text-gray-600" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M9 5l7 7-7 7" 
+          />
+        </svg>
+      </button>
+
+      {/* Dots Indicator */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        {users.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className={`w-3 h-3 rounded-full transition-colors ${
+              index === currentIndex 
+                ? "bg-white" 
+                : "bg-gray-400 hover:bg-gray-300"
+            }`}
+            aria-label={`Go to user ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -23,7 +23,7 @@ export default function Navbar() {
                     
                     
                     <Link 
-                        href="/explore" 
+                        href="/catalog" 
                         className="text-gray-600 hover:text-gray-900 transition-colors"
                     >
                         Explore
@@ -61,13 +61,13 @@ export default function Navbar() {
                     {loggedInUser ? (
                         <>
                             <Link 
-                                href="/dashboard" 
+                                href="/" 
                                 className="text-gray-600 hover:text-gray-900 transition-colors"
                             >
                                 Beranda
                             </Link>
                             <Link 
-                                href="/become-mentor" 
+                                href="/register-mentor" 
                                 className="text-gray-600 hover:text-gray-900 transition-colors"
                             >
                                 Jadi Mentor
@@ -104,13 +104,13 @@ export default function Navbar() {
                     ) : (
                         <>
                             <Link 
-                                href="/login" 
+                                href="/about" 
                                 className="text-gray-600 hover:text-gray-900 transition-colors"
                             >
-                                Beranda
+                                About
                             </Link>
                             <Link 
-                                href="/register" 
+                                href="/mentor-register" 
                                 className="text-gray-600 hover:text-gray-900 transition-colors"
                             >
                                 Jadi Mentor
