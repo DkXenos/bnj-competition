@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import MentorCard from "@/components/mentor_card";
 
 export default function Home() {
   return (
@@ -7,6 +7,8 @@ export default function Home() {
       <Link href={"/login"}> login </Link>
       <Link href={"/register"}> register </Link>
       <Link href={"/chat"}> chat </Link>
+
+      <MentorCard mentor_id={1}/>
     </div>
   );
 }
