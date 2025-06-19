@@ -5,5 +5,6 @@ type IUser = {
     no_telpon: string;
     password: string;
     tanggal_join: string;
+    isMentor: boolean;
 };
 export type { IUser };
