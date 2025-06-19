@@ -37,10 +37,10 @@ export default function RegisterPage() {
 
   return (
     <div>
-      <div className="flex flex-col bg-white min-h-screen w-screen items-center justify-center">
-        <div className="bg-slate-900 flex flex-col min-w-[40%] min-h-[30rem] p-8 rounded-xl gap-8">
-          <h1 className="text-center text-2xl">Daftar</h1>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <div className="flex flex-col bg-gradient-to-br from-sky-50 to-blue-100 min-h-screen w-screen items-center justify-center">
+        <div className="bg-white flex flex-col min-w-[40%] min-h-[30rem] p-8 rounded-xl gap-8 shadow-lg border border-gray-100">
+          <h1 className="text-center text-2xl text-black">Daftar</h1>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-black">
             <input
               onChange={handleChange}
               required
@@ -48,7 +48,7 @@ export default function RegisterPage() {
               name="username"
               value={form.username}
               placeholder="Username"
-              className="p-2 border border-gray-300 rounded"
+              className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <input
               onChange={handleChange}
@@ -57,7 +57,7 @@ export default function RegisterPage() {
               name="email"
               value={form.email}
               placeholder="Email"
-              className="p-2 border border-gray-300 rounded"
+              className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <input
               onChange={handleChange}
@@ -66,28 +66,28 @@ export default function RegisterPage() {
               name="password"
               value={form.password}
               placeholder="Password"
-              className="p-2 border border-gray-300 rounded"
+              className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <input
               onChange={handleChange}
               required
+              type="tel"
               name="no_telpon"
               value={form.no_telpon}
-              placeholder="nomor telepon anda"
-              className="p-2 border border-gray-300 rounded"
+              placeholder="Nomor Telepon"
+              className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button
               type="submit"
-              className="bg-blue-500 text-white p-2 rounded"
+              className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition-colors duration-200 font-medium"
               disabled={loading}
             >
-              {" "}
               {loading ? "Memproses..." : "Daftar"}
             </button>
           </form>
-          <p className="text-center">
+          <p className="text-center text-black">
             Sudah memiliki akun?{" "}
-            <Link href="/login" className="text-blue-500">
+            <Link href="/login" className="text-blue-500 hover:text-blue-600 font-medium">
               Masuk
             </Link>
           </p>

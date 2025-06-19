@@ -3,15 +3,16 @@ import { useState } from "react";
 import Image from "next/image";
 import { IUser } from "@/types/user.md";
 
-// Sample user data - replace with your actual backend data later
+// Sample user data with descriptions/specialties
 const sampleUsers: IUser[] = [
   {
     id: 1,
-    username: "Claire",
+    username: "Claire Rivers",
     email: "claire@gmail.com",
     no_telpon: "+1234567890",
-    password: "", // Don't display passwords
-    tanggal_join: "2024-01-15T10:30:00Z"
+    password: "",
+    tanggal_join: "2024-01-15T10:30:00Z",
+    isMentor: true
   },
   {
     id: 2,
@@ -19,7 +20,8 @@ const sampleUsers: IUser[] = [
     email: "brandon@gmail.com", 
     no_telpon: "+1234567891",
     password: "",
-    tanggal_join: "2024-01-16T14:20:00Z"
+    tanggal_join: "2024-01-16T14:20:00Z",
+    isMentor: true
   },
   {
     id: 3,
@@ -27,15 +29,23 @@ const sampleUsers: IUser[] = [
     email: "Tjoh@gmail.com",
     no_telpon: "+1234567892", 
     password: "",
-    tanggal_join: "2024-01-17T09:15:00Z"
+    tanggal_join: "2024-01-17T09:15:00Z",
+    isMentor: true
   }
 ];
 
-// Avatar mapping - you can store these URLs in your database later
+// Avatar mapping
 const avatarMap: { [key: number]: string } = {
   1: "/mentor-1.jpg",
-  2: "/avatars/bryan.jpg", 
-  3: "/avatars/nicho.jpg",
+  2: "/mentor-2.jpg", 
+  3: "/mentor-3.jpg",
+};
+
+// User descriptions/testimonials
+const userDescriptions: { [key: number]: string } = {
+  1: "Platform ini sangat membantu saya dalam menemukan mentor yang tepat. Pengalaman belajar yang luar biasa!",
+  2: "Mentoring sessions di sini benar-benar mengubah karir saya. Sangat direkomendasikan untuk semua yang ingin berkembang.",
+  3: "Sistem mentoring yang terstruktur dan mentor-mentor yang berpengalaman. Investasi terbaik untuk masa depan!"
 };
 
 export default function Carousel() {
@@ -61,6 +71,7 @@ export default function Carousel() {
 
   const currentUser = users[currentIndex];
   const currentAvatar = avatarMap[currentUser?.id];
+  const currentDescription = userDescriptions[currentUser?.id];
   const hasImageError = imageErrors[currentUser?.id];
 
   const handleImageError = (userId: number) => {
@@ -78,12 +89,12 @@ export default function Carousel() {
   return (
     <div className="relative w-full h-96 bg-gradient-to-br flex items-center justify-center from-gray-50 to-gray-100 rounded-lg overflow-hidden shadow-lg">
       {/* Carousel Content */}
-      <div className="w-[90%] h-full bg-sky-100">
+      <div className="w-[90%] h-full bg-sky-100 rounded-lg ">
         <div className="w-full h-full flex items-center justify-center p-8">
-          <div className="text-center">
+          <div className="text-center max-w-2xl">
             {/* Profile Avatar with Image */}
-            <div className="mb-4">
-              <div className="w-20 h-20 bg-gray-300 rounded-full mx-auto overflow-hidden">
+            <div className="mb-4 pt-10">
+              <div className="w-20 h-20 bg-gray-300 rounded-full mx-auto overflow-hidden border-4 border-white shadow-lg">
                 {currentAvatar && !hasImageError ? (
                   <Image
                     src={currentAvatar}
@@ -102,36 +113,49 @@ export default function Carousel() {
                 )}
               </div>
             </div>
+
             {/* User Info */}
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            <h2 className="text-2xl font-bold text-gray-800 mb-3">
               {currentUser?.username}
             </h2>
-        
+
+            {/* Description/Testimonial Section */}
+            <div className="mb-4 px-4">
+              <div className="bg-white bg-opacity-50 rounded-lg p-4 shadow-sm">
+                
+                <p className="text-gray-700 text-sm italic leading-relaxed">
+                  "{currentDescription}"
+                </p>
+              </div>
+            </div>
+            
             <div className="space-y-2 mb-4">
-              <p className="text-gray-600 flex items-center justify-center gap-2">
+              <p className="text-gray-600 flex items-center justify-center gap-2 text-sm">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 {currentUser?.email}
               </p>
         
-              <p className="text-gray-600 flex items-center justify-center gap-2">
+              <p className="text-gray-600 flex items-center justify-center gap-2 text-sm">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 {currentUser?.no_telpon}
               </p>
             </div>
+
             {/* Join Date */}
-            <p className="text-sm text-gray-500">
+            <p className="text-xs text-gray-500 pb-5">
               Bergabung sejak {formatDate(currentUser?.tanggal_join)}
             </p>
           </div>
         </div>
+        
         {/* Previous Button */}
         <button
           onClick={goToPrevious}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
           aria-label="Previous user"
         >
           <svg
@@ -148,10 +172,11 @@ export default function Carousel() {
             />
           </svg>
         </button>
+        
         {/* Next Button */}
         <button
           onClick={goToNext}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
           aria-label="Next user"
         >
           <svg
@@ -168,6 +193,7 @@ export default function Carousel() {
             />
           </svg>
         </button>
+        
         {/* Dots Indicator */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {users.map((_, index) => (

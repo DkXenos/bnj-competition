@@ -8,13 +8,14 @@ import { IChat } from "@/types/chat.md";
 import Link from "next/link";
 
 export default function ChatPage() {
-  const {loggedInUser} = useUser();
+  const { loggedInUser } = useUser();
   const [chat, setChat] = useState<IChat[]>([]);
   const searchParams = useSearchParams();
   const chatId = Number(searchParams.get("chat_composite_id"));
   const otherUser = searchParams.get("other_username");
   const otherUserID = Number(searchParams.get("other_user_id"));
   const [form, setForm] = useState({ textToSend: "" });
+
   useEffect(() => {
     if (!chatId) return;
     const fetchChat = async () => {
@@ -23,7 +24,7 @@ export default function ChatPage() {
         if (data && data.chat?.messages) {
           setChat(data.chat.messages);
 
-          for(const message of data.chat.messages) {
+          for (const message of data.chat.messages) {
             if (message.first_user === loggedInUser?.id) {
               message.first_user = loggedInUser?.id;
             } else {
@@ -57,46 +58,133 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="overflow-hidden flex flex-col w-screen items-center justify-center min-h-screen bg-gray-100">
-      <div className="flex flex-col justify-between mt-12 w-[75%] min-h-[50rem] bg-white border-1 shadow-lg rounded-lg">
-        <div className="flex items-center gap-2 bg-slate-200 p-4 rounded-t-lg">
-          <Link href="/" className="text-xl font-semibold text-black">{" < "}Back</Link>
-          <div className="ml-4 w-10 h-10 rounded-full bg-slate-900"></div>
-          <h1 className="text-xl font-bold text-black">{otherUser}</h1>
-        </div>
-        <div className="p-4 h-[40rem] overflow-y-auto">
-          {/* Chat messages will go here */}
-          <div className="flex flex-col gap-4">
-            {chat && chat.map((message, idx) => (
-              <div
-                key={message.id || idx}
-                className={`p-3 rounded-lg max-w-md ${
-                  message.receiver_id !== loggedInUser?.id
-                    ? "bg-sky-200 self-end"
-                    : "bg-gray-100 self-start"
-                }`}
+    <div className="min-h-screen bg-sky-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl h-[80vh] bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="bg-white border-b border-sky-100 p-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/all_chats_page"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <p className="text-gray-800">{message.text}</p>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              <span className="font-medium">Back</span>
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold text-gray-800">
+                {otherUser}
+              </h1>
+              <p className="text-sm text-gray-500">Online</p>
+            </div>
+          </div>
+
+          <div className="w-20"></div> {/* Spacer for balance */}
+        </div>
+
+        {/* Messages Container */}
+        <div className="flex-1 p-6 overflow-y-auto bg-sky-50">
+          <div className="flex flex-col gap-4 max-w-3xl mx-auto">
+            {chat && chat.length > 0 ? (
+              chat.map((message, idx) => (
+                <div
+                  key={message.id || idx}
+                  className={`flex ${
+                    message.receiver_id !== loggedInUser?.id
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${
+                      message.receiver_id !== loggedInUser?.id
+                        ? "bg-sky-100 text-gray-800"
+                        : "bg-white text-gray-800 border border-sky-100"
+                    }`}
+                  >
+                    <p className="text-sm leading-relaxed">{message.text}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                    />
+                  </svg>
+                </div>
+                <p className="text-gray-500">
+                  No messages yet. Start the conversation!
+                </p>
               </div>
-            ))}
+            )}
           </div>
         </div>
-        <form name="" className="flex p-2 items-center bg-gray-100" onSubmit={handleSend}>
-            <input
-              type="text"
-              className="flex-1 text-black focus:outline-none border-gray-300 w-full h-full px-4 py-5"
-              placeholder="Type your message..."
-              name="textToSend"
-              value={form.textToSend}
-              onChange={e => setForm({ textToSend: e.target.value })}
-            />
+
+        {/* Message Input */}
+        <div className="bg-white border-t border-sky-100 p-6">
+          <form
+            onSubmit={handleSend}
+            className="flex gap-3 max-w-3xl mx-auto"
+          >
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                className="w-full px-4 py-3 bg-sky-50 border border-sky-100 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-transparent transition-all"
+                placeholder="Type your message..."
+                name="textToSend"
+                value={form.textToSend}
+                onChange={(e) => setForm({ textToSend: e.target.value })}
+              />
+            </div>
             <button
               type="submit"
-              className="bg-sky-500 text-white p-2 px-4 rounded-lg hover:bg-sky-600 transition"
+              disabled={!form.textToSend.trim()}
+              className="px-6 py-3 bg-sky-100 text-gray-700 rounded-xl hover:bg-sky-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium flex items-center gap-2"
             >
-              Send
+              <span>Send</span>
             </button>
           </form>
+        </div>
       </div>
     </div>
   );

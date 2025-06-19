@@ -1,5 +1,6 @@
 import Carousel from '@/components/carousel';
 import MentorSection from '@/components/mentor-section';
+import Footer from '@/components/footer';
 
 
 export default function Homepage() {
@@ -11,6 +12,7 @@ export default function Homepage() {
       </div>
       
       <MentorSection />
+      <Footer />
     </div>
   );
 }

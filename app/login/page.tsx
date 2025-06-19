@@ -32,18 +32,18 @@ export default function LoginPage() {
 
   return (
    <div>
-      <div className="flex flex-col bg-white min-h-screen w-screen items-center justify-center">
-        <div className="bg-slate-900 flex flex-col min-w-[40%] min-h-[30rem] p-8 rounded-xl gap-8">
-          <h1 className="text-center text-2xl">Daftar</h1>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <div className="flex flex-col bg-gradient-to-br from-sky-50 to-blue-100 min-h-screen w-screen items-center justify-center">
+        <div className="bg-white flex flex-col min-w-[40%] min-h-[30rem] p-8 rounded-xl gap-8 shadow-lg border border-gray-100">
+          <h1 className="text-center text-2xl text-black">Masuk</h1>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-black">
             <input
               onChange={handleChange}
               required
               type="text"
               name="usernameOrEmail"
               value={form.usernameOrEmail}
-              placeholder="Username"
-              className="p-2 border border-gray-300 rounded"
+              placeholder="Username atau Email"
+              className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <input
               onChange={handleChange}
@@ -52,20 +52,19 @@ export default function LoginPage() {
               name="password"
               value={form.password}
               placeholder="Password"
-              className="p-2 border border-gray-300 rounded"
+              className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button
               type="submit"
-              className="bg-blue-500 text-white p-2 rounded"
+              className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition-colors duration-200 font-medium"
               disabled={loading}
             >
-              {" "}
               {loading ? "Memproses..." : "Masuk"}
             </button>
           </form>
-          <p className="text-center">
-            Sudah memiliki akun?{" "}
-            <Link href="/register" className="text-blue-500">
+          <p className="text-center text-black">
+            Belum memiliki akun?{" "}
+            <Link href="/register" className="text-blue-500 hover:text-blue-600 font-medium">
               Daftar
             </Link>
           </p>
