@@ -1,20 +1,45 @@
-'use client';
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
+import { GetChatByFK } from "@/app/api/get_chat_by_fk/route";
 
-export default function ChatButton({ receiver_id }: { receiver_id: number }) {
+export default function ChatButton({
+  receiver_id,
+  reciever_name
+}: {
+  receiver_id: number;
+  reciever_name?: string;
+}) {
   const router = useRouter();
   const { loggedInUser } = useUser();
 
-  const handleChatClick = () => {
+  const handleChatClick = async () => {
     if (!loggedInUser) {
       console.error("User not logged in");
       return;
     }
 
-    // Navigate to the chat page with sender_id and receiver_id as query parameters
-    router.push(`/chat?sender_id=${loggedInUser.id}&receiver_id=${receiver_id}`);
+    try {
+      const data = await GetChatByFK(loggedInUser.id, receiver_id);
+      if (!data) {
+        console.error("No chat data found");
+        return;
+      }
+      const chatId = data.id || data.chat_composite_id;
+      if (!chatId) {
+        console.error("Chat ID not found");
+        return;
+      }
+      // Navigate to the chat page with the chat ID
+      router.push(
+            `/chat?chat_composite_id=${chatId}&other_username=${encodeURIComponent(
+              reciever_name || "Mentor"
+            )}&other_user_id=${receiver_id}`
+          );
+    } catch (error) {
+      console.error("Error fetching or creating chat:", error);
+    }
   };
 
   return (

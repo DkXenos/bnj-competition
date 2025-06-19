@@ -20,14 +20,18 @@ export default function ChatPage() {
     const fetchChat = async () => {
       try {
         const data = await GetChat(chatId);
-        setChat(data.chat?.messages ?? []);
+        if (data && data.chat?.messages) {
+          setChat(data.chat.messages);
 
-        for(const message of data.chat?.messages ?? []) {
-          if (message.first_user === loggedInUser?.id) {
-            message.first_user = loggedInUser?.id;
-          } else {
-            message.first_user = otherUser;
+          for(const message of data.chat.messages) {
+            if (message.first_user === loggedInUser?.id) {
+              message.first_user = loggedInUser?.id;
+            } else {
+              message.first_user = otherUser;
+            }
           }
+        } else {
+          setChat([]);
         }
       } catch (error) {
         setChat([]);

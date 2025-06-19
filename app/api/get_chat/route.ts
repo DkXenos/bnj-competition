@@ -3,7 +3,7 @@ import supabase from "@/lib/db";
 
 export async function GetChat(chat_id: number) {
   if (!chat_id) {
-    throw new Error("User not logged in");
+    return null;
   }
   // Fetch the composite key data
   const { data: compositeKeyData, error: compositeKeyError } = await supabase
