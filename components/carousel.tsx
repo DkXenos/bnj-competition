@@ -2,14 +2,14 @@
 import { useState } from "react";
 import { IUser } from "@/types/user.md";
 
-// Sample user data - replace with your actual backend data later
+// Sample user data - replace with your actual backend data later kontol
 const sampleUsers: IUser[] = [
   {
     id: 1,
     username: "jesti",
     email: "jesti@gmail.com",
     no_telpon: "+1234567890",
-    password: "", // Don't display passwords
+    password: "", 
     tanggal_join: "2024-01-15T10:30:00Z"
   },
   {
