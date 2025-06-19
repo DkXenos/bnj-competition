@@ -49,6 +49,7 @@ export default function ChatPage() {
       await AddChat(chatId, form.textToSend, otherUserID);
       // Clear the input field
       setForm({ textToSend: "" });
+      window.location.reload();
     } catch (error) {
       console.error("Error sending message:", error);
     }
