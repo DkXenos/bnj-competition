@@ -8,28 +8,49 @@ const sampleUsers: IUser[] = [
     id: 1,
     username: "jesti",
     email: "jesti@gmail.com",
-    phone_number: "+1234567890",
+    no_telpon: "+1234567890",
     password: "", // Don't display passwords
-    created_at: "2024-01-15T10:30:00Z",
-    role: "user"
+    tanggal_join: "2024-01-15T10:30:00Z"
   },
   {
     id: 2,
     username: "bryan",
     email: "bryan@gmail.com", 
-    phone_number: "+1234567891",
+    no_telpon: "+1234567891",
     password: "",
-    created_at: "2024-01-16T14:20:00Z",
-    role: "admin"
+    tanggal_join: "2024-01-16T14:20:00Z"
   },
   {
     id: 3,
     username: "nicho",
     email: "nicho@gmail.com",
-    phone_number: "+1234567892", 
+    no_telpon: "+1234567892", 
     password: "",
-    created_at: "2024-01-17T09:15:00Z",
-    role: "staff"
+    tanggal_join: "2024-01-17T09:15:00Z"
+  },
+  {
+    id: 4,
+    username: "sarah",
+    email: "sarah@gmail.com",
+    no_telpon: "+1234567893",
+    password: "",
+    tanggal_join: "2024-01-18T16:45:00Z"
+  },
+  {
+    id: 5,
+    username: "alex",
+    email: "alex@gmail.com",
+    no_telpon: "+1234567894",
+    password: "",
+    tanggal_join: "2024-01-19T11:30:00Z"
+  },
+  {
+    id: 6,
+    username: "lisa",
+    email: "lisa@gmail.com",
+    no_telpon: "+1234567895",
+    password: "",
+    tanggal_join: "2024-01-20T13:20:00Z"
   }
 ];
 
@@ -63,17 +84,6 @@ export default function Carousel() {
     });
   };
 
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'bg-red-100 text-red-800';
-      case 'staff':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-green-100 text-green-800';
-    }
-  };
-
   return (
     <div className="relative top-10 w-full h-96 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden shadow-lg">
       {/* Carousel Content */}
@@ -105,20 +115,13 @@ export default function Carousel() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              {currentUser?.phone_number}
+              {currentUser?.no_telpon}
             </p>
-          </div>
-
-          {/* Role Badge */}
-          <div className="mb-4">
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRoleBadgeColor(currentUser?.role)}`}>
-              {currentUser?.role.toUpperCase()}
-            </span>
           </div>
 
           {/* Join Date */}
           <p className="text-sm text-gray-500">
-            Bergabung sejak {formatDate(currentUser?.created_at)}
+            Bergabung sejak {formatDate(currentUser?.tanggal_join)}
           </p>
         </div>
       </div>

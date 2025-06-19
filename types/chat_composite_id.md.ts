@@ -1,5 +1,5 @@
 type IChatComposite = {
-    otherUserName: ReactNode;
+    otherUserName: string;
     id: number;
 
     waktu: string;
