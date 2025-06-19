@@ -1,110 +1,96 @@
-'use client';
-
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+"use client";
+import { useUser } from "@/context/UserContext";
 import { GetChat } from "@/app/api/get_chat/route";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { AddChat } from "@/app/api/add_chat/route";
-import { IUser } from "@/types/user.md";
 import { IChat } from "@/types/chat.md";
+import Link from "next/link";
 
 export default function ChatPage() {
+  const {loggedInUser} = useUser();
+  const [chat, setChat] = useState<IChat[]>([]);
   const searchParams = useSearchParams();
-  const sender_id = parseInt(searchParams.get("sender_id") || "0", 10);
-  const receiver_id = parseInt(searchParams.get("receiver_id") || "0", 10);
-
-  const [messages, setMessages] = useState<IChat[]>([]);
+  const chatId = Number(searchParams.get("chat_composite_id"));
+  const otherUser = searchParams.get("other_username");
+  const otherUserID = Number(searchParams.get("other_user_id"));
   const [form, setForm] = useState({ textToSend: "" });
-  const [receiver, setReceiver] = useState<IUser>();
-
   useEffect(() => {
-    async function fetchChat() {
-      if (!sender_id || !receiver_id) return;
-
+    if (!chatId) return;
+    const fetchChat = async () => {
       try {
-        const { chat, receiver } = await GetChat(sender_id, receiver_id);
-        setMessages(chat || []);
-        setReceiver(receiver);
-      } catch (error) {
-        console.error("Error fetching chat:", error);
-      }
-    }
-    fetchChat();
-  }, [sender_id, receiver_id]);
+        const data = await GetChat(chatId);
+        setChat(data.chat?.messages ?? []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, textToSend: e.target.value });
-  };
+        for(const message of data.chat?.messages ?? []) {
+          if (message.first_user === loggedInUser?.id) {
+            message.first_user = loggedInUser?.id;
+          } else {
+            message.first_user = otherUser;
+          }
+        }
+      } catch (error) {
+        setChat([]);
+      }
+    };
+    fetchChat();
+  }, [chatId]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.textToSend.trim() || !sender_id || !receiver_id) return;
+    if (!form.textToSend.trim() || !loggedInUser) return;
 
     try {
-      await AddChat(sender_id, receiver_id, form.textToSend);
+      // Add the chat to the database
+      await AddChat(chatId, form.textToSend, otherUserID);
+      // Clear the input field
       setForm({ textToSend: "" });
-
-      // Refresh messages
-      const { chat } = await GetChat(sender_id, receiver_id);
-      setMessages(chat || []);
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
 
   return (
-    <div className="flex flex-col bg-gray-100 min-h-screen w-screen items-center justify-center">
-      <div className="bg-white flex flex-col min-w-[40%] min-h-[30rem] p-4 rounded-xl shadow-lg">
-        <div className="flex items-center justify-between border-b pb-2 mb-4">
-          <h1 className="text-xl font-bold text-gray-800">Chat</h1>
-          <p className="text-sm text-gray-500">Mentor: {receiver?.username}</p>
+    <div className="overflow-hidden flex flex-col w-screen items-center justify-center min-h-screen bg-gray-100">
+      <div className="flex flex-col justify-between mt-12 w-[75%] min-h-[50rem] bg-white border-1 shadow-lg rounded-lg">
+        <div className="flex items-center gap-2 bg-slate-200 p-4 rounded-t-lg">
+          <Link href="/" className="text-xl font-semibold text-black">{" < "}Back</Link>
+          <div className="ml-4 w-10 h-10 rounded-full bg-slate-900"></div>
+          <h1 className="text-xl font-bold text-black">{otherUser}</h1>
         </div>
-        <div className="flex-1 overflow-y-auto bg-gray-50 rounded p-4 mb-4">
-          {messages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`flex flex-col mb-2 ${
-                msg.sender_id === sender_id ? "items-end" : "items-start"
-              }`}
-            >
-              {/* Nama pengirim */}
-              <span className="text-xs text-gray-500 mb-1">
-                {msg.sender_id === sender_id ? "Anda" : receiver?.username || "Guest"}
-              </span>
+        <div className="p-4 h-[40rem] overflow-y-auto">
+          {/* Chat messages will go here */}
+          <div className="flex flex-col gap-4">
+            {chat && chat.map((message, idx) => (
               <div
-                className={`max-w-[70%] p-2 rounded-lg shadow ${
-                  msg.sender_id === sender_id
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-800"
+                key={message.id || idx}
+                className={`p-3 rounded-lg max-w-md ${
+                  message.receiver_id !== loggedInUser?.id
+                    ? "bg-sky-200 self-end"
+                    : "bg-gray-100 self-start"
                 }`}
               >
-                <p className="text-sm">{msg.text}</p>
-                <span className="text-xs text-gray-300 block text-right mt-1">
-                  {msg.waktu
-                    ? new Date(msg.waktu).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
-                    : ""}
-                </span>
+                <p className="text-gray-800">{message.text}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-        <form onSubmit={handleSend} className="flex gap-2">
-          <input
-            type="text"
-            value={form.textToSend}
-            onChange={handleChange}
-            className="flex-1 rounded p-2 border border-gray-300 text-black"
-            placeholder="Mau bicara apa hari ini ?"
-          />
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 rounded hover:bg-blue-600"
-          >
-            Send
-          </button>
-        </form>
+        <form name="" className="flex p-2 items-center bg-gray-100" onSubmit={handleSend}>
+            <input
+              type="text"
+              className="flex-1 text-black focus:outline-none border-gray-300 w-full h-full px-4 py-5"
+              placeholder="Type your message..."
+              name="textToSend"
+              value={form.textToSend}
+              onChange={e => setForm({ textToSend: e.target.value })}
+            />
+            <button
+              type="submit"
+              className="bg-sky-500 text-white p-2 px-4 rounded-lg hover:bg-sky-600 transition"
+            >
+              Send
+            </button>
+          </form>
       </div>
     </div>
   );
