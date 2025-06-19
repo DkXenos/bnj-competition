@@ -1,25 +1,24 @@
 "use client";
 import supabase from "@/lib/db";
 
-export async function AddChat(loggedInUser: number, receiver_id: number, text: string) {
-  if (!loggedInUser) {
-    throw new Error("User not logged in");
+export async function AddChat(composite_chat_id: number, text: string, receiver_id: number) {
+  if (!composite_chat_id) {
+    throw new Error("chat id not valid");
   }
 
-  const { data: receiver } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", receiver_id)
-    .single();
-
-  await supabase
+  const { error } = await supabase
     .from("chats")
     .insert({
-      sender_id: loggedInUser,
-      receiver_id: receiver_id,
+      chat_composite_id: composite_chat_id,
       text: text,
+      receiver_id: receiver_id,
       waktu: new Date().toISOString(),
     });
 
-  return { receiver };
+  if (error) {
+    console.error("Error adding chat:", error);
+    throw error;
+  }
+
+  return { success: true };
 }
