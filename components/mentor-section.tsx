@@ -6,7 +6,7 @@ import { GetAllMentors } from "@/app/api/get_all_mentors/route";
 import supabase from "@/lib/db";
 import { useRouter } from "next/navigation";
 
-// Updated MentorCard component to match your existing pattern
+
 function MentorCard({ mentor }: { mentor: IMentor }) {
   const router = useRouter();
   const [mentorUser, setMentorUser] = useState<IUser | null>(null);
@@ -28,7 +28,7 @@ function MentorCard({ mentor }: { mentor: IMentor }) {
   }, [mentor.user_id]);
 
   const handleMentorClick = () => {
-    router.push(`/mentor_detail/${mentor.id}`);
+      router.push(`/mentor_detail/${mentor.id}`);
   };
 
   return (
@@ -73,7 +73,7 @@ export default function MentorSection() {
     const fetchMentors = async () => {
       try {
         const mentorData = await GetAllMentors();
-        // Show only first 3 mentors for the homepage section
+        
         setMentors(mentorData.slice(0, 3));
       } catch (error) {
         console.error("Error fetching mentors:", error);

@@ -34,6 +34,7 @@ export default function ChatPage() {
           setChat([]);
         }
       } catch (error) {
+        console.error("Error fetching chat:", error);
         setChat([]);
       }
     };
