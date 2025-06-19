@@ -10,6 +10,8 @@ export default function JadwalCard({ loggedInUser }: { loggedInUser: IUser }) {
   const [jamJadwalDengan, setJamJadwalDengan] = useState<ISesi | null>(null);
   const [jadwalDengan, setJadwalDengan] = useState<IUser | null>(null);
 
+  //ini ada beberapa yang aku ganti soale gaisa di build
+
   useEffect(() => {
     const fetchSesi = async () => {
       if(loggedInUser.isMentor){
@@ -42,10 +44,10 @@ export default function JadwalCard({ loggedInUser }: { loggedInUser: IUser }) {
   }, [jamJadwalDengan?.id]);
 
   if(!jamJadwalDengan) {
-    return null; // or a loading state
+    return null; 
   }
   if(!jadwalDengan) {
-    return null; // or a loading state
+    return null; 
   }
 
   useEffect(() => {
