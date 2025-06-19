@@ -6,14 +6,14 @@ export async function GetChatByFK(first_user: number, second_user: number) {
     return null;
   }
   // Fetch the composite key data
-  const { data: compositeKeyData, error: compositeKeyError } = await supabase
+  const { data: compositeKeyData } = await supabase
     .from("chat_composite_key")
     .select("*")
     .eq("first_user", first_user)
     .eq("second_user", second_user)
     .single();
 
-  if( !compositeKeyData) {
+  if( compositeKeyData == null) {
     console.warn("No chat found for the given users:", first_user, second_user);
     await supabase 
     .from("chat_composite_key")
@@ -24,32 +24,15 @@ export async function GetChatByFK(first_user: number, second_user: number) {
     .single();
 
     // Fetch the newly created composite key
-    const { data: newCompositeKeyData, error: newCompositeKeyError } = await
+    const { data: id } = await
     supabase
       .from("chat_composite_key")
-      .select("*")
+      .select("id")
       .eq("first_user", first_user)
       .eq("second_user", second_user)
       .single();
-    return newCompositeKeyData.id;
+    return id;
   } else {
-    // Fetch the chat data
-    const { data: chatData, error: chatError } = await supabase
-      .from("chats")
-      .select("*")
-      .eq("chat_composite_id", compositeKeyData.id)
-      .order("waktu", { ascending: true });
-
-    if (chatError) {
-      console.error("Error fetching chat:", chatError);
-      throw chatError;
-    }
-
-    // Combine the composite key data into the chat result
-    const chat = {
-      compositeKey: compositeKeyData,
-      messages: chatData,
-    };
-    return { chat };
+    return compositeKeyData.id;
   }
 }

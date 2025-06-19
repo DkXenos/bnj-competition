@@ -19,6 +19,5 @@ export async function AddChat(composite_chat_id: number, text: string, receiver_
     console.error("Error adding chat:", error);
     throw error;
   }
-
   return { success: true };
 }
