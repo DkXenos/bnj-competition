@@ -6,5 +6,7 @@ type ISesi = {
     mentee_id: number;
     rating_ulasan: number | null;
     deksripsi_ulasan: string | null;
+    link: string;
+    status: "Menunggu Konfirmasi" | "Terkonfirmasi" | "Ditolak";
 };
 export type { ISesi };

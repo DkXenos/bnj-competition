@@ -12,7 +12,7 @@ export default function MentorCard({ mentor, user, onClick }: MentorCardProps) {
   return (
     <div 
       onClick={onClick}
-      className="bg-sky-100 border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col cursor-pointer hover:shadow-md transition-shadow duration-200 min-h-[400px]"
+      className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col cursor-pointer hover:shadow-md transition-shadow duration-200 min-h-[400px]"
     >
       {/* Profile Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">

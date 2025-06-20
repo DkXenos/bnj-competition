@@ -91,7 +91,7 @@ export default function MentorSection() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
             <h2 className="text-4xl font-bold text-black mb-4">
-              Get to know our Mentors!
+              Mentor kami!
             </h2>
             <p className="text-xl text-gray-600">
               Learn from our mentor bla bla bla
@@ -113,10 +113,10 @@ export default function MentorSection() {
         {/* Section Header */}
         <div className="mb-8">
           <h2 className="text-4xl font-bold text-black mb-4">
-            Get to know our Mentors!
+            Mentor kami!
           </h2>
           <p className="text-xl text-gray-600">
-            Learn from our mentor bla bla bla
+            Belajar dengan mentor kami yang berpengalaman dan siap membantu Anda mencapai tujuan belajar Anda.
           </p>
         </div>
 
