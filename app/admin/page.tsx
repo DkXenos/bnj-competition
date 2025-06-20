@@ -223,7 +223,7 @@ export default function AdminPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h1 className="text-xl font-bold text-center mb-4 text-black">
-              Apakah Anda yakin untuk menerima "{selectedMentorName}" menjadi mentor?
+              Apakah Anda yakin untuk menerima &ldquo;{selectedMentorName}&rdquo; menjadi mentor?
             </h1>
             <div className="flex justify-end gap-2 mt-4">
               <button
@@ -248,7 +248,7 @@ export default function AdminPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h1 className="text-xl font-bold text-center mb-4 text-black">
-              Sertakan Alasan Penolakan untuk "{selectedMentorName}"
+              Sertakan Alasan Penolakan untuk &ldquo;{selectedMentorName}&rdquo;
             </h1>
             <textarea
               value={rejectReason}
