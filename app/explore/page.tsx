@@ -231,11 +231,11 @@ export default function ExplorePage() {
           <p className="text-gray-600">
             {searchQuery ? (
               <>
-                <div>{filteredMentors.length} mentor ditemukan untuk "{searchQuery}"</div>
+                <span>{filteredMentors.length} mentor ditemukan untuk &quot;{searchQuery}&quot;</span>
               </>
             ) : (
               <>
-                <div>Menampilkan {startIndex + 1}-{Math.min(endIndex, filteredMentors.length)} dari {filteredMentors.length} mentor</div>
+                <span>Menampilkan {startIndex + 1}-{Math.min(endIndex, filteredMentors.length)} dari {filteredMentors.length} mentor</span>
               </>
             )}
           </p>

@@ -1,7 +1,6 @@
 "use client";
 import { IMentor } from "@/types/mentor.md";
 import { IUser } from "@/types/user.md";
-import { ISesi } from "@/types/sesi.md";
 import React, { useState, useEffect } from "react";
 import supabase from "@/lib/db";
 import { useUser } from "@/context/UserContext";

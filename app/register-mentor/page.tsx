@@ -57,8 +57,8 @@ export default function RegisterMentorPage() {
     }
   };
 
-  async (file: File, path: string) => {
-    const { data, error } = await supabase.storage
+  const uploadFileToSupabase = async (file: File, path: string) => {
+    const { error } = await supabase.storage
       .from("mentor-photos") // Replace with your bucket name
       .upload(path, file);
 
@@ -69,7 +69,6 @@ export default function RegisterMentorPage() {
       throw error;
     }
 
-    // Get the public URL of the uploaded file
     const { data: publicUrlData } = supabase.storage
       .from("mentor-photos")
       .getPublicUrl(path);
@@ -86,13 +85,20 @@ export default function RegisterMentorPage() {
     setLoading(true);
 
     try {
+      // Upload files to Supabase
+      const fotoKtpPath = `ktp/${Date.now()}-${form.foto_ktp?.name}`;
+      const fotoKkPath = `kk/${Date.now()}-${form.foto_kk?.name}`;
+      const fotoKtpUrl = await uploadFileToSupabase(form.foto_ktp!, fotoKtpPath);
+      const fotoKkUrl = await uploadFileToSupabase(form.foto_kk!, fotoKkPath);
+
+      // Register mentor with uploaded file URLs
       const { success, error } = await registerMentor({
         userId: Number(loggedInUser?.id),
         deskripsi: form.deskripsi,
         link_video: form.link_video,
         harga_per_sesi: parseInt(form.harga_per_sesi, 10),
-        foto_ktp: form.foto_ktp!,
-        foto_kk: form.foto_kk!,
+        foto_ktp: fotoKtpUrl,
+        foto_kk: fotoKkUrl,
       });
 
       if (!success) {
