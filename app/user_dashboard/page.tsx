@@ -9,33 +9,54 @@ import { ISesi } from "@/types/sesi.md";
 export default function UserDashboard() {
   const { loggedInUser } = useUser();
   const [jadwal, setJadwal] = useState<ISesi[]>([]);
+  const [jadwalMenungguKonfirmasi, setJadwalMenungguKonfirmasi] = useState<ISesi[]>([]);
   const [loading, setLoading] = useState(true); // Track loading state
 
   useEffect(() => {
     const fetchJadwal = async () => {
       if (!loggedInUser) return;
       setLoading(true); // Start loading
+
+      // Fetch all sessions where the user is either a mentee or a mentor
       const { data, error } = await supabase
         .from("sesi")
         .select("*")
-        .eq("mentee_id", loggedInUser.id);
+        .or(`mentee_id.eq.${loggedInUser.id},mentor_id.eq.${loggedInUser.id}`);
+
       if (!error) {
-        setJadwal(data || []);
+        // Separate sessions that need confirmation and others
+        const menungguKonfirmasi = data.filter(
+          (sesi: ISesi) =>
+            sesi.status === "Menunggu Konfirmasi" && sesi.mentor_id === loggedInUser.id
+        );
+        const jadwalLainnya = data.filter(
+          (sesi: ISesi) =>
+            sesi.status !== "Menunggu Konfirmasi" &&
+            sesi.status !== "Ditolak" && // Exclude rejected sessions
+            (sesi.mentee_id === loggedInUser.id || sesi.mentor_id === loggedInUser.id)
+        );
+
+        setJadwalMenungguKonfirmasi(menungguKonfirmasi);
+        setJadwal(jadwalLainnya);
+      } else {
+        console.error("Error fetching jadwal:", error);
       }
+
       setLoading(false); // End loading
     };
+
     fetchJadwal();
   }, [loggedInUser]);
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-sky-100">
-      <div className="relative z-10 flex flex-col items-center justify-start mt-14 h-[22.5rem] w-screen bg-sky-100 bg-[url('/bg-2.svg')] bg-cover bg-center">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-sky-100 pb-16">
+      <div className="relative z-10 flex flex-col items-center justify-start mt-14 min-h-[22.5rem] w-screen bg-sky-100 bg-[url('/bg-2.svg')] bg-cover bg-center">
         <div className="border-1 absolute -bottom-30 z-10 flex flex-col items-start p-4 justify-start mt-14 h-[15rem] w-[70%] rounded-lg shadow-lg bg-white">
           <div className="relative w-full h-full">
             <div
-              className="absolute -left-20 w-50 h-50 border-white shadow-2xl border-3 rounded-full bg-cover bg-center"
+              className="absolute -left-20 w-50 h-50 bg-gray-200 border-white shadow-2xl border-3 rounded-full bg-cover bg-center"
               style={{
-              backgroundImage: `url('${loggedInUser?.profile_image || "/default-profile.png"}')`,
+                backgroundImage: `url('${loggedInUser?.profile_image || "/def-avatar.png"}')`,
               }}
             ></div>
             <div className="w-full h-full flex">
@@ -93,7 +114,38 @@ export default function UserDashboard() {
       </div>
       <div className="relative z-10 flex flex-col items-center justify-start mt-14 h-[8rem] w-screen"></div>
 
-      {/* Personal Schedule Section (Jadwalku) */}
+      {/* Section for Sessions Needing Confirmation */}
+      {loggedInUser?.isMentor && (
+        <div className="flex flex-col w-[70%] mb-8">
+          <h1 className="text-4xl font-bold mb-4 text-black text-start">
+            Jadwal Menunggu Konfirmasi
+          </h1>
+          <p className="text-xl text-gray-600">
+            Konfirmasi jadwal sesi yang telah diajukan oleh mentee.
+          </p>
+          <div className="overflow-x-auto">
+            <div className="flex gap-6 mt-4">
+              {loading ? (
+                <div className="flex items-center justify-start h-full w-full">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+                  <span className="ml-4 text-gray-500">Loading jadwal...</span>
+                </div>
+              ) : jadwalMenungguKonfirmasi.length > 0 ? (
+                jadwalMenungguKonfirmasi.map((sesi) => (
+                  <JadwalCard key={sesi.id} sesi={sesi} />
+                ))
+              ) : (
+                <div className="relative text-gray-500 text-lg mt-4 bg-white w-full min-h-[10rem] flex items-center justify-center rounded-lg shadow-lg p-4">
+                  <i className="absolute z-10 bi bi-info-circle-fill text-8xl opacity-5"></i>
+                  <p className="text-center z-20">Sayang sekali belum ada mentee yang ingin menjadwalkan sesi mentoring dengan Anda.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Section for All Other Sessions */}
       <div className="flex flex-col w-[70%]">
         <h1 className="text-4xl font-bold mb-4 text-black text-start">
           Jadwalku

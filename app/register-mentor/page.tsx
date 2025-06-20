@@ -15,6 +15,10 @@ export default function RegisterMentorPage() {
     foto_ktp: null as File | null,
     foto_kk: null as File | null,
   });
+  const [preview, setPreview] = useState({
+    foto_ktp: "",
+    foto_kk: "",
+  }); // State untuk pratinjau gambar
   const [loading, setLoading] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
@@ -34,20 +38,21 @@ export default function RegisterMentorPage() {
     const { name, files } = e.target;
     if (files && files.length > 0) {
       const file = files[0];
-      const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
-      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      const allowedExtensions = ["jpg", "jpeg", "png", "svg"];
+      const fileExtension = file.name.split(".").pop()?.toLowerCase();
 
       if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
-        alert('Tipe file tidak diizinkan. Harap unggah file .jpg, .jpeg, .png, atau .svg.');
+        alert("Tipe file tidak diizinkan. Harap unggah file .jpg, .jpeg, .png, atau .svg.");
         return;
       }
 
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        alert('Ukuran file melebihi batas 5MB.');
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Ukuran file melebihi batas 5MB.");
         return;
       }
 
       setForm((prev) => ({ ...prev, [name]: file }));
+      setPreview((prev) => ({ ...prev, [name]: URL.createObjectURL(file) })); // Generate preview URL
     }
   };
 
@@ -153,6 +158,16 @@ export default function RegisterMentorPage() {
                   <span className="mt-2 text-sm">Klik untuk mengunggah foto KTP</span>
                 </label>
               </div>
+              {/* Preview Foto KTP */}
+              {preview.foto_ktp && (
+                <div className="mt-4 w-full h-40 overflow-hidden rounded-lg border border-gray-300">
+                  <img
+                    src={preview.foto_ktp}
+                    alt="Preview Foto KTP"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Upload KK */}
@@ -176,6 +191,16 @@ export default function RegisterMentorPage() {
                   <span className="mt-2 text-sm">Klik untuk mengunggah foto KK</span>
                 </label>
               </div>
+              {/* Preview Foto KK */}
+              {preview.foto_kk && (
+                <div className="mt-4 w-full h-40 overflow-hidden rounded-lg border border-gray-300">
+                  <img
+                    src={preview.foto_kk}
+                    alt="Preview Foto KK"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Additional Mentor Information */}
