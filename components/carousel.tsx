@@ -71,7 +71,7 @@ export default function Carousel() {
 
     const interval = setInterval(() => {
       goToNext();
-    }, 2000); // Increased to 4 seconds for smoother experience
+    }, 2000); 
 
     return () => clearInterval(interval);
   }, [isPaused, isTransitioning, currentIndex]);
@@ -344,8 +344,8 @@ export default function Carousel() {
             </div>
 
             {/* Contact Info */}
-            <div ref={contactInfoRef} className="space-y-2">
-              <p className="text-white flex items-center justify-center gap-2 text-sm">
+            <div ref={contactInfoRef} className="flex flex-row items-center justify-center gap-2 flex-wrap">
+              <p className="text-white flex items-center justify-center gap-2 text-sm bg-black/25 px-3 py-1 rounded-full">
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -361,7 +361,7 @@ export default function Carousel() {
                 </svg>
                 {currentUser?.email}
               </p>
-              <p className="text-white flex items-center justify-center gap-2 text-sm">
+              <p className="text-white flex items-center justify-center gap-2 text-sm bg-black/25 px-3 py-1 rounded-full">
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -377,7 +377,7 @@ export default function Carousel() {
                 </svg>
                 {currentUser?.no_telpon}
               </p>
-              <p className="text-sm text-white">
+              <p className="text-white flex items-center justify-center gap-2 text-sm bg-black/25 px-3 py-1 rounded-full">
                 Bergabung sejak {formatDate(currentUser?.tanggal_join)}
               </p>
             </div>
@@ -385,6 +385,7 @@ export default function Carousel() {
         </div>
 
         {/* Previous Button */}
+        
         <button
           ref={prevButtonRef}
           onClick={goToPrevious}
@@ -409,7 +410,6 @@ export default function Carousel() {
           </svg>
         </button>
 
-        {/* Next Button */}
         <button
           ref={nextButtonRef}
           onClick={goToNext}

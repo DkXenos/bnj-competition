@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useUser } from "@/context/UserContext";
 import LogoutButton from "./logout-button";
 import { IMentor } from "@/types/mentor.md";
@@ -150,6 +151,15 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between max-w-[70%] mx-auto">
         <div className="flex items-center space-x-8">
+          <button>
+            <Image
+              src="/MP-logo.svg"
+              alt="MentorPact Logo"
+              width={40}
+              height={40}
+              className="h-10 w-10"
+            />
+          </button>
           <Link href="/" className="text-2xl font-bold text-gray-900">
             MentorPact
           </Link>
@@ -292,9 +302,12 @@ export default function Navbar() {
                   className="flex items-center space-x-2 cursor-pointer"
                   onClick={toggleDropdown}
                 >
-                  <span className="text-gray-700">{loggedInUser.username}</span>
+                  <span className="text-gray-700">{loggedInUser.username?.split(" ")
+                  .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(" ")}
+                  </span>
                   <svg
-                    className="w-4 h-4 text-gray-500"
+                    className="w-4 h-4 mb-2 rotate-180 text-gray-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -309,6 +322,19 @@ export default function Navbar() {
                 </div>
                 {dropdownVisible && (
                   <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200">
+                    <div className="grid grid-cols-2 my-2">
+                      <Image
+                        // src={loggedInUser.avatar_url || "/default-avatar.png"} ini nanti buat avatar e kalo suda ada pfp image 
+                        src={"/def-avatar.png"}
+                        alt="Avatar"
+                        width={40}
+                        height={40}
+                        className="rounded-full mx-auto mb-2 border border-0.5 border-black p-0.5"/>
+                        <h1 className="text-black flex items-center font-bold">{loggedInUser.username?.split(" ")
+                        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(" ")}
+                        </h1>
+                    </div>
                     <Link href="/user_dashboard" className="block">
                       <div className="hover:bg-gray-100 w-full text-black text-md p-2 text-center">
                         Dashboard
