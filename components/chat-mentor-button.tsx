@@ -26,13 +26,18 @@ export default function ChatButton({
     setLoading(true);
     try {
       const data = await GetChatByFK(loggedInUser.id, receiver_id);
-      if (!data) {
-        console.error("No chat data found");
+
+      // Ensure `data` is a valid number (extract `id` if it's an object)
+      const chatCompositeId = typeof data === "object" ? data.id : data;
+
+      if (!chatCompositeId || isNaN(chatCompositeId)) {
+        console.error("Invalid chat composite ID:", chatCompositeId);
         setLoading(false);
         return;
       }
+
       router.push(
-        `/chat?chat_composite_id=${data}&other_username=${encodeURIComponent(
+        `/chat?chat_composite_id=${chatCompositeId}&other_username=${encodeURIComponent(
           reciever_name
         )}&other_user_id=${receiver_id}`
       );
@@ -57,7 +62,9 @@ export default function ChatButton({
       {showLoginPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-lg">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h1 className="text-xl font-bold text-center text-black mb-4">Login Diperlukan</h1>
+            <h1 className="text-xl font-bold text-center text-black mb-4">
+              Login Diperlukan
+            </h1>
             <p className="text-gray-600 text-center mb-4">
               Anda harus login terlebih dahulu untuk menghubungi mentor.
             </p>

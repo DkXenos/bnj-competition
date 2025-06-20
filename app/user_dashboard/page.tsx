@@ -54,13 +54,13 @@ export default function UserDashboard() {
         <div className="border-1 absolute -bottom-30 z-10 flex flex-col items-start p-4 justify-start mt-14 h-[15rem] w-[70%] rounded-lg shadow-lg bg-white">
           <div className="relative w-full h-full">
             <div
-              className="absolute -left-20 w-50 h-50 bg-gray-200 border-white shadow-2xl border-3 rounded-full bg-cover bg-center"
+              className="absolute -left-20 -z-10 w-50 h-50 bg-gray-200 border-white shadow-2xl border-3 rounded-full bg-cover bg-center"
               style={{
                 backgroundImage: `url('${loggedInUser?.profile_image || "/def-avatar.png"}')`,
               }}
             ></div>
             <div className="w-full h-full flex">
-              <div className="w-70 h-50 rounded-full"></div>
+              <div className="w-70 -z-10 h-50 rounded-full"></div>
               <div className="relative z-20 w-full h-full flex flex-col items-start justify-start p-4">
                 <h1 className="text-4xl text-left font-bold mb-4 text-black">
                   Halo, {loggedInUser?.username}! - Mentor
@@ -78,7 +78,7 @@ export default function UserDashboard() {
                 </p>
                 <Link
                   href={"/edit_profile_page"}
-                  className="text-blue-400 hover:underline mt-4 z-30"
+                  className="text-blue-400 hover:underline mt-4 z-[1000]"
                 >
                   Edit Profile
                 </Link>
@@ -135,9 +135,9 @@ export default function UserDashboard() {
                   <JadwalCard key={sesi.id} sesi={sesi} />
                 ))
               ) : (
-                <div className="relative text-gray-500 text-lg mt-4 bg-white w-full min-h-[10rem] flex items-center justify-center rounded-lg shadow-lg p-4">
-                  <i className="absolute z-10 bi bi-info-circle-fill text-8xl opacity-5"></i>
-                  <p className="text-center z-20">Sayang sekali belum ada mentee yang ingin menjadwalkan sesi mentoring dengan Anda.</p>
+                <div className="relative text-gray-500 text-lg mt-4 p-4 bg-white w-[19rem] min-h-[10rem] flex flex-col items-start justify-start rounded-lg shadow-lg p-4">
+                  <h1 className="text-2xl font-bold text-black">Info</h1>
+                  <p className="text-left z-20">Sayang sekali belum ada mentee yang ingin menjadwalkan sesi mentoring dengan Anda.</p>
                 </div>
               )}
             </div>

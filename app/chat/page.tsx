@@ -12,6 +12,12 @@ export default function ChatPage() {
   const [chat, setChat] = useState<IChat[]>([]);
   const searchParams = useSearchParams();
   const chatId = Number(searchParams.get("chat_composite_id"));
+
+  if (isNaN(chatId) || chatId <= 0) {
+    console.error("Invalid chat_composite_id in URL:", chatId);
+    return <div>Error: Invalid chat ID</div>;
+  }
+
   const otherUser = searchParams.get("other_username");
   const otherUserID = Number(searchParams.get("other_user_id"));
   const [form, setForm] = useState({ textToSend: "" });
