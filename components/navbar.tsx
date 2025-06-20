@@ -148,14 +148,14 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-6 py-4">
-      <div className="flex items-center justify-between max-w-7xl mx-auto">
+      <div className="flex items-center justify-between max-w-[70%] mx-auto">
         <div className="flex items-center space-x-8">
           <Link href="/" className="text-2xl font-bold text-gray-900">
             MentorPact
           </Link>
           
           <Link
-            href="/catalog"
+            href="/explore"
             className="text-gray-600 hover:text-gray-900 transition-colors"
           >
             Explore
@@ -330,7 +330,7 @@ export default function Navbar() {
                 href="/about"
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
-                About
+                Beranda
               </Link>
               <Link
                 href="/mentor-register"
@@ -340,7 +340,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/login"
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors border border-gray-300"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors border-gray-300"
               >
                 Masuk
               </Link>

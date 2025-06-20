@@ -46,10 +46,16 @@ function MentorCard({ mentor }: { mentor: IMentor }) {
       {/* Mentor Info */}
       <div className="flex-grow">
         <h3 className="text-xl font-bold text-gray-900 mb-2">
-          {mentorUser ? mentorUser.username : "Loading..."}
+          {mentorUser?.username
+            .split(" ")
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")}
         </h3>
         <p className="text-gray-600 text-sm line-clamp-3">
-          {mentor.deskripsi}
+          {mentor.deskripsi
+            .split(" ")
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")}
         </p>
       </div>
       
@@ -57,7 +63,7 @@ function MentorCard({ mentor }: { mentor: IMentor }) {
       <div className="mt-4 pt-4 border-t border-gray-100">
         <div className="flex justify-between items-center text-sm text-gray-500">
           <span>Rating: {mentor.total_rating}/5</span>
-          <span>Rp {mentor.harga_per_sesi.toLocaleString()}/sesi</span>
+          <span>Rp {mentor.harga_per_sesi.toLocaleString()}/Sesi</span>
         </div>
       </div>
     </div>

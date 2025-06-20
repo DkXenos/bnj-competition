@@ -26,11 +26,11 @@ export default function UserDashboard() {
 
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-white">
       <div className="relative z-10 flex flex-col items-center justify-start mt-14 h-[22.5rem] w-screen bg-sky-100">
         <div className="border-1 absolute -bottom-30 z-10 flex flex-col items-start p-4 justify-start mt-14 h-[15rem] w-[70%] rounded-lg shadow-lg bg-white">
           <div className="relative w-full h-full">
-            <div className="absolute -left-20 w-50 h-50 bg-black border-white shadow-lg border-3 rounded-full"></div>
+            <div className="absolute -left-20 w-50 h-50 bg-black border-white shadow-2xl border-3 rounded-full"></div>
             <div className="w-full h-full flex">
               <div className="w-70 h-50 rounded-full"></div>
               <div className="w-full h-full flex flex-col items-start justify-start p-4">
@@ -93,7 +93,7 @@ export default function UserDashboard() {
           mencapai tujuan belajar Anda.
         </p>
         <div className="overflow-x-auto">
-          <div className="flex gap-6">
+          <div className="flex gap-6 mt-4">
             {loggedInUser &&
               jadwal.map((sesi) => (
                 <JadwalCard key={sesi.id} sesi={sesi} loggedInUser={loggedInUser} />
