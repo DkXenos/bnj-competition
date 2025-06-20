@@ -76,7 +76,7 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMentors, setFilteredMentors] = useState<MentorWithUser[]>([]);
-  
+  //
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const mentorsPerPage = 8;
