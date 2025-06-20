@@ -1,6 +1,6 @@
 "use client";
-import { GetAllChats } from "@/app/api/get_all_chats/route";
-import { getUserDetailsById } from "@/app/api/get_user_details/route";
+import { GetAllChats } from "@/lib/chat";
+import { getUserDetailsById } from "@/lib/get-user";
 import { useEffect, useState } from "react";
 import { useUser } from "@/context/UserContext";
 import Link from "next/link";

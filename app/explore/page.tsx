@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { IMentor } from "@/types/mentor.md";
 import { IUser } from "@/types/user.md";
-import { GetAllMentors } from "@/app/api/get_all_mentors/route";
+import { GetAllMentors } from "@/lib/get-mentor";
 import supabase from "@/lib/db";
 import { useRouter } from "next/navigation";
 

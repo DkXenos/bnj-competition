@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@/context/UserContext";
-import { registerMentor } from "@/app/api/register_mentor/route";
+import { registerMentor } from "@/lib/login-register";
 import supabase from "@/lib/db";
 import Link from "next/link";
 import Image from "next/image";

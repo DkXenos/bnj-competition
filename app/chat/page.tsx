@@ -1,20 +1,50 @@
 "use client";
 import { useUser } from "@/context/UserContext";
-import { GetChat } from "@/app/api/get_chat/route";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { AddChat } from "@/app/api/add_chat/route";
+import { AddChat, GetChat } from "@/lib/chat";
 import { IChat } from "@/types/chat.md";
 import Link from "next/link";
+import { IUser } from "@/types/user.md"; // Ensure this is the correct path to your IUser type
+
+interface ChatContentProps {
+  loggedInUser: IUser | null; // Define the type for loggedInUser
+  chat: IChat[]; // Define the type for chat
+  setChat: React.Dispatch<React.SetStateAction<IChat[]>>; // Define the type for setChat
+  form: { textToSend: string }; // Define the type for form
+  setForm: React.Dispatch<React.SetStateAction<{ textToSend: string }>>; // Define the type for setForm
+}
 
 export default function ChatPage() {
   const { loggedInUser } = useUser();
   const [chat, setChat] = useState<IChat[]>([]);
+  const [form, setForm] = useState({ textToSend: "" });
+
+  // Wrap the part using `useSearchParams` in a Suspense boundary
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ChatContent
+        loggedInUser={loggedInUser}
+        chat={chat}
+        setChat={setChat}
+        form={form}
+        setForm={setForm}
+      />
+    </Suspense>
+  );
+}
+
+function ChatContent({
+  loggedInUser,
+  chat,
+  setChat,
+  form,
+  setForm,
+}: ChatContentProps) {
   const searchParams = useSearchParams();
   const chatId = Number(searchParams.get("chat_composite_id"));
   const otherUser = searchParams.get("other_username");
   const otherUserID = Number(searchParams.get("other_user_id"));
-  const [form, setForm] = useState({ textToSend: "" });
 
   useEffect(() => {
     if (!chatId || !loggedInUser?.id || !otherUser) return;

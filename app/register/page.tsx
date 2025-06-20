@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { registerUser } from "@/app/api/register/route";
+import { registerUser } from "@/lib/login-register";
 import Link from "next/link";
 
 export default function RegisterPage() {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { loginUser } from "@/app/api/login/route";
+import { loginUser } from "@/lib/login-register";
 import Link from "next/link";
 
 export default function LoginPage() {

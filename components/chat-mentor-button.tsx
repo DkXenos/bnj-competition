@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
-import { GetChatByFK } from "@/app/api/get_chat_by_fk/route";
+import { GetChatByFK } from "@/lib/chat";
 
 export default function ChatButton({
   receiver_id,

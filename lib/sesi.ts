@@ -1,5 +1,4 @@
 import supabase from "@/lib/db";
-
 export async function confirmSession(sesiId: number) {
   try {
     const { error } = await supabase
@@ -17,4 +16,19 @@ export async function confirmSession(sesiId: number) {
     console.error("Unexpected error:", error);
     return { success: false, error: "Terjadi kesalahan saat mengonfirmasi sesi." };
   }
+}
+
+
+export async function GetSesi() {
+  const { data: sesi, error } = await supabase
+    .from("sesi")
+    .select("*")
+    .order("jam_mulai", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching sesi:", error);
+    throw error;
+  }
+
+  return sesi || [];
 }

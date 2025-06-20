@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { UpdateUserProfile } from "@/app/api/update_user_profile/route";
+import { UpdateUserProfile } from "@/lib/update-user";
 import supabase from "@/lib/db";
 import Link from "next/link";
 import { useUser } from "@/context/UserContext";

@@ -2,7 +2,7 @@ import { ISesi } from "@/types/sesi.md";
 import { useEffect, useState } from "react";
 import supabase from "@/lib/db";
 import { useUser } from "@/context/UserContext";
-import { confirmSession } from "@/app/api/confirm_session/route";
+import { confirmSession } from "@/lib/sesi";
 
 export default function JadwalCard({ sesi }: { sesi: ISesi }) {
   const [name, setName] = useState<string>("Loading...");

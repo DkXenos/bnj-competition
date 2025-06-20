@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { GetSesi } from "@/app/api/get_sesi/route";
+import { GetSesi } from "@/lib/sesi";
 import { ISesi } from "@/types/sesi.md";
 
 export default function Schedule() {
