@@ -110,14 +110,6 @@ export default function UserDashboard() {
 
 	return (
 		<div className="flex flex-col items-center justify-start min-h-screen bg-gray-100">
-			
-      {/* warning backend */}
-			<div onClick={(e) => {(e.target as HTMLElement).style.display = "none";}}
-          className="absolute text-center w-[300px] h-[300px] bg-red-600 z-15 top-[200px] left-[500px] flex items-center justify-center rotate-35 right-0 p-4">
-				<h1 className="-rotate-45">masih belum connect sama backend ya jadwal nya</h1>
-				<p>(click kotak merah e biar ngilang)</p>
-			</div>
-
 			<div className="relative z-10 flex flex-col items-center justify-start mt-14 h-[15rem] w-screen bg-sky-100">
 				<div className="border-1 absolute -bottom-30 z-10 flex flex-col items-start p-4 justify-start mt-14 h-[15rem] w-[50%] rounded-lg shadow-lg bg-white">
 					<div className="relative w-full h-full">
