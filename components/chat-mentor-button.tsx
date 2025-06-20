@@ -44,10 +44,11 @@ export default function ChatButton({
   return (
     <button
       onClick={handleChatClick}
-      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition-colors flex items-center gap-2"
       disabled={loading}
     >
-      {loading ? "Loading..." : "Chat with Mentor"}
+      <i className="bi bi-chat-left-dots-fill pr-4"></i>
+      {loading ? "Loading..." : "Kontak"}
     </button>
   );
 }

@@ -1,5 +1,6 @@
 import supabase from "@/lib/db";
 import ChatButton from "@/components/chat-mentor-button";
+import BookMentorButton from "@/components/book-mentor-button";
 import Link from "next/link";
 
 export default async function MentorDetailPage({
@@ -22,6 +23,8 @@ export default async function MentorDetailPage({
     .select(`*`)
     .eq("id", mentor.user_id)
     .single();
+
+  
 
   return (
     <div className="min-h-screen bg-sky-100">
@@ -50,9 +53,9 @@ export default async function MentorDetailPage({
         </div>
 
         {/* Main Content Card */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-white/70 rounded-xl shadow-lg overflow-hidden">
           {/* Mentor Profile Section */}
-          <div className="bg-sky-50 p-6 md:p-8 border-b border-sky-100">
+          <div className="bg-white p-6 md:p-8 border-b border-sky-100">
             <div className="flex flex-col md:flex-row gap-6 items-start">
               {/* Profile Avatar */}
               <div className="w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -91,19 +94,7 @@ export default async function MentorDetailPage({
                     <span>{mentor.total_rating}/5 Rating</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <svg
-                      className="w-4 h-4 text-green-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                      />
-                    </svg>
+                    <i className="bi bi-wallet2"></i>
                     <span>
                       Rp {mentor.harga_per_sesi.toLocaleString()}/sesi
                     </span>
@@ -118,10 +109,23 @@ export default async function MentorDetailPage({
 
               {/* Chat Button */}
               <div className="flex-shrink-0">
-                <ChatButton
-                  receiver_id={mentor.user_id}
-                  reciever_name={data_lengkap_mentor.username}
-                />
+                <div className="flex gap-2">
+                  <ChatButton
+                    receiver_id={mentor.user_id}
+                    reciever_name={data_lengkap_mentor.username}
+                  />
+                  <BookMentorButton sesi={{
+                    id: 0,
+                    jam_mulai: "",
+                    jam_selesai: "",
+                    mentor_id: 0,
+                    mentee_id: 0,
+                    rating_ulasan: null,
+                    deksripsi_ulasan: null,
+                    link: "",
+                    status: "Menunggu Konfirmasi"
+                  }}/>
+              </div>
               </div>
             </div>
           </div>
@@ -132,19 +136,7 @@ export default async function MentorDetailPage({
             {mentor.link_video && (
               <div className="mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-sky-200"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
+                  <i className="bi bi-camera-video-fill"></i>
                   Video Profil
                 </h2>
                 <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-sky-100">
