@@ -77,6 +77,10 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMentors, setFilteredMentors] = useState<MentorWithUser[]>([]);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const mentorsPerPage = 8;
 
   useEffect(() => {
     const fetchMentors = async () => {
@@ -128,7 +132,35 @@ export default function ExplorePage() {
       );
       setFilteredMentors(filtered);
     }
+    // Reset to first page when search changes
+    setCurrentPage(1);
   }, [searchQuery, mentors]);
+
+  // Calculate pagination values
+  const totalPages = Math.ceil(filteredMentors.length / mentorsPerPage);
+  const startIndex = (currentPage - 1) * mentorsPerPage;
+  const endIndex = startIndex + mentorsPerPage;
+  const currentMentors = filteredMentors.slice(startIndex, endIndex);
+
+  // Pagination handlers
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const goToPage = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   if (loading) {
     return (
@@ -190,35 +222,109 @@ export default function ExplorePage() {
               placeholder="Telusuri mentor..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className=" w-full pl-10 pr-3 py-3 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-sky-100 focus:border-blue-500 text-black"
+              className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-sky-100 focus:border-blue-500 text-black"
             />
           </div>
         </div>
 
         {/* Results Info */}
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <p className="text-gray-600">
             {searchQuery ? (
               <>
-                {filteredMentors.length} Mentor ditemukan
-                {filteredMentors.length !== 1 ? "" : ""} untuk "{searchQuery}"
+                {filteredMentors.length} mentor ditemukan untuk "{searchQuery}"
               </>
             ) : (
               <>
-                Menunjukan {mentors.length} mentor
-                {mentors.length !== 1 ? "" : ""}
+                Menampilkan {startIndex + 1}-{Math.min(endIndex, filteredMentors.length)} dari {filteredMentors.length} mentor
               </>
             )}
           </p>
+          
+          {/* Page indicator */}
+          {totalPages > 1 && (
+            <p className="text-gray-500 text-sm">
+              Halaman {currentPage} dari {totalPages}
+            </p>
+          )}
         </div>
 
         {/* Mentors Grid */}
-        {filteredMentors.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredMentors.map((mentor) => (
-              <MentorCard key={mentor.id} mentor={mentor} user={mentor.user} />
-            ))}
-          </div>
+        {currentMentors.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              {currentMentors.map((mentor) => (
+                <MentorCard key={mentor.id} mentor={mentor} user={mentor.user} />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                {/* Previous Button */}
+                <button
+                  onClick={goToPrevPage}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    currentPage === 1
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200"
+                  }`}
+                >
+                  <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Sebelumnya
+                </button>
+
+                {/* Page Numbers */}
+                <div className="flex gap-1">
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, index) => {
+                    let pageNumber;
+                    if (totalPages <= 5) {
+                      pageNumber = index + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = index + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + index;
+                    } else {
+                      pageNumber = currentPage - 2 + index;
+                    }
+
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => goToPage(pageNumber)}
+                        className={`px-3 py-2 rounded-lg font-medium transition-colors ${
+                          currentPage === pageNumber
+                            ? "bg-blue-500 text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200"
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Next Button */}
+                <button
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    currentPage === totalPages
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200"
+                  }`}
+                >
+                  Selanjutnya
+                  <svg className="w-4 h-4 ml-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-12">
             <div className="w-24 h-24 bg-white/70 rounded-full mx-auto mb-4 flex items-center justify-center">
@@ -255,9 +361,9 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {/* Back to Top Button */}
-        {filteredMentors.length > 8 && (
-          <div className="text-center mt-12">
+        {/* Back to Top Button - only show when there are multiple pages */}
+        {totalPages > 1 && (
+          <div className="text-center mt-8">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="px-6 py-3 bg-white text-gray-700 rounded-full shadow-lg hover:bg-gray-50 transition-colors duration-200 font-medium"

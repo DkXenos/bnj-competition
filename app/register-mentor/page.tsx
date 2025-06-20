@@ -128,9 +128,9 @@ export default function RegisterMentorPage() {
         </div>
       )}
 
-      <div className="flex flex-col bg-gradient-to-br from-sky-50 to-blue-100 min-h-screen w-screen items-center justify-center">
+      <div className="flex flex-col bg-gradient-to-br from-sky-50 to-blue-100 min-h-screen w-screen items-center justify-center mt-15">
         <div className="bg-white flex flex-col min-w-[40%] min-h-[40rem] p-8 rounded-xl gap-8 shadow-lg border border-gray-100">
-          <h1 className="text-center text-2xl text-black">Daftar Mentor</h1>
+          <h1 className="text-center text-2xl text-black ">Daftar Mentor</h1>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-black">
             {/* Upload KTP */}
             <div className="flex flex-col gap-2">

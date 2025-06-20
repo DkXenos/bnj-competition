@@ -15,8 +15,9 @@ interface MentorWithUser extends IMentor {
 export default function Navbar() {
   const { loggedInUser } = useUser();
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Search functionality
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<MentorWithUser[]>([]);
@@ -41,6 +42,10 @@ export default function Navbar() {
 
   const toggleDropdown = () => {
     setDropdownVisible((prev) => !prev);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuVisible((prev) => !prev);
   };
 
   // Search functionality
@@ -81,22 +86,27 @@ export default function Navbar() {
             .single();
 
           if (userError || !userData) {
-            console.error("Error fetching user for mentor:", mentor.id, userError);
+            console.error(
+              "Error fetching user for mentor:",
+              mentor.id,
+              userError
+            );
             return null;
           }
 
           return {
             ...mentor,
-            user: userData
+            user: userData,
           };
         })
       );
 
       // Filter out null results and search by username
       const validMentors = mentorsWithUsers
-        .filter((mentor): mentor is MentorWithUser => 
-          mentor !== null && 
-          mentor.user?.username?.toLowerCase().includes(query.toLowerCase())
+        .filter(
+          (mentor): mentor is MentorWithUser =>
+            mentor !== null &&
+            mentor.user?.username?.toLowerCase().includes(query.toLowerCase())
         )
         .slice(0, 5); // Limit to 5 results
 
@@ -148,32 +158,35 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-6 py-4">
-      <div className="flex items-center justify-between max-w-[70%] mx-auto">
-        <div className="flex items-center space-x-8">
-          <button>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 md:px-6 py-4">
+      <div className="flex items-center justify-between max-w-7xl mx-auto w-[70%]">
+        {/* Logo and Brand */}
+        <div className="flex items-center space-x-2 md:space-x-3">
+          <Link href="/" className="flex items-center space-x-2">
             <Image
               src="/MP-logo.svg"
               alt="MentorPact Logo"
               width={40}
               height={40}
-              className="h-10 w-10"
+              className="h-8 w-8 md:h-10 md:w-10"
             />
-          </button>
-          <Link href="/" className="text-2xl font-bold text-gray-900">
-            MentorPact
+            <span className="text-xl md:text-3xl font-bold text-gray-900">
+              MentorPact
+            </span>
           </Link>
-          
+
+          {/* Desktop Navigation Links */}
           <Link
             href="/explore"
-            className="text-gray-600 hover:text-gray-900 transition-colors"
+            className="hidden md:block text-gray-600 hover:text-gray-900 transition-colors ml-8"
           >
             Telusuri
           </Link>
         </div>
 
-        <div className="flex-1 max-w-2xl mx-8 relative">
-          <div className="relative">
+        {/* Desktop Search Bar */}
+        <div className="hidden md:flex flex-1 max-w-2xl mx-8 relative">
+          <div className="relative w-full">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg
                 className="h-5 w-5 text-gray-400"
@@ -244,7 +257,11 @@ export default function Navbar() {
                           </p>
                         </div>
                         <div className="flex items-center text-yellow-400">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <svg
+                            className="w-4 h-4"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                           </svg>
                           <span className="text-xs text-gray-600 ml-1">
@@ -271,14 +288,17 @@ export default function Navbar() {
                     />
                   </svg>
                   <p className="text-gray-500">No mentors found</p>
-                  <p className="text-xs text-gray-400">Try a different search term</p>
+                  <p className="text-xs text-gray-400">
+                    Try a different search term
+                  </p>
                 </div>
               ) : null}
             </div>
           )}
         </div>
 
-        <div className="flex items-center space-x-6">
+        {/* Desktop Navigation Menu */}
+        <div className="hidden md:flex items-center space-x-6">
           {loggedInUser ? (
             <>
               <Link
@@ -302,12 +322,15 @@ export default function Navbar() {
                   className="flex items-center space-x-2 cursor-pointer"
                   onClick={toggleDropdown}
                 >
-                  <span className="text-gray-700">{loggedInUser.username?.split(" ")
-                  .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")}
-                  </span>
+                  <Image
+                    src={"/def-avatar.png"}
+                    alt="Avatar"
+                    width={32}
+                    height={32}
+                    className="rounded-full border border-gray-300"
+                  />
                   <svg
-                    className="w-4 h-4 mb-2 rotate-180 text-gray-500"
+                    className="w-4 h-4 text-gray-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -316,24 +339,29 @@ export default function Navbar() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M19 9l-7-7-7 7"
+                      d="M19 9l-7 7-7-7"
                     />
                   </svg>
                 </div>
                 {dropdownVisible && (
                   <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200">
-                    <div className="grid grid-cols-2 my-2">
+                    <div className="flex items-center gap-3 px-4 py-2 mb-2 border-b border-gray-100">
                       <Image
-                        // src={loggedInUser.avatar_url || "/default-avatar.png"} ini nanti buat avatar e kalo suda ada pfp image 
                         src={"/def-avatar.png"}
                         alt="Avatar"
-                        width={40}
-                        height={40}
-                        className="rounded-full mx-auto mb-2 border border-0.5 border-black p-0.5"/>
-                        <h1 className="text-black flex items-center font-bold">{loggedInUser.username?.split(" ")
-                        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-                        .join(" ")}
-                        </h1>
+                        width={32}
+                        height={32}
+                        className="rounded-full border border-gray-300"
+                      />
+                      <h1 className="text-black font-bold text-sm truncate">
+                        {loggedInUser.username
+                          ?.split(" ")
+                          .map(
+                            (word: string) =>
+                              word.charAt(0).toUpperCase() + word.slice(1)
+                          )
+                          .join(" ")}
+                      </h1>
                     </div>
                     <Link href="/user_dashboard" className="block">
                       <div className="hover:bg-gray-100 w-full text-black text-md p-2 text-center">
@@ -356,7 +384,7 @@ export default function Navbar() {
                 href="/about"
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
-                Beranda
+                Tentang
               </Link>
               <Link
                 href="/register-mentor"
@@ -366,14 +394,132 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/login"
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors border-gray-300"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
               >
                 Masuk
               </Link>
             </>
           )}
         </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          onClick={toggleMobileMenu}
+          className="md:hidden flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 transition-colors"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {mobileMenuVisible ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
+          </svg>
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuVisible && (
+        <div className="md:hidden bg-white border-t border-gray-200 px-4 py-4 space-y-4">
+          {/* Mobile Navigation Links */}
+          <div className="space-y-2">
+            <Link
+              href="/"
+              className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              onClick={() => setMobileMenuVisible(false)}
+            >
+              Beranda
+            </Link>
+            <Link
+              href="/explore"
+              className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              onClick={() => setMobileMenuVisible(false)}
+            >
+              Telusuri
+            </Link>
+            <Link
+              href="/about"
+              className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              onClick={() => setMobileMenuVisible(false)}
+            >
+              Tentang
+            </Link>
+            <Link
+              href="/register-mentor"
+              className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              onClick={() => setMobileMenuVisible(false)}
+            >
+              Jadi Mentor
+            </Link>
+
+            {loggedInUser ? (
+              <>
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <div className="flex items-center gap-3 py-2">
+                    <Image
+                      src={"/def-avatar.png"}
+                      alt="Avatar"
+                      width={32}
+                      height={32}
+                      className="rounded-full border border-gray-300"
+                    />
+                    <span className="text-black font-medium">
+                      {loggedInUser.username
+                        ?.split(" ")
+                        .map(
+                          (word: string) =>
+                            word.charAt(0).toUpperCase() + word.slice(1)
+                        )
+                        .join(" ")}
+                    </span>
+                  </div>
+                  <Link
+                    href="/user_dashboard"
+                    className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    onClick={() => setMobileMenuVisible(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/all_chats_page"
+                    className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    onClick={() => setMobileMenuVisible(false)}
+                  >
+                    Chats
+                  </Link>
+                  <div className="py-2">
+                    <LogoutButton />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <Link
+                  href="/login"
+                  className="block w-full text-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  onClick={() => setMobileMenuVisible(false)}
+                >
+                  Masuk
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
