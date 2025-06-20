@@ -7,7 +7,7 @@ import { GetChatByFK } from "@/app/api/get_chat_by_fk/route";
 
 export default function ChatButton({
   receiver_id,
-  reciever_name
+  reciever_name,
 }: {
   receiver_id: number;
   reciever_name: string;
@@ -15,10 +15,11 @@ export default function ChatButton({
   const router = useRouter();
   const { loggedInUser } = useUser();
   const [loading, setLoading] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   const handleChatClick = async () => {
     if (!loggedInUser) {
-      console.error("User not logged in");
+      setShowLoginPopup(true); // Show login popup if user is not logged in
       return;
     }
 
@@ -42,13 +43,35 @@ export default function ChatButton({
   };
 
   return (
-    <button
-      onClick={handleChatClick}
-      className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition-colors flex items-center gap-2"
-      disabled={loading}
-    >
-      <i className="bi bi-chat-left-dots-fill pr-4"></i>
-      {loading ? "Loading..." : "Kontak"}
-    </button>
+    <>
+      <button
+        onClick={handleChatClick}
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition-colors flex items-center gap-2"
+        disabled={loading}
+      >
+        <i className="bi bi-chat-left-dots-fill pr-4"></i>
+        {loading ? "Loading..." : "Kontak"}
+      </button>
+
+      {/* Login Required Popup */}
+      {showLoginPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-lg">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h1 className="text-xl font-bold text-center text-black mb-4">Login Diperlukan</h1>
+            <p className="text-gray-600 text-center mb-4">
+              Anda harus login terlebih dahulu untuk menghubungi mentor.
+            </p>
+            <div className="flex w-full justify-center">
+              <button
+                className="px-4 w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                onClick={() => (window.location.href = "/login")}
+              >
+                Masuk
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

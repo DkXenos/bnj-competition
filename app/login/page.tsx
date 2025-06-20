@@ -33,7 +33,7 @@ export default function LoginPage() {
   return (
    <div>
       <div className="flex flex-col bg-gradient-to-br from-sky-50 to-blue-100 min-h-screen w-screen items-center justify-center">
-        <div className="bg-white flex flex-col min-w-[40%] min-h-[30rem] p-8 rounded-xl gap-8 shadow-lg border border-gray-100">
+        <div className="bg-white flex flex-col min-w-[40%] min-h-[20rem] p-8 rounded-xl gap-8 shadow-lg border border-gray-100 justify-between">
           <h1 className="text-center text-2xl text-black">Masuk</h1>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-black">
             <input

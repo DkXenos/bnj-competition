@@ -4,6 +4,7 @@ import { IUser } from "@/types/user.md";
 import React, { useState, useEffect } from "react";
 import supabase from "@/lib/db";
 import { useUser } from "@/context/UserContext";
+
 export default function BookMentorButton({
   mentor,
 }: {
@@ -12,6 +13,7 @@ export default function BookMentorButton({
   const [hovered, setHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showSchedulePanel, setShowSchedulePanel] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false); // State for login popup
   const [jadwal, setJadwal] = useState<any[]>([]);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,6 +44,10 @@ export default function BookMentorButton({
   }, [mentor.user.id]);
 
   const handleClick = () => {
+    if (!loggedInUser) {
+      setShowLoginPopup(true); // Show login popup if user is not logged in
+      return;
+    }
     setShowModal(true);
   };
 
@@ -115,6 +121,26 @@ export default function BookMentorButton({
         )}
       </button>
 
+      {/* Login Required Popup */}
+      {showLoginPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-lg">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h1 className="text-xl font-bold text-center mb-4 text-black">Login Diperlukan</h1>
+            <p className="text-gray-600 text-center mb-4">
+              Anda harus login terlebih dahulu untuk membuat jadwal dengan mentor.
+            </p>
+            <div className="flex w-full justify-center">
+              <button
+                className="px-4 w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                onClick={() => (window.location.href = "/login")}
+              >
+                Masuk
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal Notifikasi */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-lg">
@@ -156,11 +182,11 @@ export default function BookMentorButton({
                 <p>Loading jadwal...</p>
               ) : (
                 <select
-                  className="border border-gray-300 rounded px-4 py-2 w-full"
+                  className="border text-black border-gray-300 rounded px-4 py-2 w-full"
                   onChange={(e) => setSelectedTime(e.target.value)}
                   value={selectedTime || ""}
                 >
-                  <option value="" disabled>
+                  <option className="text-black" value="" disabled>
                     Pilih jam
                   </option>
                   {Array.from({ length: 24 }, (_, i) => {

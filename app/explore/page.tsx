@@ -161,11 +161,11 @@ export default function ExplorePage() {
         {/* Header Section */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Explore Our Mentors
+            Telusuri Mentor Kami
           </h1>
           <p className="text-xl text-gray-600 mb-6">
-            Discover experienced mentors ready to help you achieve your learning
-            goals
+            Belajar dengan mentor kami yang berpengalaman dan siap membantu Anda
+            mencapai tujuan belajar Anda.
           </p>
 
           {/* Search Bar */}
@@ -187,7 +187,7 @@ export default function ExplorePage() {
             </div>
             <input
               type="text"
-              placeholder="Search mentors..."
+              placeholder="Telusuri mentor..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className=" w-full pl-10 pr-3 py-3 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-sky-100 focus:border-blue-500 text-black"
@@ -200,13 +200,13 @@ export default function ExplorePage() {
           <p className="text-gray-600">
             {searchQuery ? (
               <>
-                Showing {filteredMentors.length} result
-                {filteredMentors.length !== 1 ? "s" : ""} for "{searchQuery}"
+                {filteredMentors.length} Mentor ditemukan
+                {filteredMentors.length !== 1 ? "" : ""} untuk "{searchQuery}"
               </>
             ) : (
               <>
-                Showing all {mentors.length} mentor
-                {mentors.length !== 1 ? "s" : ""}
+                Menunjukan {mentors.length} mentor
+                {mentors.length !== 1 ? "" : ""}
               </>
             )}
           </p>
@@ -221,7 +221,7 @@ export default function ExplorePage() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <div className="w-24 h-24 bg-white/70 rounded-full mx-auto mb-4 flex items-center justify-center">
               <svg
                 className="w-12 h-12 text-gray-400"
                 fill="none"
@@ -237,19 +237,19 @@ export default function ExplorePage() {
               </svg>
             </div>
             <h3 className="text-xl font-medium text-gray-900 mb-2">
-              No mentors found
+              Tidak Ada Mentor Yang Ditemukan
             </h3>
             <p className="text-gray-600 mb-4">
               {searchQuery
-                ? `No mentors match your search "${searchQuery}". Try different keywords.`
-                : "No mentors are available at the moment."}
+                ? `Mentor tidak dapat ditemukan "${searchQuery}". Cari mentor yang lain.`
+                : "Tidak ada mentor yang tersedia saat ini."}
             </p>
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
               >
-                Clear Search
+                Hapus Pencarian
               </button>
             )}
           </div>
@@ -262,7 +262,7 @@ export default function ExplorePage() {
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="px-6 py-3 bg-white text-gray-700 rounded-full shadow-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
             >
-              Back to Top
+              Kembali ke Atas
             </button>
           </div>
         )}

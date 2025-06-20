@@ -1,18 +1,20 @@
 "use client";
 import { useUser } from "@/context/UserContext";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import supabase from "@/lib/db";
 import JadwalCard from "@/components/jadwal-card";
-import { useEffect } from "react";
 import { ISesi } from "@/types/sesi.md";
 
 export default function UserDashboard() {
   const { loggedInUser } = useUser();
   const [jadwal, setJadwal] = useState<ISesi[]>([]);
+  const [loading, setLoading] = useState(true); // Track loading state
+
   useEffect(() => {
     const fetchJadwal = async () => {
       if (!loggedInUser) return;
+      setLoading(true); // Start loading
       const { data, error } = await supabase
         .from("sesi")
         .select("*")
@@ -20,14 +22,14 @@ export default function UserDashboard() {
       if (!error) {
         setJadwal(data || []);
       }
+      setLoading(false); // End loading
     };
     fetchJadwal();
   }, [loggedInUser]);
 
-
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-white">
-      <div className="relative z-10 flex flex-col items-center justify-start mt-14 h-[22.5rem] w-screen bg-sky-100">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-sky-100">
+      <div className="relative z-10 flex flex-col items-center justify-start mt-14 h-[22.5rem] w-screen bg-sky-100 bg-[url('/bg-2.svg')] bg-cover bg-center">
         <div className="border-1 absolute -bottom-30 z-10 flex flex-col items-start p-4 justify-start mt-14 h-[15rem] w-[70%] rounded-lg shadow-lg bg-white">
           <div className="relative w-full h-full">
             <div className="absolute -left-20 w-50 h-50 bg-black border-white shadow-2xl border-3 rounded-full"></div>
@@ -94,10 +96,18 @@ export default function UserDashboard() {
         </p>
         <div className="overflow-x-auto">
           <div className="flex gap-6 mt-4">
-            {loggedInUser &&
-              jadwal.map((sesi) => (
-                <JadwalCard key={sesi.id} sesi={sesi} loggedInUser={loggedInUser} />
-              ))}
+            {loading ? (
+              <div className="flex items-center justify-start h-full w-full">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+                <span className="ml-4 text-gray-500">Loading jadwal...</span>
+              </div>
+            ) : loggedInUser && jadwal.length > 0 ? (
+              jadwal.map((sesi) => <JadwalCard key={sesi.id} sesi={sesi} />)
+            ) : (
+              <div className="text-gray-500 text-lg mt-4">
+                Kamu belum membuat jadwal
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -158,7 +158,7 @@ export default function Navbar() {
             href="/explore"
             className="text-gray-600 hover:text-gray-900 transition-colors"
           >
-            Explore
+            Telusuri
           </Link>
         </div>
 
@@ -181,7 +181,7 @@ export default function Navbar() {
             </div>
             <input
               type="text"
-              placeholder="Search mentors..."
+              placeholder="Telusuri mentor..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={handleSearchInputFocus}
@@ -333,7 +333,7 @@ export default function Navbar() {
                 Beranda
               </Link>
               <Link
-                href="/mentor-register"
+                href="/register-mentor"
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Jadi Mentor

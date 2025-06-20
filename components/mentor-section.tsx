@@ -131,8 +131,8 @@ function MentorCard({ mentor, index }: { mentor: IMentor; index: number }) {
       {/* Additional Info */}
       <div className="mt-4 pt-4 border-t border-gray-100">
         <div className="flex justify-between items-center text-sm text-gray-500">
-          <span>Rating: {mentor.total_rating}/5</span>
-          <span>Rp {mentor.harga_per_sesi.toLocaleString()}/Sesi</span>
+          <span><i className="bi bi-star-fill mr-2 text-amber-300"></i>Rating: {mentor.total_rating}/5</span>
+          <span><i className="bi bi-wallet2 mr-2"></i>Rp {mentor.harga_per_sesi.toLocaleString()}/Sesi</span>
         </div>
       </div>
     </div>
@@ -251,11 +251,11 @@ export default function MentorSection() {
       <div className="w-full py-12 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h2 className="text-4xl font-bold text-black mb-4">
-              Get to know our Mentors!
+            <h2 className="text-4xl text-center font-bold text-black mb-4">
+              Mentor - Mentor Kami!
             </h2>
-            <p className="text-xl text-gray-600">
-              Learn from our mentor bla bla bla
+            <p className="text-xl text-center text-gray-600">
+              Sedang memuat mentor kami, harap tunggu sebentar...
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -274,10 +274,10 @@ export default function MentorSection() {
         {/* Section Header */}
         <div ref={headerRef} className="mb-8 text-center">
           <h2 className="text-4xl font-bold text-black mb-4">
-            Get to know our Mentors!
+            Mentor - Mentor Kami!
           </h2>
           <p className="text-xl text-gray-600">
-            Learn from our mentor bla bla bla
+            Temukan mentor yang tepat untuk membantu Anda mencapai tujuan belajar Anda.
           </p>
         </div>
 
