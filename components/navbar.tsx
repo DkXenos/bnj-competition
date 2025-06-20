@@ -23,7 +23,7 @@ export default function Navbar() {
     closeTimeoutRef.current = setTimeout(() => {
       setDropdownVisible(false);
       closeTimeoutRef.current = null;
-    }, 300);
+    }, 150);
   };
 
   const toggleDropdown = () => {

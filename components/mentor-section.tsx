@@ -34,7 +34,7 @@ function MentorCard({ mentor }: { mentor: IMentor }) {
   return (
     <div 
       onClick={handleMentorClick}
-      className="bg-sky-100 border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col cursor-pointer hover:shadow-md transition-shadow duration-200 min-h-[400px]"
+      className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col cursor-pointer hover:shadow-md transition-shadow duration-200 min-h-[400px]"
     >
       {/* Profile Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
@@ -91,7 +91,7 @@ export default function MentorSection() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
             <h2 className="text-4xl font-bold text-black mb-4">
-              Mentor kami!
+              Get to know our Mentors!
             </h2>
             <p className="text-xl text-gray-600">
               Learn from our mentor bla bla bla
@@ -108,15 +108,15 @@ export default function MentorSection() {
   }
 
   return (
-    <div className="w-full py-12 px-6">
+    <div className="w-full py-12 px-6 ">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="mb-8">
+        <div className="mb-8 text-center">
           <h2 className="text-4xl font-bold text-black mb-4">
-            Mentor kami!
+            Get to know our Mentors!
           </h2>
           <p className="text-xl text-gray-600">
-            Belajar dengan mentor kami yang berpengalaman dan siap membantu Anda mencapai tujuan belajar Anda.
+            Learn from our mentor bla bla bla
           </p>
         </div>
 
@@ -131,10 +131,10 @@ export default function MentorSection() {
         </div>
 
         {/* Show All Button */}
-        <div className="flex justify-start">
+        <div className="flex justify-center">
           <button 
             onClick={() => router.push('/explore')}
-            className="px-6 py-3 border border-gray-400 text-gray-700 rounded-full hover:bg-gray-50 transition-colors duration-200 font-medium"
+            className="px-6 bg-white py-3 text-gray-700 shadow-lg rounded-full hover:bg-gray-50 transition-colors duration-200 font-medium"
           >
             Tampilkan Semua
           </button>

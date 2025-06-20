@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="w-full h-auto text-black bg-sky-100 pt-16">
+    <footer className="w-full h-auto text-black bg-[#f5f5f5] pt-16">
       <div className="container mx-auto text-center">
         <Image
           src={"/MP-logo.svg"}

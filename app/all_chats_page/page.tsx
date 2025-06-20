@@ -61,7 +61,7 @@ export default function AllChatsPage() {
 
   return (
     <div className="min-h-screen bg-sky-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-[80vh]">
+      <div className="w-full max-w-[90%] bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-[80vh]">
         {/* Header */}
         <div className="bg-white border-b border-sky-100 p-6">
           <div className="flex items-center justify-between">
@@ -213,7 +213,7 @@ export default function AllChatsPage() {
               </p>
               <Link
                 href="/explore"
-                className="px-4 py-2 bg-sky-100 text-gray-700 rounded-lg hover:bg-sky-200 transition-colors"
+                className="px-4 py-2 bg-white shadow-lg text-gray-700 rounded-lg hover:bg-sky-200 transition-colors"
               >
                 Find Mentors
               </Link>

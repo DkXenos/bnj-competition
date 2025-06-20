@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { IUser } from "@/types/user.md";
 
@@ -51,9 +51,21 @@ const userDescriptions: { [key: number]: string } = {
 export default function Carousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [users] = useState<IUser[]>(sampleUsers);
-  const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>(
-    {}
-  );
+  const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>({});
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Auto-scroll effect
+  useEffect(() => {
+    if (isPaused) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) =>
+        prevIndex === users.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 3000); // Change slide every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [users.length, isPaused]);
 
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) =>
@@ -69,6 +81,14 @@ export default function Carousel() {
 
   const goToSlide = (index: number) => {
     setCurrentIndex(index);
+  };
+
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
   };
 
   const currentUser = users[currentIndex];
@@ -89,7 +109,11 @@ export default function Carousel() {
   };
 
   return (
-    <div className="relative w-full  bg-[url('/bg-2.svg')] py-48 bg-blend-overlay bg-cover max-h-[30rem] bg-black/10 bg-gradient-to-br flex items-center justify-center from-gray-50 to-gray-100 rounded-lg overflow-hidden">
+    <div 
+      className="relative w-full bg-[url('/bg-2.svg')] py-48 bg-blend-overlay bg-cover max-h-[30rem] bg-black/10 bg-gradient-to-br flex items-center justify-center from-gray-50 to-gray-100 rounded-lg overflow-hidden"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Carousel Content */}
       <div className="w-[90%] h-full rounded-lg ">
         <div className="w-full h-full flex items-center justify-center p-8">
@@ -182,7 +206,7 @@ export default function Carousel() {
         {/* Previous Button */}
         <button
           onClick={goToPrevious}
-          className="absolute left-50 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+          className="absolute left-15 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
           aria-label="Previous user"
         >
           <svg
@@ -203,7 +227,7 @@ export default function Carousel() {
         {/* Next Button */}
         <button
           onClick={goToNext}
-          className="absolute right-50 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+          className="absolute right-15 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
           aria-label="Next user"
         >
           <svg
@@ -235,6 +259,12 @@ export default function Carousel() {
               aria-label={`Go to user ${index + 1}`}
             />
           ))}
+        </div>
+
+        {/* Auto-scroll indicator */}
+        <div className="absolute top-4 right-4 flex items-center gap-2 text-white text-xs">
+          <div className={`w-2 h-2 rounded-full ${isPaused ? 'bg-yellow-400' : 'bg-green-400'}`}></div>
+          <span>{isPaused ? 'Paused' : 'Auto'}</span>
         </div>
       </div>
     </div>
