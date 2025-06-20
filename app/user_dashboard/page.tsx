@@ -12,7 +12,7 @@ export default function UserDashboard() {
   const [filteredJadwal, setFilteredJadwal] = useState<ISesi[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // State for checkbox filters
+  // State for checkbox filter
   const [filters, setFilters] = useState({
     terkonfirmasi: false,
     menungguKonfirmasi: false,
