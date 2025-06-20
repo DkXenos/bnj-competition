@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 interface MentorWithUser extends IMentor {
   user: IUser;
 }
-
+//
 function MentorCard({ mentor, user }: { mentor: IMentor; user: IUser }) {
   const router = useRouter();
 
