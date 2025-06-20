@@ -7,5 +7,6 @@ type IUser = {
     tanggal_join: string;
     isMentor: boolean;
     profile_image: string | null;
+    isAdmin: boolean;
 };
 export type { IUser };

@@ -23,13 +23,6 @@ export default function RegisterMentorPage() {
   const [loading, setLoading] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
-  useEffect(() => {
-    // Check if the user is logged in
-    if (!loggedInUser) {
-      setShowLoginPopup(true);
-    }
-  }, [loggedInUser]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -56,6 +49,13 @@ export default function RegisterMentorPage() {
       setPreview((prev) => ({ ...prev, [name]: URL.createObjectURL(file) })); // Generate preview URL
     }
   };
+
+  useEffect(() => {
+    // Check if the user is logged in
+    if (!loggedInUser) {
+      setShowLoginPopup(true);
+    }
+  }, [loggedInUser]);
 
   const uploadFileToSupabase = async (file: File, path: string) => {
     const { error } = await supabase.storage
@@ -169,6 +169,8 @@ export default function RegisterMentorPage() {
               {preview.foto_ktp && (
                 <div className="mt-4 w-full h-40 overflow-hidden rounded-lg border border-gray-300">
                   <Image
+                    width={128}
+                    height={128}
                     loading="lazy"
                     src={preview.foto_ktp}
                     alt="Preview Foto KTP"
@@ -203,6 +205,8 @@ export default function RegisterMentorPage() {
               {preview.foto_kk && (
                 <div className="mt-4 w-full h-40 overflow-hidden rounded-lg border border-gray-300">
                   <Image
+                    width={128}
+                    height={128}
                     loading="lazy"
                     src={preview.foto_kk}
                     alt="Preview Foto KK"

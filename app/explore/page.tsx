@@ -84,8 +84,16 @@ export default function ExplorePage() {
   useEffect(() => {
     const fetchMentors = async () => {
       try {
-        // Get all mentors
-        const mentorData = await GetAllMentors();
+        // Get all mentors where is_confirmed = true
+        const { data: mentorData, error: mentorError } = await supabase
+          .from("mentors")
+          .select("*")
+          .eq("is_confirmed", true);
+
+        if (mentorError) {
+          console.error("Error fetching mentors:", mentorError);
+          return;
+        }
 
         // Fetch user data for each mentor
         const mentorsWithUsers = await Promise.all(

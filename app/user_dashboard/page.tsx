@@ -19,6 +19,12 @@ export default function UserDashboard() {
     ditolak: false,
   });
 
+  // State for mentor registration status
+  const [mentorStatus, setMentorStatus] = useState<{
+    is_confirmed: boolean | null;
+    alasan_ditolak: string | null;
+  }>({ is_confirmed: null, alasan_ditolak: null });
+
   useEffect(() => {
     const fetchJadwal = async () => {
       if (!loggedInUser) return;
@@ -42,7 +48,29 @@ export default function UserDashboard() {
       setLoading(false);
     };
 
+    const fetchMentorStatus = async () => {
+      if (!loggedInUser) return;
+
+      // Fetch mentor registration status
+      const { data, error } = await supabase
+        .from("mentors")
+        .select("is_confirmed, alasan_ditolak")
+        .eq("user_id", loggedInUser.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching mentor status:", error);
+        return;
+      }
+
+      setMentorStatus({
+        is_confirmed: data?.is_confirmed ?? null,
+        alasan_ditolak: data?.alasan_ditolak ?? null,
+      });
+    };
+
     fetchJadwal();
+    fetchMentorStatus();
   }, [loggedInUser]);
 
   // Filter jadwal based on checkbox selections
@@ -189,6 +217,26 @@ export default function UserDashboard() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Mentor Registration Status Section */}
+      <div className="flex flex-col w-[70%] mb-8 bg-white p-6 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold mb-4 text-black text-start">
+          Status Pendaftaran Mentor
+        </h1>
+        {mentorStatus.is_confirmed === null ? (
+          <p className="text-gray-600">Anda belum mendaftar sebagai mentor.</p>
+        ) : mentorStatus.is_confirmed ? (
+          <div className="bg-green-100 text-green-700 p-4 rounded-lg">
+            <h2 className="text-lg font-bold">Pendaftaran Diterima</h2>
+            <p>Selamat! Anda telah diterima sebagai mentor.</p>
+          </div>
+        ) : (
+          <div className="bg-red-100 text-red-700 p-4 rounded-lg">
+            <h2 className="text-lg font-bold">Pendaftaran Ditolak</h2>
+            <p>Alasan: {mentorStatus.alasan_ditolak || "Tidak ada alasan yang diberikan."}</p>
+          </div>
+        )}
       </div>
     </div>
   );

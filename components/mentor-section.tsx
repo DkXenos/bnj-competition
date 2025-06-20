@@ -150,10 +150,20 @@ export default function MentorSection() {
   useEffect(() => {
     const fetchMentors = async () => {
       try {
-        const mentorData = await GetAllMentors();
-        setMentors(mentorData.slice(0, 3));
+        // Fetch mentors with is_confirmed = true
+        const { data: mentorData, error } = await supabase
+          .from("mentors")
+          .select("*")
+          .eq("is_confirmed", true);
+
+        if (error) {
+          console.error("Error fetching mentors:", error);
+          return;
+        }
+
+        setMentors(mentorData.slice(0, 3)); // Limit to 3 mentors
       } catch (error) {
-        console.error("Error fetching mentors:", error);
+        console.error("Unexpected error fetching mentors:", error);
       } finally {
         setLoading(false);
       }
@@ -241,7 +251,7 @@ export default function MentorSection() {
       duration: 0.1,
       ease: "power2.inOut",
       onComplete: () => {
-        router.push('/explore');
+        router.push("/explore");
       },
     });
   };
@@ -284,17 +294,13 @@ export default function MentorSection() {
         {/* Mentor Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {mentors.map((mentor, index) => (
-            <MentorCard
-              key={mentor.id}
-              mentor={mentor}
-              index={index}
-            />
+            <MentorCard key={mentor.id} mentor={mentor} index={index} />
           ))}
         </div>
 
         {/* Show All Button */}
         <div className="flex justify-center">
-          <button 
+          <button
             ref={buttonRef}
             onClick={handleButtonClick}
             className="px-6 bg-white py-3 text-gray-700 shadow-lg rounded-full hover:bg-gray-50 transition-colors duration-200 font-medium"
