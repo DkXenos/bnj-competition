@@ -2,51 +2,55 @@ import { ISesi } from "@/types/sesi.md";
 import { useEffect, useState } from "react";
 import supabase from "@/lib/db";
 import { useUser } from "@/context/UserContext";
+import { confirmSession } from "@/app/api/confirm_session/route";
 
 export default function JadwalCard({ sesi }: { sesi: ISesi }) {
-  const [mentorName, setMentorName] = useState<string>("Loading...");
+  const [name, setName] = useState<string>("Loading...");
   const { loggedInUser } = useUser();
 
   useEffect(() => {
-    const fetchMentorName = async () => {
+    const fetchName = async () => {
       try {
         const { data, error } = await supabase
           .from("users")
           .select("username")
-          .eq("id", sesi.mentor_id)
+          .eq(
+            loggedInUser?.id === sesi.mentor_id ? "id" : "id",
+            loggedInUser?.id === sesi.mentor_id ? sesi.mentee_id : sesi.mentor_id
+          )
           .single();
 
         if (error) {
-          console.error("Error fetching mentor name:", error);
-          setMentorName("Unknown");
+          console.error("Error fetching name:", error);
+          setName("Unknown");
           return;
         }
 
-        setMentorName(data?.username || "Unknown");
+        setName(data?.username || "Unknown");
       } catch (error) {
         console.error("Unexpected error:", error);
-        setMentorName("Unknown");
+        setName("Unknown");
       }
     };
 
-    fetchMentorName();
-  }, [sesi.mentor_id]);
+    fetchName();
+  }, [sesi.mentor_id, sesi.mentee_id, loggedInUser?.id]);
 
   const handleAccept = async () => {
     try {
-      const { error } = await supabase
-        .from("sesi")
-        .update({ status: "Terkonfirmasi" })
-        .eq("id", sesi.id);
+      const result = await confirmSession(sesi.id);
 
-      if (error) {
-        console.error("Error updating status:", error);
+      if (!result.success) {
+        alert(`Gagal mengonfirmasi sesi: ${result.error}`);
         return;
       }
 
-      alert("Sesi berhasil diterima!");
+      alert(result.message); // "Sesi berhasil dikonfirmasi."
+      window.location.reload(); // Refresh the page to reflect changes
+      // Optional: Refresh data or update UI
     } catch (error) {
       console.error("Unexpected error:", error);
+      alert("Terjadi kesalahan saat mengonfirmasi sesi.");
     }
   };
 
@@ -63,10 +67,13 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
       }
 
       alert("Sesi berhasil ditolak!");
+      window.location.reload(); // Refresh the page to reflect changes
     } catch (error) {
       console.error("Unexpected error:", error);
     }
   };
+
+  const label = loggedInUser?.id === sesi.mentor_id ? "Mentee" : "Mentor";
 
   return (
     <div className="min-w-[300px] bg-white border-1 rounded-lg shadow-lg p-6 justify-between">
@@ -88,7 +95,7 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         </h1>
         <p className="text-gray-500 mb-1">{sesi.link}</p>
         <p className="text-gray-500 mb-1">
-          Mentor: {mentorName.charAt(0).toUpperCase() + mentorName.slice(1)}
+          {label}: {name.charAt(0).toUpperCase() + name.slice(1)}
         </p>
         <span
           className={`px-3 py-2 rounded-lg text-xs font-semibold ${
