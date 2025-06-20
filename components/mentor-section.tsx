@@ -270,7 +270,7 @@ export default function MentorSection() {
 
   return (
     <div ref={sectionRef} className="w-full py-12 px-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[70%] mx-auto">
         {/* Section Header */}
         <div ref={headerRef} className="mb-8 text-center">
           <h2 className="text-4xl font-bold text-black mb-4">

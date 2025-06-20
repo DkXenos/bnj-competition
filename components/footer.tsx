@@ -112,7 +112,7 @@ export default function Footer() {
       ref={footerRef}
       className="w-full bg-gradient-to-b from-white to-sky-100 text-black overflow-hidden"
     >
-      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16">
+      <div className="w-[70%] container mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 md:mb-12">
           {/* Brand Section */}
