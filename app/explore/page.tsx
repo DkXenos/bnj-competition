@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 interface MentorWithUser extends IMentor {
   user: IUser;
 }
-//
+
 function MentorCard({ mentor, user }: { mentor: IMentor; user: IUser }) {
   const router = useRouter();
 
@@ -42,17 +42,20 @@ function MentorCard({ mentor, user }: { mentor: IMentor; user: IUser }) {
       {/* Mentor Info */}
       <div className="flex-grow">
         <h3 className="text-xl font-bold text-gray-900 mb-2">
-          {user.username}
+          {user.username?.split(" ")
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")}
         </h3>
         <p className="text-gray-600 text-sm line-clamp-3 mb-3">
           {mentor.deskripsi}
         </p>
       </div>
 
-      {/* Additional Info */}
+      {/* Additional Info - Changed to grid layout */}
       <div className="mt-4 pt-4 border-t border-gray-100">
-        <div className="flex justify-between items-center text-sm text-gray-500">
-          <div className="flex items-center gap-1">
+        <div className="grid grid-cols-1 gap-2 text-sm">
+          {/* Star Rating - Top row */}
+          <div className="flex items-center justify-center gap-1 text-gray-500">
             <svg
               className="w-4 h-4 text-yellow-400"
               fill="currentColor"
@@ -60,11 +63,15 @@ function MentorCard({ mentor, user }: { mentor: IMentor; user: IUser }) {
             >
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
-            <span>{mentor.total_rating}/5</span>
+            <span>{mentor.total_rating}/5 Rating</span>
           </div>
-          <span className="font-medium text-green-600">
-            Rp {mentor.harga_per_sesi.toLocaleString()}/sesi
-          </span>
+          
+          {/* Price - Bottom row */}
+          <div className="flex items-center justify-center">
+            <span className="font-medium text-green-600 text-center">
+              Rp {mentor.harga_per_sesi.toLocaleString()}/sesi
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -76,7 +83,7 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMentors, setFilteredMentors] = useState<MentorWithUser[]>([]);
-  //
+  
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const mentorsPerPage = 8;
@@ -198,7 +205,7 @@ export default function ExplorePage() {
     <div className="min-h-screen bg-sky-100 pt-20">
       <div className="max-w-[70%] mx-auto px-6 py-12">
         {/* Header Section */}
-        <div className="mb-8">
+        <div className="mb-8 lg-text-left text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Telusuri Mentor Kami
           </h1>

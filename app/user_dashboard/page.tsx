@@ -204,7 +204,7 @@ export default function UserDashboard() {
       <div className="relative z-10 flex flex-col items-center justify-start mt-16 sm:mt-20 lg:mt-24 h-[2rem] sm:h-[4rem] lg:h-[6rem] w-full"></div>
 
       {/* Checkbox Filters */}
-      <div className="flex flex-col w-full max-w-[70%] sm:max-w-[90%] lg:max-w-[80%] xl:max-w-[70%] mb-4 bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow-md mx-4 items-center">
+      <div className="flex flex-col w-full max-w-[70%] sm:max-w-[90%] lg:max-w-[80%] xl:max-w-[70%] mb-4 bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow-md mx-4 items-center lg:items-start">
         <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 lg:mb-4 text-black text-start">
           Filter Jadwal
         </h1>
@@ -243,7 +243,7 @@ export default function UserDashboard() {
       </div>
 
       {/* Section for Filtered Sessions */}
-      <div className="mt-2 sm:mt-4 lg:mt-8 flex flex-col w-full max-w-[70%] sm:max-w-[90%] lg:max-w-[80%] xl:max-w-[70%] mb-8 px-2 sm:px-4">
+      <div className="mt-2 sm:mt-4 lg:mt-8 lg:text-start text-center flex flex-col w-full max-w-[70%] sm:max-w-[90%] lg:max-w-[80%] xl:max-w-[70%] mb-8 px-2 sm:px-4">
         <div className="overflow-x-auto">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-6 mt-2 sm:mt-4">
             {loading ? (
