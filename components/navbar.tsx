@@ -162,15 +162,15 @@ export default function Navbar() {
       <div className="flex items-center justify-between max-w-7xl mx-auto w-[70%]">
         {/* Logo and Brand */}
         <div className="flex items-center space-x-2 md:space-x-3">
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 group">
             <Image
               src="/MP-logo.svg"
               alt="MentorPact Logo"
               width={40}
               height={40}
-              className="h-8 w-8 md:h-10 md:w-10"
+              className="h-8 w-8 md:h-10 md:w-10 transform transition-transform duration-200 group-hover:scale-102 group-hover:rotate-3"
             />
-            <span className="text-xl md:text-3xl font-bold text-gray-900">
+            <span className="text-xl md:text-3xl font-bold text-gray-900 transition-colors duration-200 group-hover:scale-102">
               MentorPact
             </span>
           </Link>
@@ -178,7 +178,7 @@ export default function Navbar() {
           {/* Desktop Navigation Links */}
           <Link
             href="/explore"
-            className="hidden md:block text-gray-600 hover:text-gray-900 transition-colors ml-8"
+            className="hidden md:block text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 ml-8 px-3 py-2 rounded-lg hover:shadow-sm"
           >
             Telusuri
           </Link>
@@ -209,7 +209,7 @@ export default function Navbar() {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={handleSearchInputFocus}
               onBlur={handleSearchInputBlur}
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-sky-100 focus:border-blue-500 text-black"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black transition-all duration-200 hover:border-gray-400"
             />
           </div>
 
@@ -227,10 +227,10 @@ export default function Navbar() {
                     <div
                       key={mentor.id}
                       onClick={() => handleMentorClick(mentor.id)}
-                      className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                      className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors duration-200 hover:shadow-sm"
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200 hover:bg-blue-100">
                           <svg
                             className="w-6 h-6 text-gray-400"
                             fill="none"
@@ -303,13 +303,13 @@ export default function Navbar() {
             <>
               <Link
                 href="/"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
               >
                 Beranda
               </Link>
               <Link
                 href="/register-mentor"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
               >
                 Jadi Mentor
               </Link>
@@ -319,7 +319,7 @@ export default function Navbar() {
                 onMouseLeave={handleMouseLeave}
               >
                 <div
-                  className="flex items-center space-x-2 cursor-pointer"
+                  className="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-all duration-200 group"
                   onClick={toggleDropdown}
                 >
                   <Image
@@ -327,10 +327,10 @@ export default function Navbar() {
                     alt="Avatar"
                     width={32}
                     height={32}
-                    className="rounded-full border border-gray-300"
+                    className="rounded-full border border-gray-300 transition-transform duration-200 group-hover:scale-105"
                   />
                   <svg
-                    className="w-4 h-4 text-gray-500"
+                    className="w-4 h-4 text-gray-500 transition-transform duration-200 group-hover:rotate-180"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -344,32 +344,34 @@ export default function Navbar() {
                   </svg>
                 </div>
                 {dropdownVisible && (
-                  <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200">
-                    <div className="flex items-center gap-3 px-4 py-2 mb-2 border-b border-gray-100">
-                      <Image
-                        src={"/def-avatar.png"}
-                        alt="Avatar"
-                        width={32}
-                        height={32}
-                        className="rounded-full border border-gray-300"
-                      />
-                      <h1 className="text-black font-bold text-sm truncate">
-                        {loggedInUser.username
-                          ?.split(" ")
-                          .map(
-                            (word: string) =>
-                              word.charAt(0).toUpperCase() + word.slice(1)
-                          )
-                          .join(" ")}
-                      </h1>
+                  <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200 animate-in slide-in-from-top-2 duration-200">
+                    <div className="flex items-center justify-center gap-3 px-4 py-2 mb-2 border-b border-gray-100">
+                      <div className="flex flex-col items-center gap-2">
+                        <Image
+                          src={"/def-avatar.png"}
+                          alt="Avatar"
+                          width={32}
+                          height={32}
+                          className="rounded-full border border-gray-300"
+                        />
+                        <h1 className="text-black font-bold text-sm text-center">
+                          {loggedInUser.username
+                            ?.split(" ")
+                            .map(
+                              (word: string) =>
+                                word.charAt(0).toUpperCase() + word.slice(1)
+                            )
+                            .join(" ")}
+                        </h1>
+                      </div>
                     </div>
                     <Link href="/user_dashboard" className="block">
-                      <div className="hover:bg-gray-100 w-full text-black text-md p-2 text-center">
+                      <div className="hover:bg-blue-50 w-full text-black text-md p-2 text-center transition-colors duration-200 hover:text-blue-700">
                         Dashboard
                       </div>
                     </Link>
                     <Link href="/all_chats_page" className="block">
-                      <div className="hover:bg-gray-100 w-full text-black text-md p-2 text-center">
+                      <div className="hover:bg-blue-50 w-full text-black text-md p-2 text-center transition-colors duration-200 hover:text-blue-700">
                         Chats
                       </div>
                     </Link>
@@ -382,19 +384,19 @@ export default function Navbar() {
             <>
               <Link
                 href="/about"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
               >
                 Tentang
               </Link>
               <Link
                 href="/register-mentor"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
               >
                 Jadi Mentor
               </Link>
               <Link
                 href="/login"
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
               >
                 Masuk
               </Link>
@@ -405,10 +407,10 @@ export default function Navbar() {
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMobileMenu}
-          className="md:hidden flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 transition-colors"
+          className="md:hidden flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 transition-all duration-200 hover:bg-gray-100 rounded-lg"
         >
           <svg
-            className="w-6 h-6"
+            className={`w-6 h-6 transition-transform duration-200 ${mobileMenuVisible ? 'rotate-90' : ''}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -434,33 +436,33 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuVisible && (
-        <div className="md:hidden bg-white border-t border-gray-200 px-4 py-4 space-y-4">
+        <div className="md:hidden bg-white text-center border-t border-gray-200 px-4 py-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
           {/* Mobile Navigation Links */}
           <div className="space-y-2">
             <Link
               href="/"
-              className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="block py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 rounded-lg"
               onClick={() => setMobileMenuVisible(false)}
             >
               Beranda
             </Link>
             <Link
               href="/explore"
-              className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="block py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 rounded-lg"
               onClick={() => setMobileMenuVisible(false)}
             >
               Telusuri
             </Link>
             <Link
               href="/about"
-              className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="block py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 rounded-lg"
               onClick={() => setMobileMenuVisible(false)}
             >
               Tentang
             </Link>
             <Link
               href="/register-mentor"
-              className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="block py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 rounded-lg"
               onClick={() => setMobileMenuVisible(false)}
             >
               Jadi Mentor
@@ -469,7 +471,7 @@ export default function Navbar() {
             {loggedInUser ? (
               <>
                 <div className="border-t border-gray-200 pt-4 mt-4">
-                  <div className="flex items-center gap-3 py-2">
+                  <div className="flex items-center justify-center gap-3 py-2 px-3 hover:bg-gray-50 rounded-lg transition-colors duration-200">
                     <Image
                       src={"/def-avatar.png"}
                       alt="Avatar"
@@ -489,14 +491,14 @@ export default function Navbar() {
                   </div>
                   <Link
                     href="/user_dashboard"
-                    className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    className="block py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 rounded-lg"
                     onClick={() => setMobileMenuVisible(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/all_chats_page"
-                    className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    className="block py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 rounded-lg"
                     onClick={() => setMobileMenuVisible(false)}
                   >
                     Chats
@@ -510,7 +512,7 @@ export default function Navbar() {
               <div className="border-t border-gray-200 pt-4 mt-4">
                 <Link
                   href="/login"
-                  className="block w-full text-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  className="block w-full text-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105"
                   onClick={() => setMobileMenuVisible(false)}
                 >
                   Masuk
