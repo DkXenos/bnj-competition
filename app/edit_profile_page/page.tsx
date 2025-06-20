@@ -5,6 +5,7 @@ import { UpdateUserProfile } from "@/app/api/update_user_profile/route";
 import supabase from "@/lib/db";
 import Link from "next/link";
 import { useUser } from "@/context/UserContext";
+import Image from "next/image";
 
 export default function EditProfilePage() {
   const { loggedInUser } = useUser(); // Access logged-in user from UserContext
@@ -45,15 +46,13 @@ export default function EditProfilePage() {
   };
 
   const uploadFileToSupabase = async (file: File, path: string) => {
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from("profile-images") // Replace with your bucket name
       .upload(path, file);
 
     if (error) {
       console.error("Error uploading file:", {
         message: error.message || "No error message",
-        details: error.details || "No details",
-        hint: error.hint || "No hint",
       });
       throw error;
     }
@@ -159,7 +158,11 @@ export default function EditProfilePage() {
                 className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               {preview && (
-                <img
+                <Image
+                  width={128}
+                  height={128}
+                  loading="lazy"
+                  id="profile-image-preview"
                   src={preview}
                   alt="Preview"
                   className="w-32 h-32 rounded-full border border-gray-300 mt-4"

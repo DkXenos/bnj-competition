@@ -12,31 +12,17 @@ export default function ChatPage() {
   const [chat, setChat] = useState<IChat[]>([]);
   const searchParams = useSearchParams();
   const chatId = Number(searchParams.get("chat_composite_id"));
-
-  if (isNaN(chatId) || chatId <= 0) {
-    console.error("Invalid chat_composite_id in URL:", chatId);
-    return <div>Error: Invalid chat ID</div>;
-  }
-
   const otherUser = searchParams.get("other_username");
   const otherUserID = Number(searchParams.get("other_user_id"));
   const [form, setForm] = useState({ textToSend: "" });
 
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId || !loggedInUser?.id || !otherUser) return;
     const fetchChat = async () => {
       try {
         const data = await GetChat(chatId);
         if (data && data.chat?.messages) {
           setChat(data.chat.messages);
-
-          for (const message of data.chat.messages) {
-            if (message.first_user === loggedInUser?.id) {
-              message.first_user = loggedInUser?.id;
-            } else {
-              message.first_user = otherUser;
-            }
-          }
         } else {
           setChat([]);
         }
@@ -46,22 +32,25 @@ export default function ChatPage() {
       }
     };
     fetchChat();
-  }, [chatId]);
+  }, [chatId, loggedInUser?.id, otherUser]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.textToSend.trim() || !loggedInUser) return;
 
     try {
-      // Add the chat to the database
       await AddChat(chatId, form.textToSend, otherUserID);
-      // Clear the input field
       setForm({ textToSend: "" });
       window.location.reload();
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
+
+  if (isNaN(chatId) || chatId <= 0) {
+    console.error("Invalid chat_composite_id in URL:", chatId);
+    return <div>Error: Invalid chat ID</div>;
+  }
 
   return (
     <div className="min-h-screen bg-sky-100 flex items-center justify-center p-4">
@@ -89,32 +78,6 @@ export default function ChatPage() {
               <span className="font-medium">Back</span>
             </Link>
           </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center">
-              <svg
-                className="w-6 h-6 text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-gray-800">
-                {otherUser}
-              </h1>
-              <p className="text-sm text-gray-500">Online</p>
-            </div>
-          </div>
-
-          <div className="w-20"></div> {/* Spacer for balance */}
         </div>
 
         {/* Messages Container */}
@@ -143,21 +106,6 @@ export default function ChatPage() {
               ))
             ) : (
               <div className="text-center py-12">
-                <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg
-                    className="w-8 h-8 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                    />
-                  </svg>
-                </div>
                 <p className="text-gray-500">
                   No messages yet. Start the conversation!
                 </p>

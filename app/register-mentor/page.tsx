@@ -5,6 +5,7 @@ import { useUser } from "@/context/UserContext";
 import { registerMentor } from "@/app/api/register_mentor/route";
 import supabase from "@/lib/db";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function RegisterMentorPage() {
   const { loggedInUser } = useUser(); // Access logged-in user from UserContext
@@ -56,7 +57,7 @@ export default function RegisterMentorPage() {
     }
   };
 
-  const uploadFileToSupabase = async (file: File, path: string) => {
+  async (file: File, path: string) => {
     const { data, error } = await supabase.storage
       .from("mentor-photos") // Replace with your bucket name
       .upload(path, file);
@@ -161,7 +162,8 @@ export default function RegisterMentorPage() {
               {/* Preview Foto KTP */}
               {preview.foto_ktp && (
                 <div className="mt-4 w-full h-40 overflow-hidden rounded-lg border border-gray-300">
-                  <img
+                  <Image
+                    loading="lazy"
                     src={preview.foto_ktp}
                     alt="Preview Foto KTP"
                     className="w-full h-full object-cover"
@@ -194,7 +196,8 @@ export default function RegisterMentorPage() {
               {/* Preview Foto KK */}
               {preview.foto_kk && (
                 <div className="mt-4 w-full h-40 overflow-hidden rounded-lg border border-gray-300">
-                  <img
+                  <Image
+                    loading="lazy"
                     src={preview.foto_kk}
                     alt="Preview Foto KK"
                     className="w-full h-full object-cover"
