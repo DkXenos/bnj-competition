@@ -6,5 +6,8 @@ type IMentor = {
     tanggal_join_mentor: string;
     total_rating: number;
     harga_per_sesi: number;
+    foto_ktp: string;
+    foto_kk: string;
+    is_verified: boolean;
 };
 export type { IMentor };

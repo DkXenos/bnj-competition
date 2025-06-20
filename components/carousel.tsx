@@ -14,6 +14,7 @@ const sampleUsers: IUser[] = [
     password: "",
     tanggal_join: "2024-01-15T10:30:00Z",
     isMentor: true,
+    profile_image: "/mentor-1.jpg", // Example of a user with a profile image
   },
   {
     id: 2,
@@ -23,6 +24,7 @@ const sampleUsers: IUser[] = [
     password: "",
     tanggal_join: "2024-01-16T14:20:00Z",
     isMentor: true,
+    profile_image: "/mentor-2.jpg", // Example of a user with a profile image
   },
   {
     id: 3,
@@ -32,6 +34,7 @@ const sampleUsers: IUser[] = [
     password: "",
     tanggal_join: "2024-01-17T09:15:00Z",
     isMentor: true,
+    profile_image: null, // Example of a user without a profile image
   },
 ];
 

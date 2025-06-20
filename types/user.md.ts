@@ -6,5 +6,6 @@ type IUser = {
     password: string;
     tanggal_join: string;
     isMentor: boolean;
+    profile_image: string | null;
 };
 export type { IUser };

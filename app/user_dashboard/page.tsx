@@ -32,10 +32,15 @@ export default function UserDashboard() {
       <div className="relative z-10 flex flex-col items-center justify-start mt-14 h-[22.5rem] w-screen bg-sky-100 bg-[url('/bg-2.svg')] bg-cover bg-center">
         <div className="border-1 absolute -bottom-30 z-10 flex flex-col items-start p-4 justify-start mt-14 h-[15rem] w-[70%] rounded-lg shadow-lg bg-white">
           <div className="relative w-full h-full">
-            <div className="absolute -left-20 w-50 h-50 bg-black border-white shadow-2xl border-3 rounded-full"></div>
+            <div
+              className="absolute -left-20 w-50 h-50 border-white shadow-2xl border-3 rounded-full bg-cover bg-center"
+              style={{
+              backgroundImage: `url('${loggedInUser?.profile_image || "/default-profile.png"}')`,
+              }}
+            ></div>
             <div className="w-full h-full flex">
               <div className="w-70 h-50 rounded-full"></div>
-              <div className="w-full h-full flex flex-col items-start justify-start p-4">
+              <div className="relative z-20 w-full h-full flex flex-col items-start justify-start p-4">
                 <h1 className="text-4xl text-left font-bold mb-4 text-black">
                   Halo, {loggedInUser?.username}! - Mentor
                 </h1>
@@ -50,7 +55,10 @@ export default function UserDashboard() {
                   {loggedInUser?.no_telpon ||
                     "Tidak ada nomor telepon yang terdaftar"}
                 </p>
-                <Link href={"/"} className="text-blue-400 mt-4">
+                <Link
+                  href={"/edit_profile_page"}
+                  className="text-blue-400 hover:underline mt-4 z-30"
+                >
                   Edit Profile
                 </Link>
               </div>

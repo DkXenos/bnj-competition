@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@/context/UserContext";
-import { registerUser } from "@/app/api/register/route";
+import { registerMentor } from "@/app/api/register_mentor/route";
+import supabase from "@/lib/db";
 import Link from "next/link";
 
 export default function RegisterMentorPage() {
   const { loggedInUser } = useUser(); // Access logged-in user from UserContext
   const [form, setForm] = useState({
-    username: "",
-    email: "",
-    no_telpon: "",
-    password: "",
-    foto_ktp: null,
-    foto_kk: null,
+    deskripsi: "",
+    link_video: "",
+    harga_per_sesi: "",
+    foto_ktp: null as File | null,
+    foto_kk: null as File | null,
   });
   const [loading, setLoading] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
@@ -25,7 +25,7 @@ export default function RegisterMentorPage() {
     }
   }, [loggedInUser]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -33,25 +33,77 @@ export default function RegisterMentorPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
     if (files && files.length > 0) {
-      setForm((prev) => ({ ...prev, [name]: files[0] }));
+      const file = files[0];
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+
+      if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
+        alert('Tipe file tidak diizinkan. Harap unggah file .jpg, .jpeg, .png, atau .svg.');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        alert('Ukuran file melebihi batas 5MB.');
+        return;
+      }
+
+      setForm((prev) => ({ ...prev, [name]: file }));
     }
+  };
+
+  const uploadFileToSupabase = async (file: File, path: string) => {
+    const { data, error } = await supabase.storage
+      .from("mentor-photos") // Replace with your bucket name
+      .upload(path, file);
+
+    if (error) {
+      console.error("Error uploading file:", {
+        message: error.message || "No error message",
+      });
+      throw error;
+    }
+
+    // Get the public URL of the uploaded file
+    const { data: publicUrlData } = supabase.storage
+      .from("mentor-photos")
+      .getPublicUrl(path);
+
+    if (!publicUrlData?.publicUrl) {
+      throw new Error("Failed to retrieve public URL for uploaded file.");
+    }
+
+    return publicUrlData.publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const { success, error } = await registerUser(form);
-    if (!success) {
-      console.error("Registration failed:", error);
-      alert("Gagal mendaftar. Silakan coba lagi.");
-      setLoading(false);
-      return;
-    }
-    alert("Pendaftaran berhasil! Silakan masuk.");
-    window.location.href = "/login"; // Redirect to login page after successful registration
+    try {
+      const { success, error } = await registerMentor({
+        userId: Number(loggedInUser?.id),
+        deskripsi: form.deskripsi,
+        link_video: form.link_video,
+        harga_per_sesi: parseInt(form.harga_per_sesi, 10),
+        foto_ktp: form.foto_ktp!,
+        foto_kk: form.foto_kk!,
+      });
 
-    setLoading(false);
+      if (!success) {
+        console.error("Mentor registration failed:", error);
+        alert("Gagal mendaftar sebagai mentor. Silakan coba lagi.");
+        setLoading(false);
+        return;
+      }
+
+      alert("Pendaftaran mentor berhasil!");
+      window.location.href = "/user_dashboard"; // Redirect to user dashboard after successful registration
+    } catch (error) {
+      console.error("Error during mentor registration:", error);
+      alert("Terjadi kesalahan saat mendaftar sebagai mentor. Silakan coba lagi.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,7 +114,7 @@ export default function RegisterMentorPage() {
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h1 className="text-xl font-bold text-center mb-4 text-black">Akun Diperlukan</h1>
             <p className="text-gray-600 text-center mb-4">
-              Anda harus daftar terlebih dahulu untuk mendaftar sebagai mentor.
+              Anda harus login terlebih dahulu untuk mendaftar sebagai mentor.
             </p>
             <div className="flex justify-center w-full">
               <Link
@@ -80,43 +132,6 @@ export default function RegisterMentorPage() {
         <div className="bg-white flex flex-col min-w-[40%] min-h-[40rem] p-8 rounded-xl gap-8 shadow-lg border border-gray-100">
           <h1 className="text-center text-2xl text-black">Daftar Mentor</h1>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-black">
-            <input
-              onChange={handleChange}
-              required
-              type="text"
-              name="username"
-              value={form.username}
-              placeholder="Nama Lengkap"
-              className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <input
-              onChange={handleChange}
-              required
-              type="email"
-              name="email"
-              value={form.email}
-              placeholder="Email"
-              className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <input
-              onChange={handleChange}
-              required
-              type="password"
-              name="password"
-              value={form.password}
-              placeholder="Password"
-              className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <input
-              onChange={handleChange}
-              required
-              type="tel"
-              name="no_telpon"
-              value={form.no_telpon}
-              placeholder="Nomor Telepon"
-              className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-
             {/* Upload KTP */}
             <div className="flex flex-col gap-2">
               <label className="block text-gray-700 font-medium">Foto KTP</label>
@@ -163,6 +178,42 @@ export default function RegisterMentorPage() {
               </div>
             </div>
 
+            {/* Additional Mentor Information */}
+            <div className="flex flex-col gap-2">
+              <label className="block text-gray-700 font-medium">Deskripsi</label>
+              <textarea
+                onChange={handleChange}
+                name="deskripsi"
+                value={form.deskripsi}
+                placeholder="Deskripsi Singkat tentang Anda"
+                className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              ></textarea>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="block text-gray-700 font-medium">Link Video Perkenalan (YouTube)</label>
+              <input
+                onChange={handleChange}
+                type="url"
+                name="link_video"
+                value={form.link_video}
+                placeholder="https://www.youtube.com/..."
+                className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="block text-gray-700 font-medium">Harga Per Sesi</label>
+              <input
+                onChange={handleChange}
+                type="number"
+                name="harga_per_sesi"
+                value={form.harga_per_sesi}
+                placeholder="Harga dalam Rupiah"
+                className="p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
             <button
               type="submit"
               className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition-colors duration-200 font-medium"
@@ -171,12 +222,6 @@ export default function RegisterMentorPage() {
               {loading ? "Memproses..." : "Daftar"}
             </button>
           </form>
-          <p className="text-center text-black">
-            Sudah memiliki akun?{" "}
-            <Link href="/login" className="text-blue-500 hover:text-blue-600 font-medium">
-              Masuk
-            </Link>
-          </p>
         </div>
       </div>
     </div>
