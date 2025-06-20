@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { IUser } from "@/types/user.md";
+import { gsap } from "gsap";
 
 // Sample user data with descriptions/specialties
 const sampleUsers: IUser[] = [
@@ -53,42 +54,220 @@ export default function Carousel() {
   const [users] = useState<IUser[]>(sampleUsers);
   const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>({});
   const [isPaused, setIsPaused] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Refs for animations
+  const avatarRef = useRef<HTMLDivElement | null>(null);
+  const nameRef = useRef<HTMLHeadingElement | null>(null);
+  const descriptionRef = useRef<HTMLDivElement | null>(null);
+  const contactInfoRef = useRef<HTMLDivElement | null>(null);
+  const prevButtonRef = useRef<HTMLButtonElement | null>(null);
+  const nextButtonRef = useRef<HTMLButtonElement | null>(null);
+  const dotsRef = useRef<HTMLDivElement | null>(null);
 
   // Auto-scroll effect
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || isTransitioning) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === users.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 3000); // Change slide every 3 seconds
+      goToNext();
+    }, 2000); // Increased to 4 seconds for smoother experience
 
     return () => clearInterval(interval);
-  }, [users.length, isPaused]);
+  }, [isPaused, isTransitioning, currentIndex]);
+
+  // Initial load animation
+  useEffect(() => {
+    const tl = gsap.timeline();
+    
+    // Set initial states
+    gsap.set([avatarRef.current, nameRef.current, descriptionRef.current, contactInfoRef.current], {
+      opacity: 0,
+      y: 50,
+    });
+    
+    gsap.set([prevButtonRef.current, nextButtonRef.current], {
+      opacity: 0,
+      scale: 0,
+    });
+
+    gsap.set(dotsRef.current, {
+      opacity: 0,
+      y: 20,
+    });
+
+    // Animate in sequence
+    tl.to(avatarRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: "back.out(1.7)",
+    })
+    .to(nameRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: "power2.out",
+    }, "-=0.4")
+    .to(descriptionRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: "power2.out",
+    }, "-=0.3")
+    .to(contactInfoRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: "power2.out",
+    }, "-=0.3")
+    .to([prevButtonRef.current, nextButtonRef.current], {
+      opacity: 1,
+      scale: 1,
+      duration: 0.5,
+      ease: "back.out(1.7)",
+      stagger: 0.1,
+    }, "-=0.3")
+    .to(dotsRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      ease: "power2.out",
+    }, "-=0.2");
+  }, []);
+
+  // Slide transition animation
+  const animateSlideTransition = (direction: 'next' | 'prev') => {
+    if (isTransitioning) return;
+    
+    setIsTransitioning(true);
+    const tl = gsap.timeline();
+
+    // Exit animation
+    tl.to([avatarRef.current, nameRef.current], {
+      opacity: 0,
+      x: direction === 'next' ? -50 : 50,
+      duration: 0.3,
+      ease: "power2.in",
+    })
+    .to([descriptionRef.current, contactInfoRef.current], {
+      opacity: 0,
+      x: direction === 'next' ? -30 : 30,
+      duration: 0.3,
+      ease: "power2.in",
+    }, "-=0.2")
+    .call(() => {
+      // Update index here
+      if (direction === 'next') {
+        setCurrentIndex((prevIndex) =>
+          prevIndex === users.length - 1 ? 0 : prevIndex + 1
+        );
+      } else {
+        setCurrentIndex((prevIndex) =>
+          prevIndex === 0 ? users.length - 1 : prevIndex - 1
+        );
+      }
+    })
+    .set([avatarRef.current, nameRef.current, descriptionRef.current, contactInfoRef.current], {
+      x: direction === 'next' ? 50 : -50,
+    })
+    // Enter animation
+    .to([avatarRef.current, nameRef.current], {
+      opacity: 1,
+      x: 0,
+      duration: 0.4,
+      ease: "power2.out",
+      stagger: 0.1,
+    })
+    .to([descriptionRef.current, contactInfoRef.current], {
+      opacity: 1,
+      x: 0,
+      duration: 0.4,
+      ease: "power2.out",
+      stagger: 0.1,
+    }, "-=0.2")
+    .call(() => {
+      setIsTransitioning(false);
+    });
+  };
 
   const goToPrevious = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? users.length - 1 : prevIndex - 1
-    );
+    animateSlideTransition('prev');
   };
 
   const goToNext = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === users.length - 1 ? 0 : prevIndex + 1
-    );
+    animateSlideTransition('next');
   };
 
   const goToSlide = (index: number) => {
-    setCurrentIndex(index);
+    if (index === currentIndex || isTransitioning) return;
+    
+    setIsTransitioning(true);
+    const tl = gsap.timeline();
+
+    // Quick fade transition for direct navigation
+    tl.to([avatarRef.current, nameRef.current, descriptionRef.current, contactInfoRef.current], {
+      opacity: 0,
+      scale: 0.9,
+      duration: 0.3,
+      ease: "power2.in",
+    })
+    .call(() => {
+      setCurrentIndex(index);
+    })
+    .set([avatarRef.current, nameRef.current, descriptionRef.current, contactInfoRef.current], {
+      scale: 1.1,
+    })
+    .to([avatarRef.current, nameRef.current, descriptionRef.current, contactInfoRef.current], {
+      opacity: 1,
+      scale: 1,
+      duration: 0.4,
+      ease: "back.out(1.7)",
+      stagger: 0.05,
+    })
+    .call(() => {
+      setIsTransitioning(false);
+    });
   };
 
   const handleMouseEnter = () => {
     setIsPaused(true);
+    // Subtle hover effect on container
+    gsap.to(avatarRef.current, {
+      scale: 1.05,
+      duration: 0.3,
+      ease: "power2.out",
+    });
   };
 
   const handleMouseLeave = () => {
     setIsPaused(false);
+    gsap.to(avatarRef.current, {
+      scale: 1,
+      duration: 0.3,
+      ease: "power2.out",
+    });
+  };
+
+  // Button hover animations
+  const handleButtonHover = (buttonRef: React.RefObject<HTMLButtonElement | null>) => {
+    if (buttonRef.current) {
+      gsap.to(buttonRef.current, {
+        scale: 1.1,
+        duration: 0.2,
+        ease: "power2.out",
+      });
+    }
+  };
+
+  const handleButtonLeave = (buttonRef: React.RefObject<HTMLButtonElement | null>) => {
+    if (buttonRef.current) {
+      gsap.to(buttonRef.current, {
+        scale: 1,
+        duration: 0.2,
+        ease: "power2.out",
+      });
+    }
   };
 
   const currentUser = users[currentIndex];
@@ -119,7 +298,7 @@ export default function Carousel() {
         <div className="w-full h-full flex items-center justify-center p-8">
           <div className="text-center max-w-2xl">
             {/* Profile Avatar with Image */}
-            <div className="mb-4 pt-10">
+            <div ref={avatarRef} className="mb-4 pt-10">
               <div className="w-20 h-20 bg-gray-300 rounded-full mx-auto overflow-hidden border-4 border-white shadow-lg">
                 {currentAvatar && !hasImageError ? (
                   <Image
@@ -151,63 +330,69 @@ export default function Carousel() {
             </div>
 
             {/* User Info */}
-            <h2 className="text-2xl font-bold text-white text-shadow-lg mb-3">
+            <h2 ref={nameRef} className="text-2xl font-bold text-white text-shadow-lg mb-3">
               {currentUser?.username}
             </h2>
 
             {/* Description/Testimonial Section */}
-            <div className="mb-4 px-4">
+            <div ref={descriptionRef} className="mb-4 px-4">
               <div className="bg-white shadow-lg bg-opacity-50 rounded-lg p-4">
                 <p className="text-gray-700 text-sm italic leading-relaxed">
                   &ldquo;{currentDescription}&rdquo;
                 </p>
-                <div className="mt-4 flex items-center justify-center gap-2">
-                  <p className="text-gray-600 flex items-center justify-center gap-2 text-sm">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                    {currentUser?.email}
-                  </p>
-                  <p className="text-gray-600 flex items-center justify-center gap-2 text-sm">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                      />
-                    </svg>
-                    {currentUser?.no_telpon}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Bergabung sejak {formatDate(currentUser?.tanggal_join)}
-                  </p>
-                </div>
               </div>
+            </div>
+
+            {/* Contact Info */}
+            <div ref={contactInfoRef} className="space-y-2">
+              <p className="text-white flex items-center justify-center gap-2 text-sm">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                {currentUser?.email}
+              </p>
+              <p className="text-white flex items-center justify-center gap-2 text-sm">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                {currentUser?.no_telpon}
+              </p>
+              <p className="text-sm text-white">
+                Bergabung sejak {formatDate(currentUser?.tanggal_join)}
+              </p>
             </div>
           </div>
         </div>
 
         {/* Previous Button */}
         <button
+          ref={prevButtonRef}
           onClick={goToPrevious}
+          onMouseEnter={() => handleButtonHover(prevButtonRef)}
+          onMouseLeave={() => handleButtonLeave(prevButtonRef)}
           className="absolute left-15 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
           aria-label="Previous user"
+          disabled={isTransitioning}
         >
           <svg
             className="w-6 h-6 text-gray-600"
@@ -226,9 +411,13 @@ export default function Carousel() {
 
         {/* Next Button */}
         <button
+          ref={nextButtonRef}
           onClick={goToNext}
+          onMouseEnter={() => handleButtonHover(nextButtonRef)}
+          onMouseLeave={() => handleButtonLeave(nextButtonRef)}
           className="absolute right-15 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
           aria-label="Next user"
+          disabled={isTransitioning}
         >
           <svg
             className="w-6 h-6 text-gray-600"
@@ -246,24 +435,25 @@ export default function Carousel() {
         </button>
 
         {/* Dots Indicator */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <div ref={dotsRef} className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {users.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-colors ${
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
                 index === currentIndex
-                  ? "bg-white"
+                  ? "bg-white scale-125"
                   : "bg-gray-400 hover:bg-gray-300"
               }`}
               aria-label={`Go to user ${index + 1}`}
+              disabled={isTransitioning}
             />
           ))}
         </div>
 
         {/* Auto-scroll indicator */}
         <div className="absolute top-4 right-4 flex items-center gap-2 text-white text-xs">
-          <div className={`w-2 h-2 rounded-full ${isPaused ? 'bg-yellow-400' : 'bg-green-400'}`}></div>
+          <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${isPaused ? 'bg-yellow-400' : 'bg-green-400'}`}></div>
           <span>{isPaused ? 'Paused' : 'Auto'}</span>
         </div>
       </div>

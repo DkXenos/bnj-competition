@@ -1,15 +1,20 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { IMentor } from "@/types/mentor.md";
 import { IUser } from "@/types/user.md";
 import { GetAllMentors } from "@/app/api/get_all_mentors/route";
 import supabase from "@/lib/db";
 import { useRouter } from "next/navigation";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
-function MentorCard({ mentor }: { mentor: IMentor }) {
+function MentorCard({ mentor, index }: { mentor: IMentor; index: number }) {
   const router = useRouter();
   const [mentorUser, setMentorUser] = useState<IUser | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchMentorUser = async () => {
@@ -27,14 +32,78 @@ function MentorCard({ mentor }: { mentor: IMentor }) {
     fetchMentorUser();
   }, [mentor.user_id]);
 
+  useEffect(() => {
+    if (cardRef.current) {
+      // Set initial state
+      gsap.set(cardRef.current, {
+        opacity: 0,
+        y: 50,
+        scale: 0.9,
+      });
+
+      // Animate on scroll
+      gsap.to(cardRef.current, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        delay: index * 0.2, // Stagger animation based on index
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: cardRef.current,
+          start: "top 80%",
+          end: "bottom 20%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      // Hover animations
+      const handleMouseEnter = () => {
+        gsap.to(cardRef.current, {
+          y: -10,
+          scale: 1.02,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      };
+
+      const handleMouseLeave = () => {
+        gsap.to(cardRef.current, {
+          y: 0,
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      };
+
+      const cardElement = cardRef.current;
+      cardElement.addEventListener("mouseenter", handleMouseEnter);
+      cardElement.addEventListener("mouseleave", handleMouseLeave);
+
+      return () => {
+        cardElement.removeEventListener("mouseenter", handleMouseEnter);
+        cardElement.removeEventListener("mouseleave", handleMouseLeave);
+      };
+    }
+  }, [index]);
+
   const handleMentorClick = () => {
-      router.push(`/mentor_detail/${mentor.id}`);
+    // Add click animation before navigation
+    gsap.to(cardRef.current, {
+      scale: 0.95,
+      duration: 0.1,
+      ease: "power2.inOut",
+      onComplete: () => {
+        router.push(`/mentor_detail/${mentor.id}`);
+      },
+    });
   };
 
   return (
     <div 
+      ref={cardRef}
       onClick={handleMentorClick}
-      className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col cursor-pointer hover:shadow-md transition-shadow duration-200 min-h-[400px]"
+      className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col cursor-pointer transition-shadow duration-200 min-h-[400px]"
     >
       {/* Profile Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
@@ -47,7 +116,7 @@ function MentorCard({ mentor }: { mentor: IMentor }) {
       <div className="flex-grow">
         <h3 className="text-xl font-bold text-gray-900 mb-2">
           {mentorUser?.username
-            .split(" ")
+            ?.split(" ")
             .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ")}
         </h3>
@@ -74,12 +143,14 @@ export default function MentorSection() {
   const router = useRouter();
   const [mentors, setMentors] = useState<IMentor[]>([]);
   const [loading, setLoading] = useState(true);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const fetchMentors = async () => {
       try {
         const mentorData = await GetAllMentors();
-        
         setMentors(mentorData.slice(0, 3));
       } catch (error) {
         console.error("Error fetching mentors:", error);
@@ -90,6 +161,90 @@ export default function MentorSection() {
 
     fetchMentors();
   }, []);
+
+  useEffect(() => {
+    if (!loading && headerRef.current && buttonRef.current) {
+      // Animate header
+      gsap.fromTo(
+        headerRef.current,
+        {
+          opacity: 0,
+          y: 30,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: "top 85%",
+            end: "bottom 20%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      // Animate button
+      gsap.fromTo(
+        buttonRef.current,
+        {
+          opacity: 0,
+          y: 20,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          delay: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: buttonRef.current,
+            start: "top 90%",
+            end: "bottom 20%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      // Button hover animation
+      const handleButtonHover = () => {
+        gsap.to(buttonRef.current, {
+          scale: 1.05,
+          duration: 0.2,
+          ease: "power2.out",
+        });
+      };
+
+      const handleButtonLeave = () => {
+        gsap.to(buttonRef.current, {
+          scale: 1,
+          duration: 0.2,
+          ease: "power2.out",
+        });
+      };
+
+      const buttonElement = buttonRef.current;
+      buttonElement.addEventListener("mouseenter", handleButtonHover);
+      buttonElement.addEventListener("mouseleave", handleButtonLeave);
+
+      return () => {
+        buttonElement.removeEventListener("mouseenter", handleButtonHover);
+        buttonElement.removeEventListener("mouseleave", handleButtonLeave);
+      };
+    }
+  }, [loading]);
+
+  const handleButtonClick = () => {
+    gsap.to(buttonRef.current, {
+      scale: 0.95,
+      duration: 0.1,
+      ease: "power2.inOut",
+      onComplete: () => {
+        router.push('/explore');
+      },
+    });
+  };
 
   if (loading) {
     return (
@@ -114,10 +269,10 @@ export default function MentorSection() {
   }
 
   return (
-    <div className="w-full py-12 px-6 ">
+    <div ref={sectionRef} className="w-full py-12 px-6">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="mb-8 text-center">
+        <div ref={headerRef} className="mb-8 text-center">
           <h2 className="text-4xl font-bold text-black mb-4">
             Get to know our Mentors!
           </h2>
@@ -128,10 +283,11 @@ export default function MentorSection() {
 
         {/* Mentor Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {mentors.map((mentor) => (
+          {mentors.map((mentor, index) => (
             <MentorCard
               key={mentor.id}
               mentor={mentor}
+              index={index}
             />
           ))}
         </div>
@@ -139,7 +295,8 @@ export default function MentorSection() {
         {/* Show All Button */}
         <div className="flex justify-center">
           <button 
-            onClick={() => router.push('/explore')}
+            ref={buttonRef}
+            onClick={handleButtonClick}
             className="px-6 bg-white py-3 text-gray-700 shadow-lg rounded-full hover:bg-gray-50 transition-colors duration-200 font-medium"
           >
             Tampilkan Semua

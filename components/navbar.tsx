@@ -35,7 +35,7 @@ export default function Navbar() {
     closeTimeoutRef.current = setTimeout(() => {
       setDropdownVisible(false);
       closeTimeoutRef.current = null;
-    }, 1000);
+    }, 150);
   };
 
   const toggleDropdown = () => {
@@ -117,7 +117,7 @@ export default function Navbar() {
 
     searchTimeoutRef.current = setTimeout(() => {
       searchMentors(searchQuery);
-    }, 300); // 300ms delay
+    }, 150); // 300ms delay
 
     return () => {
       if (searchTimeoutRef.current) {
