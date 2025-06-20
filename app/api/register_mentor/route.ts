@@ -22,7 +22,7 @@ export async function registerMentor({
   try {
     // Helper function to upload files to Supabase Storage
     const uploadFileToSupabase = async (file: File, path: string) => {
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from("mentor-photos") // Replace with your bucket name
         .upload(path, file);
 

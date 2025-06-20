@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { IUser } from "@/types/user.md";
 import { gsap } from "gsap";
@@ -219,9 +219,9 @@ export default function Carousel() {
 			});
 	};
 
-	const goToNext = () => {
+	const goToNext = useCallback(() => {
 		animateSlideTransition("next");
-	};
+	}, [animateSlideTransition]);
 
 	const goToSlide = (index: number) => {
 		if (index === currentIndex || isTransitioning) return;

@@ -1,6 +1,7 @@
 "use client";
 import { IMentor } from "@/types/mentor.md";
 import { IUser } from "@/types/user.md";
+import { ISesi } from "@/types/sesi.md";
 import React, { useState, useEffect } from "react";
 import supabase from "@/lib/db";
 import { useUser } from "@/context/UserContext";
@@ -14,7 +15,6 @@ export default function BookMentorButton({
   const [showModal, setShowModal] = useState(false);
   const [showSchedulePanel, setShowSchedulePanel] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false); // State for login popup
-  const [jadwal, setJadwal] = useState<any[]>([]);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const { loggedInUser } = useUser();
@@ -22,7 +22,7 @@ export default function BookMentorButton({
   useEffect(() => {
     const fetchJadwal = async () => {
       try {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("sesi")
           .select("*")
           .eq("mentor_id", mentor.user.id);
@@ -31,8 +31,6 @@ export default function BookMentorButton({
           console.error("Error fetching jadwal:", error);
           return;
         }
-
-        setJadwal(data || []);
       } catch (error) {
         console.error("Unexpected error:", error);
       } finally {
@@ -73,7 +71,7 @@ export default function BookMentorButton({
         new Date(jamMulai).getTime() + 60 * 60 * 1000
       ).toISOString(); // Add 1 hour
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("sesi")
         .insert([
           {

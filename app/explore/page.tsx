@@ -5,7 +5,6 @@ import { IUser } from "@/types/user.md";
 import { GetAllMentors } from "@/app/api/get_all_mentors/route";
 import supabase from "@/lib/db";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 interface MentorWithUser extends IMentor {
   user: IUser;
@@ -232,11 +231,11 @@ export default function ExplorePage() {
           <p className="text-gray-600">
             {searchQuery ? (
               <>
-                {filteredMentors.length} mentor ditemukan untuk "{searchQuery}"
+                <div>{filteredMentors.length} mentor ditemukan untuk "{searchQuery}"</div>
               </>
             ) : (
               <>
-                Menampilkan {startIndex + 1}-{Math.min(endIndex, filteredMentors.length)} dari {filteredMentors.length} mentor
+                <div>Menampilkan {startIndex + 1}-{Math.min(endIndex, filteredMentors.length)} dari {filteredMentors.length} mentor</div>
               </>
             )}
           </p>
