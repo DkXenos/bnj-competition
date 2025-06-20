@@ -117,17 +117,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 md:mb-12">
           {/* Brand Section */}
           <div ref={brandRef} className="md:col-span-2">
-            <div
-              className="flex items-center gap-3 mb-4 md:mb-6 cursor-pointer justify-center md:justify-start"
-              onMouseEnter={() => handleLogoHover(true)}
-              onMouseLeave={() => handleLogoHover(false)}
-            >
+            <div className="flex items-center gap-3 mb-4 md:mb-6 cursor-pointer justify-center md:justify-start">
               <Image
                 src="/MP-logo.svg"
                 alt="MentorPact Logo"
                 width={48}
                 height={48}
                 className="w-10 h-10 sm:w-12 sm:h-12 object-contain transition-transform duration-300"
+                onMouseEnter={() => handleLogoHover(true)}
+                onMouseLeave={() => handleLogoHover(false)}
               />
               <h2 className="text-xl sm:text-2xl font-bold text-black">
                 MentorPact
@@ -141,7 +139,10 @@ export default function Footer() {
           </div>
 
           {/* Quick Links Section */}
-          <div ref={quickLinksRef} className="flex justify-center md:justify-end">
+          <div
+            ref={quickLinksRef}
+            className="flex justify-center md:justify-end"
+          >
             <div className="text-center md:text-left">
               <h3 className="text-base sm:text-lg font-semibold mb-4 md:mb-6 relative">
                 Tautan Cepat
