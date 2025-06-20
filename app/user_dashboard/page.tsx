@@ -204,7 +204,7 @@ export default function UserDashboard() {
       <div className="relative z-10 flex flex-col items-center justify-start mt-16 sm:mt-20 lg:mt-24 h-[2rem] sm:h-[4rem] lg:h-[6rem] w-full"></div>
 
       {/* Checkbox Filters */}
-      <div className="flex flex-col w-full max-w-[70%] sm:max-w-[90%] lg:max-w-[80%] xl:max-w-[70%] mb-4 bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow-md mx-4">
+      <div className="flex flex-col w-full max-w-[70%] sm:max-w-[90%] lg:max-w-[80%] xl:max-w-[70%] mb-4 bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow-md mx-4 items-center">
         <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 lg:mb-4 text-black text-start">
           Filter Jadwal
         </h1>
@@ -264,7 +264,7 @@ export default function UserDashboard() {
 
       {/* Mentor Registration Status Section */}
       <div className="flex flex-col w-full max-w-[70%] sm:max-w-[90%] lg:max-w-[80%] xl:max-w-[70%] mb-8 bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow-md mx-4">
-        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 lg:mb-4 text-black text-start">
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 lg:mb-4 text-black text-center lg:text-start">
           Status Pendaftaran Mentor
         </h1>
         {mentorStatus.is_confirmed === null ? (
@@ -275,7 +275,7 @@ export default function UserDashboard() {
             <p className="text-sm sm:text-base">Selamat! Anda telah diterima sebagai mentor.</p>
           </div>
         ) : (
-          <div className="bg-red-100 text-red-700 p-3 sm:p-4 rounded-lg">
+          <div className="bg-red-100 text-red-700 p-3 sm:p-4 rounded-l text-center">
             <h2 className="text-base sm:text-lg font-bold">Pendaftaran Ditolak</h2>
             <p className="text-sm sm:text-base">Alasan: {mentorStatus.alasan_ditolak || "Tidak ada alasan yang diberikan."}</p>
           </div>
