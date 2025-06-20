@@ -9,13 +9,20 @@ import { ISesi } from "@/types/sesi.md";
 export default function UserDashboard() {
   const { loggedInUser } = useUser();
   const [jadwal, setJadwal] = useState<ISesi[]>([]);
-  const [jadwalMenungguKonfirmasi, setJadwalMenungguKonfirmasi] = useState<ISesi[]>([]);
-  const [loading, setLoading] = useState(true); // Track loading state
+  const [filteredJadwal, setFilteredJadwal] = useState<ISesi[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // State for checkbox filters
+  const [filters, setFilters] = useState({
+    terkonfirmasi: false,
+    menungguKonfirmasi: false,
+    ditolak: false,
+  });
 
   useEffect(() => {
     const fetchJadwal = async () => {
       if (!loggedInUser) return;
-      setLoading(true); // Start loading
+      setLoading(true);
 
       // Fetch all sessions where the user is either a mentee or a mentor
       const { data, error } = await supabase
@@ -23,30 +30,44 @@ export default function UserDashboard() {
         .select("*")
         .or(`mentee_id.eq.${loggedInUser.id},mentor_id.eq.${loggedInUser.id}`);
 
-      if (!error) {
-        // Separate sessions that need confirmation and others
-        const menungguKonfirmasi = data.filter(
-          (sesi: ISesi) =>
-            sesi.status === "Menunggu Konfirmasi" && sesi.mentor_id === loggedInUser.id
-        );
-        const jadwalLainnya = data.filter(
-          (sesi: ISesi) =>
-            sesi.status !== "Menunggu Konfirmasi" &&
-            sesi.status !== "Ditolak" && // Exclude rejected sessions
-            (sesi.mentee_id === loggedInUser.id || sesi.mentor_id === loggedInUser.id)
-        );
-
-        setJadwalMenungguKonfirmasi(menungguKonfirmasi);
-        setJadwal(jadwalLainnya);
-      } else {
+      if (error) {
         console.error("Error fetching jadwal:", error);
+        setLoading(false);
+        return;
       }
 
-      setLoading(false); // End loading
+      console.log("Fetched sessions:", data); // Debug log
+      setJadwal(data || []);
+      setFilteredJadwal(data || []); // Initialize filtered data
+      setLoading(false);
     };
 
     fetchJadwal();
   }, [loggedInUser]);
+
+  // Filter jadwal based on checkbox selections
+  useEffect(() => {
+    const isAnyFilterChecked = Object.values(filters).some((value) => value);
+
+    if (!isAnyFilterChecked) {
+      // If no filter is checked, show all jadwal
+      setFilteredJadwal(jadwal);
+    } else {
+      // Apply filters
+      const filtered = jadwal.filter((sesi) => {
+        if (filters.terkonfirmasi && sesi.status === "Terkonfirmasi") return true;
+        if (filters.menungguKonfirmasi && sesi.status === "Menunggu Konfirmasi") return true;
+        if (filters.ditolak && sesi.status === "Ditolak") return true;
+        return false;
+      });
+      setFilteredJadwal(filtered);
+    }
+  }, [filters, jadwal]);
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: checked }));
+  };
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-sky-100 pb-16">
@@ -63,7 +84,7 @@ export default function UserDashboard() {
               <div className="w-70 -z-10 h-50 rounded-full"></div>
               <div className="relative z-20 w-full h-full flex flex-col items-start justify-start p-4">
                 <h1 className="text-4xl text-left font-bold mb-4 text-black">
-                  Halo, {loggedInUser?.username}! - Mentor
+                  Halo, {loggedInUser?.username}!
                 </h1>
                 <p className="text-gray-700 mb-2">
                   Selamat datang di dashboard pengguna Anda!
@@ -114,46 +135,44 @@ export default function UserDashboard() {
       </div>
       <div className="relative z-10 flex flex-col items-center justify-start mt-14 h-[8rem] w-screen"></div>
 
-      {/* Section for Sessions Needing Confirmation */}
-      {loggedInUser?.isMentor && (
-        <div className="flex flex-col w-[70%] mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-black text-start">
-            Jadwal Menunggu Konfirmasi
-          </h1>
-          <p className="text-xl text-gray-600">
-            Konfirmasi jadwal sesi yang telah diajukan oleh mentee.
-          </p>
-          <div className="overflow-x-auto">
-            <div className="flex gap-6 mt-4">
-              {loading ? (
-                <div className="flex items-center justify-start h-full w-full">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-                  <span className="ml-4 text-gray-500">Loading jadwal...</span>
-                </div>
-              ) : jadwalMenungguKonfirmasi.length > 0 ? (
-                jadwalMenungguKonfirmasi.map((sesi) => (
-                  <JadwalCard key={sesi.id} sesi={sesi} />
-                ))
-              ) : (
-                <div className="relative text-gray-500 text-lg mt-4 p-4 bg-white w-[19rem] min-h-[10rem] flex flex-col items-start justify-start rounded-lg shadow-lg p-4">
-                  <h1 className="text-2xl font-bold text-black">Info</h1>
-                  <p className="text-left z-20">Sayang sekali belum ada mentee yang ingin menjadwalkan sesi mentoring dengan Anda.</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Section for All Other Sessions */}
-      <div className="flex flex-col w-[70%]">
-        <h1 className="text-4xl font-bold mb-4 text-black text-start">
-          Jadwalku
+      {/* Checkbox Filters */}
+      <div className="flex flex-col w-[70%] mb-4 bg-white p-6 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold mb-2 text-black text-start">
+          Filter Jadwal
         </h1>
-        <p className="text-xl text-gray-600">
-          Belajar dengan mentor kami yang berpengalaman dan siap membantu Anda
-          mencapai tujuan belajar Anda.
-        </p>
+        <div className="flex gap-4">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="terkonfirmasi"
+              checked={filters.terkonfirmasi}
+              onChange={handleCheckboxChange}
+            />
+            <span className="text-lg text-black">Terkonfirmasi</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="menungguKonfirmasi"
+              checked={filters.menungguKonfirmasi}
+              onChange={handleCheckboxChange}
+            />
+            <span className="text-lg text-black">Menunggu Konfirmasi</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="ditolak"
+              checked={filters.ditolak}
+              onChange={handleCheckboxChange}
+            />
+            <span className="text-lg text-black">Ditolak</span>
+          </label>
+        </div>
+      </div>
+
+      {/* Section for Filtered Sessions */}
+      <div className="mt-8 flex flex-col w-[70%] mb-8">
         <div className="overflow-x-auto">
           <div className="flex gap-6 mt-4">
             {loading ? (
@@ -161,11 +180,11 @@ export default function UserDashboard() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
                 <span className="ml-4 text-gray-500">Loading jadwal...</span>
               </div>
-            ) : loggedInUser && jadwal.length > 0 ? (
-              jadwal.map((sesi) => <JadwalCard key={sesi.id} sesi={sesi} />)
+            ) : filteredJadwal.length > 0 ? (
+              filteredJadwal.map((sesi) => <JadwalCard key={sesi.id} sesi={sesi} />)
             ) : (
               <div className="text-gray-500 text-lg mt-4">
-                Kamu belum membuat jadwal
+                Tidak ada jadwal yang sesuai dengan filter.
               </div>
             )}
           </div>
