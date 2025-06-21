@@ -105,7 +105,7 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         <p className="text-gray-500 mb-1">
           {label}: {name.charAt(0).toUpperCase() + name.slice(1)}
         </p>
-        {loggedInUser?.id === sesi.mentee_id && sesi.status === "Terkonfirmasi" && (
+        {loggedInUser?.id === sesi.mentee_id && (sesi.status === "Terkonfirmasi" || "Selesai" || "Dilaksanakan" || "Bermasalah") && (
          <Link href={sesi.link} className="mb-1 text-center w-full text-blue-500">Link meeting</Link>
         )}
         <span
