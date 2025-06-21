@@ -243,7 +243,7 @@ export default function UserDashboard() {
       </div>
 
       {/* Section for Filtered Sessions */}
-      <div className="mt-2 sm:mt-4 lg:mt-8 lg-text-left text-center flex flex-col w-full max-w-[70%] sm:max-w-[90%] lg:max-w-[0%] xl:max-w-[70%] mb-8">
+      <div className="lg-text-left text-center flex flex-col w-full max-w-[70%] sm:max-w-[90%] lg:max-w-[0%] xl:max-w-[70%] mb-8">
         <div className="overflow-x-auto">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-6 mt-2 sm:mt-4">
             {loading ? (

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import supabase from "@/lib/db";
 import { useUser } from "@/context/UserContext";
 import { confirmSession } from "@/lib/sesi";
+import Link from "next/link";
 
 export default function JadwalCard({ sesi }: { sesi: ISesi }) {
   const [name, setName] = useState<string>("Loading...");
@@ -76,9 +77,16 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
   const label = loggedInUser?.id === sesi.mentor_id ? "Mentee" : "Mentor";
 
   return (
-    <div className="min-w-[300px] bg-white border-1 rounded-lg shadow-lg p-6 justify-between">
-      <div className="w-full gap-2 h-full flex flex-col justify-between">
-        <h2 className="text-black text-lg font-bold mb-2">Belajar bersama</h2>
+    <div className="relative min-w-[300px] bg-white border-1 rounded-lg shadow-lg p-6">
+      {loggedInUser?.id === sesi.mentee_id && sesi.status === "Terkonfirmasi" && (
+          <div className="absolute top-4 right-4 flex gap-1 hover:cursor-pointer">
+            <div className="rounded-full bg-gray-200 px-2">
+            <i className="bi bi-flag-fill text-xs text-red-300"></i>
+            </div>
+          </div>
+      )}
+      <div className="gap-2 h-full flex flex-col justify-between">
+        <h2 className="text-black text-lg font-bold mb-2">Mentoring</h2>
         <h1 className="text-gray-600 mb-1">
           {new Date(sesi.jam_mulai).toLocaleString("id-ID", {
             weekday: "long",
@@ -93,10 +101,13 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
             hour12: false,
           })}
         </h1>
-        <p className="text-gray-500 mb-1">{sesi.link}</p>
+       
         <p className="text-gray-500 mb-1">
           {label}: {name.charAt(0).toUpperCase() + name.slice(1)}
         </p>
+        {loggedInUser?.id === sesi.mentee_id && sesi.status === "Terkonfirmasi" && (
+         <Link href={sesi.link} className="mb-1 text-center w-full text-blue-500">Link meeting</Link>
+        )}
         <span
           className={`px-3 py-2 rounded-lg text-xs font-semibold ${
             sesi.status === "Terkonfirmasi"
@@ -110,42 +121,6 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         >
           {sesi.status}
         </span>
-
-        {/* Buttons for Mentee */}
-        {loggedInUser?.id === sesi.mentee_id && sesi.status === "Menunggu Konfirmasi" && (
-          <div className="flex w-full gap-2 mt-4">
-            <button
-              className="w-full py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-              onClick={handleReject}
-            >
-              Batalkan
-            </button>
-          </div>
-        )}
-
-        {/* Buttons for Mentee */}
-        {loggedInUser?.id === sesi.mentee_id && sesi.status === "Ditolak" && (
-          <div className="flex w-full gap-2 mt-4">
-            <button
-              className="w-full py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-              onClick={handleReject}
-            >
-              Kontak Mentor
-            </button>
-          </div>
-        )}
-
-        {/* Buttons for Mentee */}
-        {loggedInUser?.id === sesi.mentee_id && sesi.status === "Terkonfirmasi" && (
-          <div className="flex w-full gap-2 mt-4">
-            <button
-              className="w-full py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-              onClick={handleReject}
-            >
-              Batalkan
-            </button>
-          </div>
-        )}
 
         {/* Buttons for Mentor */}
         {loggedInUser?.id === sesi.mentor_id && sesi.status === "Menunggu Konfirmasi" && (
