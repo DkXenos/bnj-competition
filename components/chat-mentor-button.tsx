@@ -54,7 +54,7 @@ export default function ChatButton({
         className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition-colors flex items-center gap-2"
         disabled={loading}
       >
-        <i className="bi bi-chat-left-dots-fill pr-4"></i>
+        <i className="bi bi-chat-left-dots-fill"></i>
         {loading ? "Loading..." : "Kontak"}
       </button>
 

@@ -83,7 +83,7 @@ function ChatContent({
 
   return (
     <div className="min-h-screen bg-sky-100 flex items-center justify-center p-2 sm:p-4">
-      <div className="w-full max-w-4xl h-[90vh] sm:h-[80vh] bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
+      <div className="w-full max-w-[70%] h-[90vh] sm:h-[80vh] bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-white border-b border-sky-100 p-4 sm:p-6 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-4">
@@ -169,7 +169,7 @@ function ChatContent({
                   </svg>
                 </div>
                 <p className="text-gray-500 text-sm sm:text-base">
-                  No messages yet. Start the conversation!
+                  Belumn ada pesan, silahkan memulai percakapan.
                 </p>
               </div>
             )}
@@ -212,20 +212,8 @@ function ChatContent({
               disabled={!form.textToSend.trim()}
               className="px-3 sm:px-6 py-2 sm:py-3 bg-sky-100 text-gray-700 rounded-xl hover:bg-sky-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium flex items-center gap-1 sm:gap-2 flex-shrink-0 text-sm sm:text-base"
             >
-              <svg
-                className="w-4 h-4 sm:w-5 sm:h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                />
-              </svg>
-              <span className="hidden sm:inline">Send</span>
+              <i className="bi bi-send-fill rotate-45 mr-1"></i>
+              <span className="hidden sm:inline">Kirim</span>
             </button>
           </form>
         </div>

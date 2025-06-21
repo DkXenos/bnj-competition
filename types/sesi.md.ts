@@ -7,6 +7,6 @@ type ISesi = {
     rating_ulasan: number | null;
     deksripsi_ulasan: string | null;
     link: string;
-    status: "Menunggu Konfirmasi" | "Terkonfirmasi" | "Ditolak";
+    status: "Menunggu Konfirmasi" | "Terkonfirmasi" | "Ditolak" | "Dilaksanakan" | "Selesai" | "Bermasalah";
 };
 export type { ISesi };

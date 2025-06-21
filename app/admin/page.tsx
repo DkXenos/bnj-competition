@@ -74,9 +74,9 @@ export default function AdminPage() {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-sky-100 py-8">
       <div className="w-screen h-[10vh]"></div>
-      <h1 className="text-2xl font-bold text-black mb-6">Unconfirmed Mentors</h1>
+      <h1 className="text-2xl font-bold text-black mb-6">Konfirmasi Mentors</h1>
       {loading ? (
-        <p className="text-black">Loading unconfirmed mentors...</p>
+        <p className="text-black">Loading calon mentor...</p>
       ) : unconfirmedMentors.length > 0 ? (
         <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {unconfirmedMentors.map((mentor) => (
@@ -88,10 +88,10 @@ export default function AdminPage() {
                 <h3 className="text-xl font-bold text-black mb-2">{mentor.username}</h3>
                 <p className="text-gray-600 text-sm mb-2">Mentor ID: {mentor.id}</p>
                 <p className="text-gray-600 text-sm mb-2">
-                  Description: {mentor.deskripsi}
+                  Deskripsi: {mentor.deskripsi}
                 </p>
                 <p className="text-gray-600 text-sm mb-2">
-                  Price per session: Rp {mentor.harga_per_sesi.toLocaleString()}
+                  Harga per sesi: Rp {mentor.harga_per_sesi.toLocaleString()}
                 </p>
               </div>
               <div className="flex gap-2 mt-4">
@@ -106,7 +106,7 @@ export default function AdminPage() {
           ))}
         </div>
       ) : (
-        <p className="text-black">No unconfirmed mentors found.</p>
+        <p className="text-black w-[70%] text-2xl text-center">Sayang sekali belum ada orang baru yang mendaftar sebagai mentor.</p>
       )}
     </div>
   );

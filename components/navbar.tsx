@@ -298,7 +298,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Navigation Menu */}
-        <div className="hidden md:flex items-center space-x-6">
+        <div className="hidden lg:flex items-center space-x-6">
           {loggedInUser ? (
             <>
               <Link
@@ -330,7 +330,7 @@ export default function Navbar() {
                 onMouseLeave={handleMouseLeave}
               >
                 <div
-                  className="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-all duration-200 group"
+                  className="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-sky-100 transition-all duration-200 group"
                   onClick={toggleDropdown}
                 >
                   <Image
@@ -359,11 +359,11 @@ export default function Navbar() {
                     <div className="flex items-center justify-center gap-3 px-4 py-2 mb-2 border-b border-gray-100">
                       <div className="flex flex-col items-center gap-2">
                         <Image
-                          src={"/def-avatar.png"}
+                          src={loggedInUser.profile_image || "/def-avatar.png"}
                           alt="Avatar"
-                          width={32}
-                          height={32}
-                          className="rounded-full border border-gray-300"
+                          width={100}
+                          height={100}
+                          className="rounded-full w-10 h-10 object-cover border border-gray-300 transition-transform duration-200 group-hover:scale-105"
                         />
                         <h1 className="text-black font-bold text-sm text-center">
                           {loggedInUser.username
@@ -418,7 +418,7 @@ export default function Navbar() {
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMobileMenu}
-          className="md:hidden flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 transition-all duration-200 hover:bg-gray-100 rounded-lg"
+          className="lg:hidden flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 transition-all duration-200 hover:bg-gray-100 rounded-lg"
         >
           <svg
             className={`w-6 h-6 transition-transform duration-200 ${mobileMenuVisible ? 'rotate-90' : ''}`}
@@ -447,7 +447,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuVisible && (
-        <div className="md:hidden bg-white text-center border-t border-gray-200 px-4 py-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
+        <div className="lg:hidden bg-white text-center border-t border-gray-200 px-4 py-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
           {/* Mobile Navigation Links */}
           <div className="space-y-2">
             <Link
@@ -484,11 +484,11 @@ export default function Navbar() {
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <div className="flex items-center justify-center gap-3 py-2 px-3 hover:bg-gray-50 rounded-lg transition-colors duration-200">
                     <Image
-                      src={"/def-avatar.png"}
+                      src={loggedInUser.profile_image || "/def-avatar.png"}
                       alt="Avatar"
-                      width={32}
-                      height={32}
-                      className="rounded-full border border-gray-300"
+                      width={100}
+                      height={100}
+                      className="rounded-full w-10 h-10 object-cover border border-gray-300 transition-transform duration-200 group-hover:scale-105"
                     />
                     <span className="text-black font-medium">
                       {loggedInUser.username

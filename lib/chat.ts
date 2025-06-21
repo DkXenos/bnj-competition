@@ -21,6 +21,15 @@ export async function AddChat(
     throw error;
   }
 
+    // Update the composite key with the latest message and timestamp
+  await supabase
+    .from("chat_composite_key")
+    .update({
+      latest_text: text, // Use the `text` variable
+      latest_chat_date: new Date().toISOString(),
+    })
+    .eq("id", composite_chat_id);
+
   return { success: true };
 };
 
@@ -34,6 +43,7 @@ export async function GetAllChats(loggedInUser: number) {
     .from("chat_composite_key")
     .select("*")
     .or(`first_user.eq.${loggedInUser},second_user.eq.${loggedInUser}`)
+    .order("latest_chat_date", { ascending: true });
 
   if (error) {
     console.error("Error fetching chats:", error);

@@ -103,11 +103,49 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
               ? "bg-green-100 text-green-700"
               : sesi.status === "Ditolak"
               ? "bg-red-100 text-red-700"
+              : sesi.status === "Selesai" || sesi.status === "Bermasalah"
+              ? "bg-blue-100 text-blue-700"
               : "bg-yellow-100 text-yellow-700"
           }`}
         >
           {sesi.status}
         </span>
+
+        {/* Buttons for Mentee */}
+        {loggedInUser?.id === sesi.mentee_id && sesi.status === "Menunggu Konfirmasi" && (
+          <div className="flex w-full gap-2 mt-4">
+            <button
+              className="w-full py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+              onClick={handleReject}
+            >
+              Batalkan
+            </button>
+          </div>
+        )}
+
+        {/* Buttons for Mentee */}
+        {loggedInUser?.id === sesi.mentee_id && sesi.status === "Ditolak" && (
+          <div className="flex w-full gap-2 mt-4">
+            <button
+              className="w-full py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+              onClick={handleReject}
+            >
+              Kontak Mentor
+            </button>
+          </div>
+        )}
+
+        {/* Buttons for Mentee */}
+        {loggedInUser?.id === sesi.mentee_id && sesi.status === "Terkonfirmasi" && (
+          <div className="flex w-full gap-2 mt-4">
+            <button
+              className="w-full py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+              onClick={handleReject}
+            >
+              Batalkan
+            </button>
+          </div>
+        )}
 
         {/* Buttons for Mentor */}
         {loggedInUser?.id === sesi.mentor_id && sesi.status === "Menunggu Konfirmasi" && (
@@ -126,6 +164,8 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
             </button>
           </div>
         )}
+
+        
       </div>
     </div>
   );

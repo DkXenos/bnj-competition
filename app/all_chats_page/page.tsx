@@ -52,7 +52,7 @@ export default function AllChatsPage() {
         <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8">
           <div className="flex items-center justify-center space-x-3">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-200"></div>
-            <span className="text-gray-600 text-lg">Loading chats...</span>
+            <span className="text-gray-600 text-lg">Loading pesan...</span>
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function AllChatsPage() {
 
   return (
     <div className="min-h-screen bg-sky-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-[90%] bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-[80vh]">
+      <div className="w-full max-w-[70%] bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-[80vh]">
         {/* Header - Made responsive */}
         <div className="bg-white border-b border-sky-100 p-3 sm:p-6">
           <div className="flex items-center justify-between">
@@ -84,7 +84,7 @@ export default function AllChatsPage() {
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                <span className="text-sm sm:text-base font-medium">Back</span>
+                <span className="text-sm sm:text-base font-medium">Kembali</span>
               </Link>
             </div>
 
@@ -141,17 +141,20 @@ export default function AllChatsPage() {
                           {chat.otherUserName}
                         </h3>
                         <p className="text-gray-500 text-xs mt-1 truncate">
-                          {chat.text || "No messages yet"}
+                          {chat.latest_text || "Klik untuk melihat pesan"}
                         </p>
                       </div>
 
                       {/* Time and Arrow - responsive */}
                       <div className="flex flex-col items-end gap-1 flex-shrink-0">
                         <span className="text-xs text-gray-400">
-                          {new Date(chat.waktu).toLocaleDateString("id-ID", {
-                            day: "2-digit",
-                            month: "short",
-                          })}
+                          {chat.latest_chat_date
+                            ? new Date(chat.latest_chat_date).toLocaleDateString("id-ID", {
+                                day: "2-digit",
+                                month: "short",
+                              })
+                            : ""}
+                            
                         </span>
                         <svg
                           className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400"
@@ -189,13 +192,13 @@ export default function AllChatsPage() {
                   </svg>
                 </div>
                 <p className="text-gray-500 text-center text-sm sm:text-base">
-                  User not logged in.
+                  Kamu belum masuk ke dalam akun.
                 </p>
                 <Link
                   href="/login"
                   className="mt-4 px-3 py-2 sm:px-4 sm:py-2 bg-sky-100 text-gray-700 rounded-lg hover:bg-sky-200 transition-colors text-sm sm:text-base"
                 >
-                  Login to view chats
+                  Masuk ke dalam akun untuk melihat chat
                 </Link>
               </div>
             )
@@ -217,10 +220,10 @@ export default function AllChatsPage() {
                 </svg>
               </div>
               <h3 className="text-gray-700 font-medium mb-2 text-sm sm:text-base">
-                No chats yet
+                Buka chat untuk melihat pesan
               </h3>
               <p className="text-gray-500 text-center mb-4 text-xs sm:text-sm">
-                Start a conversation with a mentor to see your chats here.
+                Kamu belum memiliki chat. Silakan mulai percakapan dengan mentor.
               </p>
               <Link
                 href="/explore"
