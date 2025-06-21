@@ -1,11 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { IMentor } from "@/types/mentor.md";
 import { IUser } from "@/types/user.md";
 // import { GetAllMentors } from "@/lib/get-mentor";
 import supabase from "@/lib/db";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface MentorWithUser extends IMentor {
   user: IUser;
@@ -21,7 +25,7 @@ function MentorCard({ mentor, user }: { mentor: IMentor; user: IUser }) {
   return (
     <div
       onClick={handleMentorClick}
-      className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col cursor-pointer hover:shadow-md transition-shadow duration-200 min-h-[400px]"
+      className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col cursor-pointer hover:shadow-md transition-shadow duration-200 min-h-[400px] mentor-card"
     >
       {/* Profile Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
@@ -76,6 +80,7 @@ export default function ExplorePage() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const mentorsPerPage = 8;
+  const mainContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchMentors = async () => {
@@ -120,6 +125,51 @@ export default function ExplorePage() {
 
     fetchMentors();
   }, []);
+
+  // GSAP Animations
+  useLayoutEffect(() => {
+    if (loading) return;
+
+    const ctx = gsap.context(() => {
+      // Animate header
+      gsap.from(".header-anim", {
+        opacity: 0,
+        y: -30,
+        stagger: 0.15,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+
+      // Animate mentor cards
+      gsap.from(".mentor-card", {
+        opacity: 0,
+        y: 40,
+        stagger: 0.1,
+        duration: 0.4,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".grid-container",
+          start: "top 85%",
+        },
+      });
+
+      // Animate pagination
+      if (document.querySelector(".pagination-anim")) {
+        gsap.from(".pagination-anim", {
+          opacity: 0,
+          y: 30,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".pagination-anim",
+            start: "top 95%",
+          },
+        });
+      }
+    }, mainContainerRef);
+
+    return () => ctx.revert(); // Cleanup GSAP animations
+  }, [loading, filteredMentors]);
 
   // Filter mentors based on search query
   useEffect(() => {
@@ -191,20 +241,20 @@ export default function ExplorePage() {
   }
 
   return (
-    <div className="min-h-screen bg-sky-100 pt-20">
+    <div ref={mainContainerRef} className="min-h-screen bg-sky-100 pt-20">
       <div className="max-w-[70%] mx-auto px-6 py-12">
         {/* Header Section */}
         <div className="mb-8 lg-text-left text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 header-anim">
             Telusuri Mentor Kami
           </h1>
-          <p className="text-xl text-gray-600 mb-6">
+          <p className="text-xl text-gray-600 mb-6 header-anim">
             Belajar dengan mentor kami yang berpengalaman dan siap membantu Anda
             mencapai tujuan belajar Anda.
           </p>
 
           {/* Search Bar */}
-          <div className="relative">
+          <div className="relative header-anim">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg
                 className="h-5 w-5 text-gray-400"
@@ -255,7 +305,7 @@ export default function ExplorePage() {
         {/* Mentors Grid */}
         {currentMentors.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8 grid-container">
               {currentMentors.map((mentor) => (
                 <MentorCard key={mentor.id} mentor={mentor} user={mentor.user} />
               ))}
@@ -263,7 +313,7 @@ export default function ExplorePage() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-8">
+              <div className="flex justify-center items-center gap-2 mt-8 pagination-anim">
                 {/* Previous Button */}
                 <button
                   onClick={goToPrevPage}

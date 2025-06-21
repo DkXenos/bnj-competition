@@ -304,7 +304,7 @@ export default function Carousel() {
 
 	return (
 		<div
-			className="relative w-full bg-[url('/bg-2.svg')] py-48 bg-blend-overlay bg-cover max-h-[30rem] bg-black/10 bg-gradient-to-br flex items-center justify-center from-gray-50 to-gray-100 rounded-lg overflow-hidden"
+			className="relative w-full bg-[url('/bg-2.svg')] py-48 bg-blend-overlay bg-cover lg:max-h-[30rem] max-h-[34rem] bg-black/10 bg-gradient-to-br flex items-center justify-center from-gray-50 to-gray-100 rounded-lg overflow-hidden"
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={handleMouseLeave}
 		>
