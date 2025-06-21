@@ -134,9 +134,9 @@ export default function UserDashboard() {
                 {/* User Info with Profile Picture */}
                 <div className="w-full lg:flex-1 flex flex-col sm:flex-row items-center sm:items-start gap-4">
                   {/* Profile Avatar - Positioned much lower to avoid navbar cut-off */}
-                  <div className="flex-shrink-0 mt-8 sm:mt-10 md:mt-12 lg:mt-6">
+                  <div className="flex-shrink-0">
                     <div
-                      className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 xl:w-40 xl:h-40 bg-gray-200 border-white shadow-2xl border-3 sm:border-4 rounded-full bg-cover bg-center"
+                      className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 xl:w-46 xl:h-46 bg-gray-200 border-white shadow-2xl border-3 sm:border-4 rounded-full bg-cover bg-center"
                       style={{
                         backgroundImage: `url('${loggedInUser?.profile_image || "/def-avatar.png"}')`,
                       }}
@@ -254,7 +254,7 @@ export default function UserDashboard() {
             ) : filteredJadwal.length > 0 ? (
               filteredJadwal.map((sesi) => <JadwalCard key={sesi.id} sesi={sesi} />)
             ) : (
-              <div className="text-gray-500 text-sm sm:text-base lg:text-lg mt-4 text-center w-full">
+              <div className="text-gray-500 text-sm sm:text-base lg:text-lg mt-4 md:text-start text-center w-full">
                 Tidak ada jadwal yang sesuai dengan filter.
               </div>
             )}

@@ -178,7 +178,7 @@ export default function Navbar() {
           {/* Desktop Navigation Links */}
           <Link
             href="/explore"
-            className="hidden md:block text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 ml-8 px-3 py-2 rounded-lg hover:shadow-sm"
+            className="hidden md:block text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 ml-8 px-3 py-2 rounded-lg hover:shadow-sm"
           >
             Telusuri
           </Link>
@@ -303,16 +303,27 @@ export default function Navbar() {
             <>
               <Link
                 href="/"
-                className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
+                className="text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
               >
                 Beranda
               </Link>
-              <Link
-                href="/register-mentor"
-                className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
-              >
-                Jadi Mentor
-              </Link>
+                {!loggedInUser.isMentor && !loggedInUser.isAdmin && (
+                <Link
+                  href="/register-mentor"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
+                >
+                  Jadi Mentor
+                </Link>
+                )}
+
+                {loggedInUser.isAdmin && (
+                <Link
+                  href="/admin"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
+                >
+                  Konfirmasi Mentor
+                </Link>
+                )}
               <div
                 className="relative"
                 onMouseEnter={handleMouseEnter}
@@ -323,11 +334,11 @@ export default function Navbar() {
                   onClick={toggleDropdown}
                 >
                   <Image
-                    src={"/def-avatar.png"}
+                    src={loggedInUser.profile_image || "/def-avatar.png"}
                     alt="Avatar"
-                    width={32}
-                    height={32}
-                    className="rounded-full border border-gray-300 transition-transform duration-200 group-hover:scale-105"
+                    width={100}
+                    height={100}
+                    className="rounded-full w-10 h-10 object-cover border border-gray-300 transition-transform duration-200 group-hover:scale-105"
                   />
                   <svg
                     className="w-4 h-4 text-gray-500 transition-transform duration-200 group-hover:rotate-180"
@@ -384,13 +395,13 @@ export default function Navbar() {
             <>
               <Link
                 href="/about"
-                className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
+                className="text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
               >
                 Tentang
               </Link>
               <Link
                 href="/register-mentor"
-                className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
+                className="text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
               >
                 Jadi Mentor
               </Link>

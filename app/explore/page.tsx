@@ -5,6 +5,7 @@ import { IUser } from "@/types/user.md";
 // import { GetAllMentors } from "@/lib/get-mentor";
 import supabase from "@/lib/db";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface MentorWithUser extends IMentor {
   user: IUser;
@@ -24,36 +25,24 @@ function MentorCard({ mentor, user }: { mentor: IMentor; user: IUser }) {
     >
       {/* Profile Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
-        <svg
-          className="w-16 h-16 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-          />
-        </svg>
+        <Image src={user?.profile_image || '/guest-photo.svg'} className="object-center rounded-lg w-full h-full object-cover" alt={user?.username ? `${user.username} profile` : "Mentor profile"} width={500} height={500} />
       </div>
 
       {/* Mentor Info */}
       <div className="flex-grow">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">
+        <h3 className="text-xl text-center md:text-start font-bold text-gray-900 mb-2">
           {user.username?.split(" ")
             .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ")}
         </h3>
-        <p className="text-gray-600 text-sm line-clamp-3 mb-3">
+        <p className="text-gray-600 text-center md:text-start text-sm line-clamp-3 mb-3">
           {mentor.deskripsi}
         </p>
       </div>
 
       {/* Additional Info - Changed to grid layout */}
       <div className="mt-4 pt-4 border-t border-gray-100">
-        <div className="grid grid-cols-1 gap-2 text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
           {/* Star Rating - Top row */}
           <div className="flex items-center justify-center gap-1 text-gray-500">
             <svg
