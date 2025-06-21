@@ -2,7 +2,7 @@ import supabase from "@/lib/db";
 import ChatButton from "@/components/chat-mentor-button";
 import BookMentorButton from "@/components/book-mentor-button";
 import Link from "next/link";
-
+import Image from "next/image";
 export default async function MentorDetailPage({
   params,
 }: {
@@ -27,10 +27,11 @@ export default async function MentorDetailPage({
   
 
   return (
-    <div className="min-h-screen min-w-screen bg-sky-100">
-      <div className="min-w-screen min-h-screen max-w-[80%] mx-auto p-4 md:p-8">
+    <div className="min-h-screen min-w-screen bg-sky-100 pb-16">
+      <div className="min-h-[0vh] md:min-h-[8vh] w-screen"></div>
+      <div className="min-w-screen min-h-screen p-4 md:p-8 flex items-center">
         {/* Main Content Card */}
-        <div className="bg-white/70 mt-16 rounded-xl max-w-[70%] mx-auto shadow-lg overflow-hidden">
+        <div className="bg-white/70 mt-16 rounded-xl w-[70%] mx-auto shadow-lg overflow-hidden">
           {/* Mentor Profile Section */}
           <div className="bg-white p-8 border-b border-sky-100">
             <Link
@@ -42,20 +43,7 @@ export default async function MentorDetailPage({
           </Link>
             <div className="flex flex-col md:flex-row gap-6 items-start">
               {/* Profile Avatar */}
-              <div className="w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg
-                  className="w-10 h-10 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
+              <div style={{ backgroundImage: `url('${data_lengkap_mentor?.profile_image || "/def-avatar.png"}')` }} className="bg-cover bg-center w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0">
               </div>
 
               {/* Mentor Information */}
