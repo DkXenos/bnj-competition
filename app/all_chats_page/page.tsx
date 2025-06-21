@@ -62,16 +62,17 @@ export default function AllChatsPage() {
   return (
     <div className="min-h-screen bg-sky-100 flex items-center justify-center p-4">
       <div className="w-full max-w-[90%] bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-[80vh]">
-        {/* Header */}
-        <div className="bg-white border-b border-sky-100 p-6">
+        {/* Header - Made responsive */}
+        <div className="bg-white border-b border-sky-100 p-3 sm:p-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            {/* Back button - responsive */}
+            <div className="flex items-center gap-2 sm:gap-3">
               <Link
                 href="/"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4 sm:w-5 sm:h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -83,19 +84,25 @@ export default function AllChatsPage() {
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                <span className="font-medium">Back</span>
+                <span className="text-sm sm:text-base font-medium">Back</span>
               </Link>
             </div>
-            <h1 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-              Kotak Pesan
+
+            {/* Title - Made responsive */}
+            <h1 className="text-sm sm:text-lg md:text-xl font-semibold text-gray-800 flex items-center gap-1 sm:gap-2 text-center flex-1 mx-2 sm:mx-4">
+              <span className="hidden sm:inline">Kotak Pesan</span>
+              <span className="sm:hidden">Pesan</span>
             </h1>
-            <div className="w-20"></div>
+
+            {/* Spacer for balance - responsive */}
+            <div className="w-8 sm:w-16 md:w-20"></div>
           </div>
         </div>
+
         <div className="flex-1 overflow-y-auto bg-sky-50">
           {chats.length > 0 ? (
             loggedInUser ? (
-              <div className="p-4 space-y-3">
+              <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
                 {chats.map((chat) => (
                   <Link
                     href={`/chat?chat_composite_id=${
@@ -110,11 +117,11 @@ export default function AllChatsPage() {
                     key={chat.id}
                     className="block"
                   >
-                    <div className="bg-white rounded-lg p-4 flex items-center gap-4 cursor-pointer hover:shadow-md hover:bg-sky-50 transition-all duration-200 border border-sky-100">
-                      {/* Avatar */}
-                      <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="bg-white rounded-lg p-3 sm:p-4 flex items-center gap-3 sm:gap-4 cursor-pointer hover:shadow-md hover:bg-sky-50 transition-all duration-200 border border-sky-100">
+                      {/* Avatar - responsive */}
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0">
                         <svg
-                          className="w-6 h-6 text-gray-600"
+                          className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -128,9 +135,9 @@ export default function AllChatsPage() {
                         </svg>
                       </div>
 
-                      {/* Chat Info */}
+                      {/* Chat Info - responsive */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-gray-900 font-medium text-sm truncate">
+                        <h3 className="text-gray-900 font-medium text-xs sm:text-sm truncate">
                           {chat.otherUserName}
                         </h3>
                         <p className="text-gray-500 text-xs mt-1 truncate">
@@ -138,7 +145,7 @@ export default function AllChatsPage() {
                         </p>
                       </div>
 
-                      {/* Time and Arrow */}
+                      {/* Time and Arrow - responsive */}
                       <div className="flex flex-col items-end gap-1 flex-shrink-0">
                         <span className="text-xs text-gray-400">
                           {new Date(chat.waktu).toLocaleDateString("id-ID", {
@@ -147,7 +154,7 @@ export default function AllChatsPage() {
                           })}
                         </span>
                         <svg
-                          className="w-4 h-4 text-gray-400"
+                          className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -165,10 +172,10 @@ export default function AllChatsPage() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full p-8">
-                <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mb-4">
+              <div className="flex flex-col items-center justify-center h-full p-6 sm:p-8">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-sky-100 rounded-full flex items-center justify-center mb-4">
                   <svg
-                    className="w-8 h-8 text-gray-400"
+                    className="w-7 h-7 sm:w-8 sm:h-8 text-gray-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -181,20 +188,22 @@ export default function AllChatsPage() {
                     />
                   </svg>
                 </div>
-                <p className="text-gray-500 text-center">User not logged in.</p>
+                <p className="text-gray-500 text-center text-sm sm:text-base">
+                  User not logged in.
+                </p>
                 <Link
                   href="/login"
-                  className="mt-4 px-4 py-2 bg-sky-100 text-gray-700 rounded-lg hover:bg-sky-200 transition-colors"
+                  className="mt-4 px-3 py-2 sm:px-4 sm:py-2 bg-sky-100 text-gray-700 rounded-lg hover:bg-sky-200 transition-colors text-sm sm:text-base"
                 >
                   Login to view chats
                 </Link>
               </div>
             )
           ) : (
-            <div className="flex flex-col items-center justify-center h-full p-8">
-              <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mb-4">
+            <div className="flex flex-col items-center justify-center h-full p-6 sm:p-8">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-sky-100 rounded-full flex items-center justify-center mb-4">
                 <svg
-                  className="w-8 h-8 text-gray-400"
+                  className="w-7 h-7 sm:w-8 sm:h-8 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -207,13 +216,15 @@ export default function AllChatsPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-gray-700 font-medium mb-2">No chats yet</h3>
-              <p className="text-gray-500 text-center mb-4">
+              <h3 className="text-gray-700 font-medium mb-2 text-sm sm:text-base">
+                No chats yet
+              </h3>
+              <p className="text-gray-500 text-center mb-4 text-xs sm:text-sm">
                 Start a conversation with a mentor to see your chats here.
               </p>
               <Link
                 href="/explore"
-                className="px-4 py-2 bg-white shadow-lg text-gray-700 rounded-lg hover:bg-sky-200 transition-colors"
+                className="px-3 py-2 sm:px-4 sm:py-2 bg-white shadow-lg text-gray-700 rounded-lg hover:bg-sky-200 transition-colors text-sm sm:text-base"
               >
                 Find Mentors
               </Link>
