@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
+//
 gsap.registerPlugin(ScrollTrigger);
 
 interface MentorWithUser extends IMentor {
