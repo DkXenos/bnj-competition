@@ -1,6 +1,6 @@
 "use client"; // Ensure this page is a client component
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import supabase from "@/lib/db";
 import Link from "next/link";
@@ -12,23 +12,23 @@ interface IMentor {
   deskripsi: string;
   link_video: string;
   harga_per_sesi: number;
+  foto_ktp: string;
+  foto_kk: string;
   is_confirmed: boolean;
   alasan_ditolak: string | null;
-  foto_ktp: string; // URL for KTP image
-  foto_kk: string; // URL for KK image
 }
 
 interface MentorWithUser extends IMentor {
   username: string;
 }
 
-export default function AdminMentorConfirmation() {
+function AdminMentorConfirmationContent() {
   const [mentor, setMentor] = useState<MentorWithUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [showRejectPanel, setShowRejectPanel] = useState(false);
   const [showConfirmPanel, setShowConfirmPanel] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
-  const searchParams = useSearchParams(); // Client-side hook
+  const searchParams = useSearchParams();
   const mentorId = searchParams.get("id");
 
   useEffect(() => {
@@ -36,7 +36,6 @@ export default function AdminMentorConfirmation() {
       if (!mentorId) return;
 
       try {
-        // Fetch mentor details by ID
         const { data: mentorData, error: mentorError } = await supabase
           .from("mentors")
           .select("*")
@@ -48,7 +47,6 @@ export default function AdminMentorConfirmation() {
           return;
         }
 
-        // Fetch user data for the mentor
         const { data: userData, error: userError } = await supabase
           .from("users")
           .select("username")
@@ -119,8 +117,9 @@ export default function AdminMentorConfirmation() {
         alert("Failed to reject mentor.");
         return;
       }
-
-      alert(`Mentor "${mentor.username}" rejected successfully! Reason: ${rejectReason}`);
+      alert(
+        `Mentor "${mentor.username}" rejected successfully! Reason: ${rejectReason}`
+      );
       setShowRejectPanel(false);
       setRejectReason("");
     } catch (error) {
@@ -140,24 +139,30 @@ export default function AdminMentorConfirmation() {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-sky-100 py-16">
       <div className="w-screen h-[6vh]"></div>
-      <h1 className="w-[70%] text-2xl font-bold text-black mb-6 text-center md:text-start">Detail Mentor</h1>
+      <h1 className="w-[70%] text-2xl font-bold text-black mb-6 text-center md:text-start">
+        Detail Mentor
+      </h1>
       <div className="bg-white border border-gray-200 rounded-lg shadow-md p-6 flex flex-col justify-between w-full max-w-[70%]">
         <div>
           <h3 className="text-xl font-bold text-black mb-2 text-center md:text-start">
             {mentor.username.charAt(0).toUpperCase() + mentor.username.slice(1)}
           </h3>
-          <p className="text-gray-600 text-sm mb-2 text-center md:text-start">Mentor ID: {mentor.id}</p>
-          <p className="text-gray-600 text-sm mb-2 text-center md:text-start">Deskripsi: {mentor.deskripsi}</p>
+          <p className="text-gray-600 text-sm mb-2 text-center md:text-start">
+            Mentor ID: {mentor.id}
+          </p>
+          <p className="text-gray-600 text-sm mb-2 text-center md:text-start">
+            Deskripsi: {mentor.deskripsi}
+          </p>
           <p className="text-gray-600 text-sm mb-2 text-center md:text-start">
             Harga per sesi: Rp {mentor.harga_per_sesi.toLocaleString()}
           </p>
-          {/* Display KTP and KK Images */}
           <div className="mt-6 flex flex-col">
             <div className="flex w-full flex-col md:flex-row gap-4 items-start">
-              {/* KTP & KK Images */}
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col items-start">
-                  <p className="w-full text-base font-semibold text-gray-700 mb-2 text-center md:text-start">Foto KTP</p>
+                  <p className="w-full text-base font-semibold text-gray-700 mb-2 text-center md:text-start">
+                    Foto KTP
+                  </p>
                   <div className="md:w-56 md:h-58.5 border rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                     <Link
                       href={mentor.foto_ktp}
@@ -176,7 +181,9 @@ export default function AdminMentorConfirmation() {
                   </div>
                 </div>
                 <div className="flex flex-col items-start">
-                  <p className="w-full text-base font-semibold text-gray-700 mb-2 text-center md:text-start">Foto KK</p>
+                  <p className="w-full text-base font-semibold text-gray-700 mb-2 text-center md:text-start">
+                    Foto KK
+                  </p>
                   <div className="md:w-56 md:h-58.5 border rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                     <Link
                       href={mentor.foto_kk}
@@ -195,11 +202,13 @@ export default function AdminMentorConfirmation() {
                   </div>
                 </div>
               </div>
-              {/* YouTube Video */}
               <div className="flex flex-col items-start w-full h-full">
-                <h1 className="w-full text-base font-semibold text-gray-700 mb-2 text-center md:text-start">Video Perkenalan</h1>
+                <h1 className="w-full text-base font-semibold text-gray-700 mb-2 text-center md:text-start">
+                  Video Perkenalan
+                </h1>
                 <div className="w-full aspect-video min-h-[315px]">
-                  {mentor.link_video && mentor.link_video.includes("youtube.com/watch?v=") ? (
+                  {mentor.link_video &&
+                  mentor.link_video.includes("youtube.com/watch?v=") ? (
                     <iframe
                       width="100%"
                       height="100%"
@@ -209,18 +218,23 @@ export default function AdminMentorConfirmation() {
                       allowFullScreen
                       className="rounded-lg w-full h-full"
                     />
-                  ) : mentor.link_video && mentor.link_video.includes("youtu.be/") ? (
+                  ) : mentor.link_video &&
+                    mentor.link_video.includes("youtu.be/") ? (
                     <iframe
                       width="100%"
                       height="100%"
-                      src={`https://www.youtube.com/embed/${mentor.link_video.split("youtu.be/")[1]}`}
+                      src={`https://www.youtube.com/embed/${
+                        mentor.link_video.split("youtu.be/")[1]
+                      }`}
                       title="Video Perkenalan Mentor"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                       className="rounded-lg w-full h-full"
                     />
                   ) : (
-                    <span className="text-gray-400 text-center md:text-start">Tidak ada video</span>
+                    <span className="text-gray-400 text-center md:text-start">
+                      Tidak ada video
+                    </span>
                   )}
                 </div>
               </div>
@@ -243,12 +257,12 @@ export default function AdminMentorConfirmation() {
         </div>
       </div>
 
-      {/* Confirm Panel */}
       {showConfirmPanel && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h1 className="text-xl font-bold text-center mb-4 text-black">
-              Apakah Anda yakin untuk menerima &ldquo;{mentor.username}&rdquo; menjadi mentor?
+              Apakah Anda yakin untuk menerima &ldquo;{mentor.username}&rdquo;
+              menjadi mentor?
             </h1>
             <div className="flex justify-end gap-2 mt-4">
               <button
@@ -268,12 +282,14 @@ export default function AdminMentorConfirmation() {
         </div>
       )}
 
-      {/* Reject Panel */}
       {showRejectPanel && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h1 className="text-xl font-bold text-center mb-4 text-black">
-              Sertakan Alasan Penolakan untuk &ldquo;{mentor.username.charAt(0).toUpperCase() + mentor.username.slice(1)}&rdquo;
+              Sertakan Alasan Penolakan untuk &ldquo;
+              {mentor.username.charAt(0).toUpperCase() +
+                mentor.username.slice(1)}
+              &rdquo;
             </h1>
             <textarea
               value={rejectReason}
@@ -300,5 +316,19 @@ export default function AdminMentorConfirmation() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AdminMentorConfirmation() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen bg-sky-100">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+        </div>
+      }
+    >
+      <AdminMentorConfirmationContent />
+    </Suspense>
   );
 }
