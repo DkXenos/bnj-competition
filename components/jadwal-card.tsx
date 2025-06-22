@@ -9,6 +9,8 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
   const [currentSesi, setCurrentSesi] = useState(sesi);
   const [name, setName] = useState<string>("Loading...");
   const { loggedInUser } = useUser();
+  const [showRejectPopup, setShowRejectPopup] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
 
   useEffect(() => {
     const checkAndUpdateStatus = async () => {
@@ -88,22 +90,38 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
     }
   };
 
-  const handleReject = async () => {
+  const handleReject = () => {
+    setShowRejectPopup(true);
+  };
+
+  const submitRejection = async () => {
+    if (!rejectReason.trim()) {
+      alert("Alasan penolakan tidak boleh kosong.");
+      return;
+    }
     try {
       const { error } = await supabase
         .from("sesi")
-        .update({ status: "Ditolak" })
+        .update({ status: "Ditolak", alasan_ditolak: rejectReason })
         .eq("id", currentSesi.id);
 
       if (error) {
         console.error("Error updating status:", error);
+        alert("Gagal menolak sesi.");
         return;
       }
 
       alert("Sesi berhasil ditolak!");
-      setCurrentSesi((prev) => ({ ...prev, status: "Ditolak" }));
+      setCurrentSesi((prev) => ({
+        ...prev,
+        status: "Ditolak",
+        alasan_ditolak: rejectReason,
+      }));
+      setShowRejectPopup(false);
+      setRejectReason("");
     } catch (error) {
       console.error("Unexpected error:", error);
+      alert("Terjadi kesalahan tak terduga.");
     }
   };
 
@@ -175,9 +193,17 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
               <i className="bi bi-link-45deg text-gray-400"></i>
               <span className="mb-1 text-center w-full text-gray-400 cursor-not-allowed select-none">
               Link meeting
-            </span>
+              </span>
             </div>
           ))}
+            {currentSesi.status === "Ditolak" &&
+              currentSesi.alasan_ditolak && (
+                <div className="space-x-1">
+                  <div className="mt-1 text-sm text-red-700">
+                    Alasan: {currentSesi.alasan_ditolak}
+                  </div>
+                </div>
+            )}
         <span
           className={`px-3 py-2 rounded-lg text-xs font-semibold ${
             currentSesi.status === "Terkonfirmasi"
@@ -211,6 +237,38 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
             </div>
           )}
       </div>
+
+      {/* Rejection Popup */}
+      {showRejectPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h1 className="text-xl font-bold text-center mb-4 text-black">
+              Alasan Penolakan Sesi
+            </h1>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Tuliskan alasan Anda menolak sesi ini..."
+              className="w-full p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              rows={4}
+            />
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => setShowRejectPopup(false)}
+                className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={submitRejection}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+              >
+                Tolak Sesi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

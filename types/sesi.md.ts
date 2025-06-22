@@ -8,5 +8,7 @@ type ISesi = {
     deksripsi_ulasan: string | null;
     link: string;
     status: "Menunggu Konfirmasi" | "Terkonfirmasi" | "Ditolak" | "Dilaksanakan" | "Selesai" | "Bermasalah";
+    isFreeTrial: boolean | null
+    alasan_ditolak: string | null;
 };
 export type { ISesi };

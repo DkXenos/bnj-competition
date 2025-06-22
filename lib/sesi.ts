@@ -32,3 +32,23 @@ export async function GetSesi() {
 
   return sesi || [];
 }
+
+export async function CheckForFreeTrial(mentor_id : number, user_id : number){
+  const { data, error } = await supabase
+    .from("sesi")
+    .select("isFreeTrial")
+    .eq("mentor_id", mentor_id)
+    .eq("mentee_id", user_id)
+    .single();
+
+  if(data == null){
+    return null;
+  }
+
+  if (error) {
+    console.error("Error checking free trial:", error);
+    return false;
+  }
+
+  return data?.isFreeTrial || false;
+}
