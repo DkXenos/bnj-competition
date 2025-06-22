@@ -4,6 +4,7 @@ import supabase from "@/lib/db";
 import { useUser } from "@/context/UserContext";
 import { confirmSession, SubmitReview } from "@/lib/sesi";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function JadwalCard({ sesi }: { sesi: ISesi }) {
   const [currentSesi, setCurrentSesi] = useState(sesi);
@@ -636,7 +637,11 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
               <div className="mt-4 grid grid-cols-2 gap-2">
                 {reportFilePreviews.map((preview, index) => (
                   <div key={index} className="relative h-24 border border-gray-300 rounded-lg overflow-hidden">
-                    <img 
+                    <Image 
+                      width={500}
+                      height={500}
+                      key={index}
+                      
                       src={preview} 
                       alt={`Preview ${index + 1}`} 
                       className="w-full h-full object-cover"
