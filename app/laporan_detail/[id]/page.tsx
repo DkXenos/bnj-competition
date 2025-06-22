@@ -1,8 +1,8 @@
 import supabase from "@/lib/db";
 import Link from "next/link";
 import Image from "next/image";
-import AdminLaporButton from "@/components/admin-lapor-button";
-import { TindakLanjutLaporan } from "@/lib/sesi";
+import TindakLanjutForm from "@/components/tindak-lanjut-form";
+
 export default async function LaporanDetailPage({
   params,
 }: {
@@ -75,21 +75,9 @@ export default async function LaporanDetailPage({
                     </div>
                   </div>
                 )}
-            <div className="mt-6">
-                <label htmlFor="tindakLanjut" className="block text-black mb-2">
-                    Deskripsi Tindak Lanjut Laporan:
-                </label>
-                <textarea
-                    id="tindakLanjut"
-                    name="tindakLanjut"
-                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none text-black"
-                    rows={4}
-                    placeholder="Tulis tindak lanjut di sini..."
-                />
-                <div className="flex justify-end w-full">
-                  <AdminLaporButton sesiId={sesi.id} desc={typeof window !== "undefined" ? (document.getElementsByName("tindakLanjut")[0] as HTMLTextAreaElement)?.value : ""} />
-                </div>
-            </div>
+                
+                {/* Replace the textarea and button with the new component */}
+                <TindakLanjutForm sesiId={sesi.id} />
         </div>
       </div>
     </div>

@@ -16,9 +16,10 @@ export default function AdminLaporButton({ sesiId, desc }: { sesiId: number, des
       const result = await sesi.TindakLanjutLaporan(sesiId, desc);
       if (result.success) {
         alert("Laporan berhasil ditindak lanjuti!");
-        window.location.reload(); // Refresh page to show updated status
+        window.location.href = "/konfirmasi_laporan"; // Redirect to laporan page
       } else {
         alert("Gagal menindak lanjuti: " + (result.error || "Terjadi kesalahan"));
+        window.location.href = "/konfirmasi_laporan"; // Redirect to laporan page
       }
     } catch (error) {
       console.error("Error:", error);

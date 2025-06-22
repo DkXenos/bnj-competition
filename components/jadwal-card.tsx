@@ -359,6 +359,15 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
           </div>
         )}
 
+        {/* Add this new condition to display tindak lanjut details */}
+        {currentSesi.status_laporan === "Ditindak Lanjuti" && currentSesi.deskripsi_tindak_lanjut && (
+          <div className="space-x-1">
+            <div className="mt-1 text-sm text-yellow-700">
+              <span className="font-semibold">Tindak Lanjut:</span> {currentSesi.deskripsi_tindak_lanjut}
+            </div>
+          </div>
+        )}
+
         {loggedInUser?.id === currentSesi.mentee_id &&
           currentSesi.status === "Selesai" && (
             <>
