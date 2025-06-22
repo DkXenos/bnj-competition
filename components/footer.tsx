@@ -1,3 +1,4 @@
+// Footer.tsx
 "use client";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,19 +13,13 @@ export default function Footer() {
   const footerRef = useRef<HTMLElement>(null);
   const brandRef = useRef<HTMLDivElement>(null);
   const quickLinksRef = useRef<HTMLDivElement>(null);
-  const supportRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Initial state - hide all elements
       gsap.set(
-        [
-          brandRef.current,
-          quickLinksRef.current,
-          supportRef.current,
-          bottomRef.current,
-        ],
+        [brandRef.current, quickLinksRef.current, bottomRef.current],
         {
           opacity: 0,
           y: 50,
@@ -35,9 +30,10 @@ export default function Footer() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: footerRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none reverse",
+          start: "top bottom", // Animation starts when top of footer hits bottom of viewport
+          end: "bottom top+=100", // Animation ends when bottom of footer is 100px above top of viewport
+          scrub: true, // Links the animation directly to the scrollbar
+          // markers: true, // Uncomment for debugging to see the start/end points
         },
       });
 
@@ -49,15 +45,14 @@ export default function Footer() {
         ease: "power2.out",
       })
         .to(
-          [quickLinksRef.current, supportRef.current],
+          quickLinksRef.current,
           {
             opacity: 1,
             y: 0,
             duration: 0.6,
             ease: "power2.out",
-            stagger: 0.2,
           },
-          "-=0.4"
+          "<0.1" // Start this 0.1 seconds after the previous animation starts
         )
         .to(
           bottomRef.current,
@@ -67,7 +62,7 @@ export default function Footer() {
             duration: 0.6,
             ease: "power2.out",
           },
-          "-=0.2"
+          "<0.1" // Start this 0.1 seconds after the previous animation starts
         );
 
       // Add hover animations for links
@@ -91,7 +86,7 @@ export default function Footer() {
       });
     }, footerRef);
 
-    return () => ctx.revert();
+    return () => ctx.revert(); // Cleanup GSAP animations on component unmount
   }, []);
 
   // Logo hover animation
