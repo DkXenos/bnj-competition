@@ -1,8 +1,12 @@
 import supabase from "@/lib/db";
 import ChatButton from "@/components/chat-mentor-button";
 import BookMentorButton from "@/components/book-mentor-button";
+import * as sesi from "@/lib/sesi";
 import Link from "next/link";
 import Image from "next/image";
+import { ISesi } from "@/types/sesi.md";
+import { IUser } from "@/types/user.md";
+
 export default async function MentorDetailPage({
   params,
 }: {
@@ -24,7 +28,24 @@ export default async function MentorDetailPage({
     .eq("id", mentor.user_id)
     .single();
 
-  
+  const allReviews: ISesi[] = await sesi.GetAllReviewByMentorID(id);
+
+  // Fetch mentee details for all reviews efficiently
+  let reviewsWithMentee: (ISesi & { mentee: Partial<IUser> })[] = [];
+  if (allReviews && allReviews.length > 0) {
+    const menteeIds = [...new Set(allReviews.map((review) => review.mentee_id))];
+    const { data: mentees } = await supabase
+      .from("users")
+      .select("id, username, profile_image")
+      .in("id", menteeIds);
+
+    const menteesMap = new Map(mentees?.map((m) => [m.id, m]));
+
+    reviewsWithMentee = allReviews.map((review) => ({
+      ...review,
+      mentee: menteesMap.get(review.mentee_id) || { username: "Pengguna" },
+    }));
+  }
 
   return (
     <div className="min-h-screen min-w-screen bg-sky-100 pb-16">
@@ -131,6 +152,46 @@ export default async function MentorDetailPage({
           </div>
         </div>
       </div>
+      {allReviews && allReviews.length > 0 && (
+        <div className="max-w-[68%] mx-auto mt-8 bg-white/80 rounded-xl shadow p-6">
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <i className="bi bi-chat-left-text-fill text-sky-500"></i>
+            <p className="text-black">Ulasan Mentor</p>
+          </h2>
+          <div className="space-y-4">
+            {reviewsWithMentee.map((review, idx) => (
+              <div
+                key={idx}
+                className="border-b border-sky-100 pb-4 mb-4 last:border-b-0 last:mb-0"
+              >
+                <div className="flex items-start gap-3">
+                  <Image
+                    src={review.mentee.profile_image || "/guest-photo.svg"}
+                    alt={review.mentee.username || "Mentee"}
+                    width={32}
+                    height={32}
+                    className="rounded-full object-cover mt-1"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-black">
+                        {review.mentee.username || "Pengguna"}
+                      </span>
+                      <span className="text-yellow-500 flex items-center gap-1">
+                        <i className="bi bi-star-fill"></i>
+                        {review.rating_ulasan}/5
+                      </span>
+                    </div>
+                    <p className="text-black italic">
+                      &quot;{review.deskripsi_ulasan || "Sangat bagus"}&quot;
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

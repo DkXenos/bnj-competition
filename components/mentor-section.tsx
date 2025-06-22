@@ -32,7 +32,7 @@ function MentorCard({ mentor, index }: { mentor: IMentor; index: number }) {
 
     fetchMentorUser();
   }, [mentor.user_id]);
-
+  
   useEffect(() => {
     if (cardRef.current) {
       // Set initial state
@@ -341,3 +341,5 @@ export default function MentorSection() {
     </div>
   );
 }
+
+

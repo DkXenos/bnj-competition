@@ -91,11 +91,19 @@ export default function BookMentorButton({
     }
 
     try {
-      const jamMulai = new Date(
-        `${selectedDate}T${selectedTime}:00:00Z`
-      ).toISOString();
+      // Create a date object from the user's selection in their local timezone.
+      const localDateTime = new Date(`${selectedDate}T${selectedTime}:00:00`);
+
+      // Check if the created date is valid
+      if (isNaN(localDateTime.getTime())) {
+        alert("Tanggal atau jam yang dipilih tidak valid.");
+        return;
+      }
+
+      // Convert to ISO string (UTC) for storage in the database.
+      const jamMulai = localDateTime.toISOString();
       const jamSelesai = new Date(
-        new Date(jamMulai).getTime() + 60 * 60 * 1000
+        localDateTime.getTime() + 60 * 60 * 1000
       ).toISOString(); // Add 1 hour
 
       const { error } = await supabase.from("sesi").insert([

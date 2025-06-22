@@ -2,7 +2,7 @@ import { ISesi } from "@/types/sesi.md";
 import { useEffect, useState } from "react";
 import supabase from "@/lib/db";
 import { useUser } from "@/context/UserContext";
-import { confirmSession } from "@/lib/sesi";
+import { confirmSession, SubmitReview } from "@/lib/sesi";
 import Link from "next/link";
 
 export default function JadwalCard({ sesi }: { sesi: ISesi }) {
@@ -11,6 +11,12 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
   const { loggedInUser } = useUser();
   const [showRejectPopup, setShowRejectPopup] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const [showAcceptPopup, setShowAcceptPopup] = useState(false);
+  const [meetingLink, setMeetingLink] = useState("");
+  const [showReviewPopup, setShowReviewPopup] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [reviewDescription, setReviewDescription] = useState("");
 
   useEffect(() => {
     const checkAndUpdateStatus = async () => {
@@ -41,7 +47,12 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
     };
 
     checkAndUpdateStatus();
-  }, [currentSesi.id, currentSesi.status, currentSesi.jam_mulai, currentSesi.jam_selesai]);
+  }, [
+    currentSesi.id,
+    currentSesi.status,
+    currentSesi.jam_mulai,
+    currentSesi.jam_selesai,
+  ]);
 
   useEffect(() => {
     const fetchName = async () => {
@@ -73,9 +84,20 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
     fetchName();
   }, [currentSesi.mentor_id, currentSesi.mentee_id, loggedInUser?.id]);
 
-  const handleAccept = async () => {
+  const handleAccept = () => {
+    setShowAcceptPopup(true);
+  };
+
+  const submitAcceptance = async () => {
+    if (!meetingLink.trim() || !meetingLink.startsWith("http")) {
+      alert(
+        "Harap masukkan link meeting yang valid (contoh: https://zoom.us/...)."
+      );
+      return;
+    }
+
     try {
-      const result = await confirmSession(currentSesi.id);
+      const result = await confirmSession(currentSesi.id, meetingLink);
 
       if (!result.success) {
         alert(`Gagal mengonfirmasi sesi: ${result.error}`);
@@ -83,7 +105,13 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
       }
 
       alert(result.message);
-      setCurrentSesi((prev) => ({ ...prev, status: "Terkonfirmasi" }));
+      setCurrentSesi((prev) => ({
+        ...prev,
+        status: "Terkonfirmasi",
+        link: meetingLink,
+      }));
+      setShowAcceptPopup(false);
+      setMeetingLink("");
     } catch (error) {
       console.error("Unexpected error:", error);
       alert("Terjadi kesalahan saat mengonfirmasi sesi.");
@@ -125,7 +153,8 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
     }
   };
 
-  const label = loggedInUser?.id === currentSesi.mentor_id ? "Mentee" : "Mentor";
+  const label =
+    loggedInUser?.id === currentSesi.mentor_id ? "Mentee" : "Mentor";
 
   return (
     <div className="relative flex flex-col justify-center items-center min-w-[300px] bg-white border-1 rounded-lg shadow-lg p-6">
@@ -178,7 +207,7 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         {loggedInUser?.id === currentSesi.mentee_id &&
           (["Terkonfirmasi", "Selesai", "Dilaksanakan", "Bermasalah"].includes(
             currentSesi.status
-          ) ? (
+          ) && currentSesi.link ? (
             <div className="space-x-1">
               <i className="bi bi-link-45deg text-blue-500"></i>
               <Link
@@ -192,23 +221,50 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
             <div className="space-x-1">
               <i className="bi bi-link-45deg text-gray-400"></i>
               <span className="mb-1 text-center w-full text-gray-400 cursor-not-allowed select-none">
-              Link meeting
+                Link meeting
               </span>
             </div>
           ))}
-            {currentSesi.status === "Ditolak" &&
-              currentSesi.alasan_ditolak && (
-                <div className="space-x-1">
-                  <div className="mt-1 text-sm text-red-700">
-                    Alasan: {currentSesi.alasan_ditolak}
+        {currentSesi.status === "Ditolak" && currentSesi.alasan_ditolak && (
+          <div className="space-x-1">
+            <div className="mt-1 text-sm text-red-700">
+              Alasan: {currentSesi.alasan_ditolak}
+            </div>
+          </div>
+        )}
+
+        {loggedInUser?.id === currentSesi.mentee_id &&
+          currentSesi.status === "Selesai" && (
+            <>
+              {currentSesi.rating_ulasan === null ? (
+                <button
+                  onClick={() => setShowReviewPopup(true)}
+                  className="text-blue-500 hover:underline hover:cursor-pointer"
+                >
+                  Beri ulasan
+                </button>
+              ) : (
+                <div className="text-sm text-gray-600 text-center w-full">
+                  <p className="font-semibold">Ulasan Anda:</p>
+                  <div className="flex items-center justify-center gap-1">
+                    <i className="bi bi-star-fill text-yellow-400"></i>
+                    <span>{currentSesi.rating_ulasan}/5</span>
                   </div>
+                  {currentSesi.deskripsi_ulasan && (
+                    <p className="mt-1 italic">
+                      &quot;{currentSesi.deskripsi_ulasan}&quot;
+                    </p>
+                  )}
                 </div>
-            )}
+              )}
+            </>
+          )}
         <span
           className={`px-3 py-2 rounded-lg text-xs font-semibold ${
             currentSesi.status === "Terkonfirmasi"
               ? "bg-green-100 text-green-700"
-              : currentSesi.status === "Ditolak" || currentSesi.status === "Bermasalah"
+              : currentSesi.status === "Ditolak" ||
+                currentSesi.status === "Bermasalah"
               ? "bg-red-100 text-red-700"
               : currentSesi.status === "Selesai"
               ? "bg-green-100 text-green-700"
@@ -217,7 +273,6 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         >
           {currentSesi.status}
         </span>
-
         {/* Buttons for Mentor */}
         {loggedInUser?.id === currentSesi.mentor_id &&
           currentSesi.status === "Menunggu Konfirmasi" && (
@@ -237,6 +292,46 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
             </div>
           )}
       </div>
+
+      {/* Acceptance Confirmation Popup */}
+      {showAcceptPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h1 className="text-xl font-bold text-center mb-4 text-black">
+              Terima Sesi & Masukkan Link
+            </h1>
+            <p className="text-gray-600 text-center mb-4">
+              Pastikan Anda bisa di jam tersebut. Masukkan link meeting (Zoom,
+              Google Meet, dll.) untuk sesi ini.
+            </p>
+            <input
+              type="url"
+              value={meetingLink}
+              onChange={(e) => setMeetingLink(e.target.value)}
+              placeholder="https://zoom.us/j/..."
+              className="w-full p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+            />
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => {
+                  setShowAcceptPopup(false);
+                  setMeetingLink(""); // Reset on cancel
+                }}
+                className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={submitAcceptance}
+                disabled={!meetingLink.trim()}
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                Terima & Kirim Link
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Rejection Popup */}
       {showRejectPopup && (
@@ -264,6 +359,78 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
               >
                 Tolak Sesi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Review Popup */}
+      {showReviewPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h1 className="text-xl font-bold text-center mb-4 text-black">
+              Beri Ulasan untuk Sesi Ini
+            </h1>
+
+            {/* Star Rating */}
+            <div className="flex justify-center items-center gap-2 mb-4">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <i
+                  key={star}
+                  className={`bi bi-star-fill cursor-pointer text-3xl transition-colors ${
+                    (hoverRating || rating) >= star
+                      ? "text-yellow-400"
+                      : "text-gray-300"
+                  }`}
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+                ></i>
+              ))}
+            </div>
+
+            {/* Review Description */}
+            <textarea
+              value={reviewDescription}
+              onChange={(e) => setReviewDescription(e.target.value)}
+              placeholder="Tuliskan ulasan Anda (opsional)..."
+              className="w-full p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              rows={4}
+            />
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => setShowReviewPopup(false)}
+                className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={async () => {
+                  const result = await SubmitReview(
+                    currentSesi.id,
+                    rating,
+                    reviewDescription,
+                    sesi.mentor_id
+                  );
+                  if (result.success) {
+                    alert(result.message || "Ulasan berhasil dikirim!");
+                    setCurrentSesi((prev) => ({
+                      ...prev,
+                      rating_ulasan: rating,
+                      deskripsi_ulasan: reviewDescription,
+                    }));
+                    setShowReviewPopup(false);
+                  } else {
+                    alert(result.error || "Gagal mengirim ulasan.");
+                  }
+                }}
+                disabled={rating === 0}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                Kirim Ulasan
               </button>
             </div>
           </div>
