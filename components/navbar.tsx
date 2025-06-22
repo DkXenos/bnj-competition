@@ -317,12 +317,20 @@ export default function Navbar() {
                 )}
 
                 {loggedInUser.isAdmin && (
+                  <>
                 <Link
                   href="/admin"
                   className="text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
                 >
                   Konfirmasi Mentor
                 </Link>
+                <Link
+                  href="/konfirmasi_laporan"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
+                >
+                  Konfirmasi Laporan
+                </Link>
+                  </>
                 )}
               <div
                 className="relative"

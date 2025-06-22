@@ -22,7 +22,19 @@ export async function confirmSession(sesiId: number, link: string) {
     return { success: false, error: "Terjadi kesalahan saat mengonfirmasi sesi." };
   }
 }
+export async function GetAllLaporanWhichIsNotConfirmed(){
+  const { data: laporan, error } = await supabase
+    .from("sesi")
+    .select("*")
+    .eq("status_laporan", "Laporan Dikirim");
 
+  if (error) {
+    console.error("Error fetching unconfirmed reports:", error);
+    throw error;
+  }
+
+  return laporan || [];
+}
 
 export async function GetSesi() {
   const { data: sesi, error } = await supabase
@@ -143,7 +155,27 @@ export async function UpdateTotalRating(mentor_id: number) {
   
   return roundedRating; // Kembalikan nilai rata-rata yang sudah dibulatkan
 }
+export async function TindakLanjutLaporan(id: number, desc: string) {
+  try {
+    const { error } = await supabase
+      .from("sesi")
+      .update({
+        status_laporan: "Ditindak Lanjuti",
+        deskripsi_tindak_lanjut: desc,
+      })
+      .eq("id", id);
 
+    if (error) {
+      console.error("Error updating report status:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, message: "Laporan berhasil ditindak lanjuti." };
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return { success: false, error: "Terjadi kesalahan saat menindak lanjuti laporan." };
+  }
+}
 export async function CheckForFreeTrial(mentor_id : number, user_id : number){
   const { data, error } = await supabase
     .from("sesi")

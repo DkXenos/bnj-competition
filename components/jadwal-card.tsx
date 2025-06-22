@@ -17,6 +17,11 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewDescription, setReviewDescription] = useState("");
+  // Tambahkan state untuk Report
+  const [showReportPopup, setShowReportPopup] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reportFiles, setReportFiles] = useState<File[]>([]);
+  const [reportFilePreviews, setReportFilePreviews] = useState<string[]>([]);
 
   useEffect(() => {
     const checkAndUpdateStatus = async () => {
@@ -153,19 +158,140 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
     }
   };
 
+  const handleReportFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // Convert FileList to array and filter by type
+    const filesArray = Array.from(files);
+    const imageFiles = filesArray.filter((file) => file.type.startsWith("image/"));
+
+    // Check file size (limit to 5MB per file)
+    const validFiles = imageFiles.filter((file) => {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`File ${file.name} terlalu besar (maks 5MB).`);
+        return false;
+      }
+      return true;
+    });
+
+    setReportFiles((prev) => [...prev, ...validFiles]);
+
+    // Create preview URLs
+    const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
+    setReportFilePreviews((prev) => [...prev, ...newPreviews]);
+  };
+
+  // Add function to remove a selected file
+  const removeReportFile = (index: number) => {
+    setReportFiles((prev) => prev.filter((_, i) => i !== index));
+
+    // Revoke the URL to prevent memory leaks
+    URL.revokeObjectURL(reportFilePreviews[index]);
+    setReportFilePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Add this function to upload files to Supabase
+  const uploadReportFilesToSupabase = async (files: File[]) => {
+    const uploadedUrls: string[] = [];
+
+    for (const file of files) {
+      try {
+        // Create a unique file path with timestamp and original file name
+        const filePath = `reports/${Date.now()}-${file.name}`;
+        
+        // Upload the file to Supabase storage
+        const { error } = await supabase.storage
+          .from("laporan")
+          .upload(filePath, file);
+
+        if (error) {
+          console.error("Error uploading file:", {
+            message: error.message,
+            name: error.name,
+          });
+          alert(`Error uploading file ${file.name}: ${error.message}`);
+          continue;
+        }
+
+        // Get the public URL after successful upload
+        const { data: publicUrlData } = supabase.storage
+          .from("laporan")
+          .getPublicUrl(filePath);
+
+        if (!publicUrlData?.publicUrl) {
+          alert(`Failed to get public URL for ${file.name}`);
+          continue;
+        }
+
+        // Add the URL to our array
+        uploadedUrls.push(publicUrlData.publicUrl);
+      } catch (err) {
+        console.error("Unexpected error during upload:", err);
+        alert(`Unexpected error uploading file ${file.name}`);
+      }
+    }
+
+    return uploadedUrls;
+  };
+
+  // Modify your submitReport function
+  const submitReport = async () => {
+    if (!reportReason.trim()) {
+      alert("Alasan laporan tidak boleh kosong.");
+      return;
+    }
+
+    try {
+      // Upload any attached files
+      const uploadedUrls = await uploadReportFilesToSupabase(reportFiles);
+
+      // Update the session with report details and uploaded file URLs
+      const { error } = await supabase
+        .from("sesi")
+        .update({
+          status: "Bermasalah",
+          deksripsi_laporan: reportReason,
+          status_laporan: "Laporan Dikirim",
+          bukti_masalah: uploadedUrls, // Keep as array
+        })
+        .eq("id", currentSesi.id);
+
+      if (error) {
+        console.error("Error updating status:", {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        alert("Gagal melaporkan sesi: " + error.message);
+        return;
+      }
+
+      setCurrentSesi((prev) => ({
+        ...prev,
+        status: "Bermasalah",
+        deksripsi_laporan: reportReason,
+        status_laporan: "Laporan Dikirim",
+        bukti_masalah: uploadedUrls, // Keep as array, don't convert to string
+      }));
+      setShowReportPopup(false);
+      setReportReason("");
+      setReportFiles([]);
+      setReportFilePreviews([]);
+
+      alert("Laporan berhasil dikirim!");
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      alert("Terjadi kesalahan tak terduga.");
+    }
+  };
+
   const label =
     loggedInUser?.id === currentSesi.mentor_id ? "Mentee" : "Mentor";
 
   return (
     <div className="relative flex flex-col justify-center items-center min-w-[300px] bg-white border-1 rounded-lg shadow-lg p-6">
-      {loggedInUser?.id === currentSesi.mentee_id &&
-        currentSesi.status === "Selesai" && (
-          <div className="absolute top-4 right-4 flex gap-1 hover:cursor-pointer">
-            <div className="rounded-full rotate-180 bg-gray-200 px-1">
-              <i className="bi bi-info-circle-fill  text-red-500"></i>
-            </div>
-          </div>
-        )}
       <div className="gap-2 h-full flex flex-col justify-between">
         <h2 className="text-black text-lg font-bold mb-2">
           {" "}
@@ -273,6 +399,22 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         >
           {currentSesi.status}
         </span>
+
+        {/* Tombol Report */}
+        {(loggedInUser?.id === currentSesi.mentor_id || 
+          loggedInUser?.id === currentSesi.mentee_id) &&
+          ["Terkonfirmasi", "Dilaksanakan", "Selesai"].includes(currentSesi.status) && (
+            <button
+              onClick={() => setShowReportPopup(true)}
+              className="text-red-500 text-sm hover:underline hover:cursor-pointer flex items-center gap-1 justify-center"
+            >
+              <i className="bi bi-exclamation-triangle-fill"></i>
+              <p className="text-center">
+              Laporkan Masalah
+              </p>
+            </button>
+        )}
+        
         {/* Buttons for Mentor */}
         {loggedInUser?.id === currentSesi.mentor_id &&
           currentSesi.status === "Menunggu Konfirmasi" && (
@@ -431,6 +573,94 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Kirim Ulasan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Report Popup */}
+      {showReportPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h1 className="text-xl font-bold text-center mb-4 text-black">
+              Laporkan Masalah
+            </h1>
+            <p className="text-gray-600 text-sm mb-4">
+              Jelaskan masalah yang Anda alami dengan sesi ini. Tim kami akan segera meninjau laporan Anda.
+            </p>
+            
+            {/* Report reason textarea */}
+            <textarea
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              placeholder="Tuliskan masalah yang Anda alami dengan sesi ini..."
+              className="w-full p-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              rows={4}
+            />
+            
+            {/* File upload section */}
+            <div className="mt-4">
+              <label className="block text-gray-700 font-medium mb-2">Bukti Masalah (opsional)</label>
+              <div className="border border-gray-300 rounded-lg p-4 flex items-center justify-center bg-gray-50">
+                <input
+                  onChange={handleReportFileChange}
+                  type="file"
+                  name="bukti_masalah"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  id="upload-bukti"
+                />
+                <label
+                  htmlFor="upload-bukti"
+                  className="cursor-pointer flex flex-col items-center justify-center text-gray-300 hover:text-red-500 transition-colors"
+                >
+                  <i className="bi bi-image text-3xl"></i>
+                  <span className="mt-2 text-sm">Klik untuk mengunggah bukti (gambar)</span>
+                </label>
+              </div>
+            </div>
+            
+            {/* File previews */}
+            {reportFilePreviews.length > 0 && (
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                {reportFilePreviews.map((preview, index) => (
+                  <div key={index} className="relative h-24 border border-gray-300 rounded-lg overflow-hidden">
+                    <img 
+                      src={preview} 
+                      alt={`Preview ${index + 1}`} 
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => removeReportFile(index)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                    >
+                      <i className="bi bi-x-lg text-xs"></i>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Action buttons */}
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => {
+                  setShowReportPopup(false);
+                  setReportReason("");
+                  setReportFiles([]);
+                  setReportFilePreviews([]);
+                }}
+                className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={submitReport}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+              >
+                Laporkan
               </button>
             </div>
           </div>
