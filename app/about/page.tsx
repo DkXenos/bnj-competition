@@ -93,7 +93,7 @@ export default function AboutPage() {
       {/* This container holds the main content and provides scroll space */}
       <div
         ref={heroSectionRef} // Attach the ref to the hero section
-        className="relative min-h-screen flex items-center justify-center pt-20 px-6 overflow-hidden"
+        className="relative min-h-screen px-6 overflow-hidden"
       >
         {/* Decorative background elements */}
         <div className="absolute inset-0 w-full h-full">
@@ -102,14 +102,14 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-1 w-[35vw] max-w-[500px] h-auto absolute lg:-rotate-148 lg:-left-[15vw] lg:bottom-[30vh] z-9"
+            className="square-pair-1 w-[35vw] h-auto absolute lg:-rotate-148 lg:-left-[15vw] lg:bottom-[30vh] z-9"
           />
           <Image
             src="/square.svg"
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-2 w-[35vw] max-w-[500px] h-auto absolute lg:rotate-168 lg:-left-[10vw] lg:-bottom-[10vh] z-10"
+            className="square-pair-2 w-[35vw] h-auto absolute lg:rotate-168 lg:-left-[10vw] lg:-bottom-[10vh] z-10"
           />
           <svg
             ref={circleRef}
@@ -118,7 +118,7 @@ export default function AboutPage() {
             viewBox="0 0 1318 1278"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="w-[80vw] max-w-[1200px] h-auto absolute lg:left-[10vw] lg:-bottom-[50vh] z-8"
+            className="w-[80vw] h-auto absolute lg:left-[10vw] lg:-bottom-[50vh] z-8"
           >
             <circle
               cx="659"
@@ -146,7 +146,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-1 w-[35vw] max-w-[500px] h-auto absolute lg:rotate-168 lg:-right-[15vw] lg:bottom-[30vh] z-9"
+            className="square-pair-1 w-[35vw] h-auto absolute lg:rotate-168 lg:-right-[15vw] lg:bottom-[30vh] z-9"
           />
 
           <Image
@@ -154,7 +154,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-2 w-[35vw] max-w-[500px] h-auto absolute lg:-rotate-168 lg:-right-[10vw] lg:-bottom-[10vh] z-10"
+            className="square-pair-2 w-[35vw] h-auto absolute lg:-rotate-168 lg:-right-[10vw] lg:-bottom-[10vh] z-10"
           />
 
           <Image
@@ -162,35 +162,35 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-3 w-[35vw] max-w-[500px] h-auto absolute lg:rotate-158 lg:-right-[5vw] lg:-bottom-[50vh] z-9"
+            className="square-pair-3 w-[35vw] h-auto absolute lg:rotate-158 lg:-right-[5vw] lg:-bottom-[50vh] z-9"
           />
           <Image
             src="/square.svg"
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-3 w-[35vw] max-w-[500px] h-auto absolute lg:-rotate-158 lg:-left-[5vw] lg:-bottom-[50vh] z-9"
+            className="square-pair-3 w-[35vw] h-auto absolute lg:-rotate-158 lg:-left-[5vw] lg:-bottom-[50vh] z-9"
           />
           <Image
             src="/square.svg"
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-4 w-[35vw] max-w-[500px] h-auto absolute lg:-rotate-128 lg:-left-[10vw] lg:-bottom-[90vh] z-9"
+            className="square-pair-4 w-[35vw] h-auto absolute lg:-rotate-128 lg:-left-[10vw] lg:-bottom-[90vh] z-9"
           />
           <Image
             src="/square.svg"
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-4 w-[35vw] max-w-[500px] h-auto absolute lg:rotate-128 lg:-right-[10vw] lg:-bottom-[90vh] z-9"
+            className="square-pair-4 w-[35vw] h-auto absolute lg:rotate-128 lg:-right-[10vw] lg:-bottom-[90vh] z-9"
           />
         </div>
 
         {/* Centered Content with Glassmorphism */}
         <div
           ref={contentRef}
-          className="relative z-20 text-center bg-white/10 backdrop-blur-md rounded-xl p-8 md:p-12 border border-white/20 shadow-lg max-w-3xl"
+          className="absolute top-[55vh] left-1/2 w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 z-20 text-center bg-white/10 backdrop-blur-md rounded-xl p-8 md:p-12 border border-white/20 shadow-lg"
         >
           <h1 className="text-4xl font-bold text-white mb-6">
             Apa itu MentorPact?
