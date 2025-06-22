@@ -6,8 +6,40 @@ import { confirmSession } from "@/lib/sesi";
 import Link from "next/link";
 
 export default function JadwalCard({ sesi }: { sesi: ISesi }) {
+  const [currentSesi, setCurrentSesi] = useState(sesi);
   const [name, setName] = useState<string>("Loading...");
   const { loggedInUser } = useUser();
+
+  useEffect(() => {
+    const checkAndUpdateStatus = async () => {
+      // Only check status for confirmed sessions
+      if (currentSesi.status !== "Terkonfirmasi") return;
+
+      const now = new Date();
+      const jamMulai = new Date(currentSesi.jam_mulai);
+      const jamSelesai = new Date(currentSesi.jam_selesai);
+      let newStatus: ISesi["status"] | null = null;
+
+      if (now > jamSelesai) {
+        newStatus = "Selesai";
+      } else if (now >= jamMulai) {
+        newStatus = "Dilaksanakan";
+      }
+
+      if (newStatus) {
+        const { error } = await supabase
+          .from("sesi")
+          .update({ status: newStatus })
+          .eq("id", currentSesi.id);
+
+        if (!error) {
+          setCurrentSesi((prev) => ({ ...prev, status: newStatus! }));
+        }
+      }
+    };
+
+    checkAndUpdateStatus();
+  }, [currentSesi.id, currentSesi.status, currentSesi.jam_mulai, currentSesi.jam_selesai]);
 
   useEffect(() => {
     const fetchName = async () => {
@@ -16,10 +48,10 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
           .from("users")
           .select("username")
           .eq(
-            loggedInUser?.id === sesi.mentor_id ? "id" : "id",
-            loggedInUser?.id === sesi.mentor_id
-              ? sesi.mentee_id
-              : sesi.mentor_id
+            loggedInUser?.id === currentSesi.mentor_id ? "id" : "id",
+            loggedInUser?.id === currentSesi.mentor_id
+              ? currentSesi.mentee_id
+              : currentSesi.mentor_id
           )
           .single();
 
@@ -37,20 +69,19 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
     };
 
     fetchName();
-  }, [sesi.mentor_id, sesi.mentee_id, loggedInUser?.id]);
+  }, [currentSesi.mentor_id, currentSesi.mentee_id, loggedInUser?.id]);
 
   const handleAccept = async () => {
     try {
-      const result = await confirmSession(sesi.id);
+      const result = await confirmSession(currentSesi.id);
 
       if (!result.success) {
         alert(`Gagal mengonfirmasi sesi: ${result.error}`);
         return;
       }
 
-      alert(result.message); // "Sesi berhasil dikonfirmasi."
-      window.location.reload(); // Refresh the page to reflect changes
-      // Optional: Refresh data or update UI
+      alert(result.message);
+      setCurrentSesi((prev) => ({ ...prev, status: "Terkonfirmasi" }));
     } catch (error) {
       console.error("Unexpected error:", error);
       alert("Terjadi kesalahan saat mengonfirmasi sesi.");
@@ -62,7 +93,7 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
       const { error } = await supabase
         .from("sesi")
         .update({ status: "Ditolak" })
-        .eq("id", sesi.id);
+        .eq("id", currentSesi.id);
 
       if (error) {
         console.error("Error updating status:", error);
@@ -70,18 +101,18 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
       }
 
       alert("Sesi berhasil ditolak!");
-      window.location.reload(); // Refresh the page to reflect changes
+      setCurrentSesi((prev) => ({ ...prev, status: "Ditolak" }));
     } catch (error) {
       console.error("Unexpected error:", error);
     }
   };
 
-  const label = loggedInUser?.id === sesi.mentor_id ? "Mentee" : "Mentor";
+  const label = loggedInUser?.id === currentSesi.mentor_id ? "Mentee" : "Mentor";
 
   return (
     <div className="relative flex flex-col justify-center items-center min-w-[300px] bg-white border-1 rounded-lg shadow-lg p-6">
-      {loggedInUser?.id === sesi.mentee_id &&
-        sesi.status === "Terkonfirmasi" && (
+      {loggedInUser?.id === currentSesi.mentee_id &&
+        currentSesi.status === "Selesai" && (
           <div className="absolute top-4 right-4 flex gap-1 hover:cursor-pointer">
             <div className="rounded-full rotate-180 bg-gray-200 px-1">
               <i className="bi bi-info-circle-fill  text-red-500"></i>
@@ -95,8 +126,8 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         </h2>
         <h1 className="text-gray-600 mb-1">
           {(() => {
-            const mulai = new Date(sesi.jam_mulai);
-            const selesai = new Date(sesi.jam_selesai);
+            const mulai = new Date(currentSesi.jam_mulai);
+            const selesai = new Date(currentSesi.jam_selesai);
 
             // Format tanggal: Jumat, 20 Juni 2025
             const tanggal = mulai.toLocaleDateString("id-ID", {
@@ -126,14 +157,14 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
             );
           })()}
         </h1>
-        {loggedInUser?.id === sesi.mentee_id &&
+        {loggedInUser?.id === currentSesi.mentee_id &&
           (["Terkonfirmasi", "Selesai", "Dilaksanakan", "Bermasalah"].includes(
-            sesi.status
+            currentSesi.status
           ) ? (
             <div className="space-x-1">
               <i className="bi bi-link-45deg text-blue-500"></i>
               <Link
-                href={sesi.link}
+                href={currentSesi.link}
                 className="mb-1 text-center w-full text-blue-500 hover:cursor-pointer hover:underline"
               >
                 Link meeting
@@ -149,21 +180,21 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
           ))}
         <span
           className={`px-3 py-2 rounded-lg text-xs font-semibold ${
-            sesi.status === "Terkonfirmasi"
+            currentSesi.status === "Terkonfirmasi"
               ? "bg-green-100 text-green-700"
-              : sesi.status === "Ditolak"
+              : currentSesi.status === "Ditolak" || currentSesi.status === "Bermasalah"
               ? "bg-red-100 text-red-700"
-              : sesi.status === "Selesai" || sesi.status === "Bermasalah"
-              ? "bg-blue-100 text-blue-700"
+              : currentSesi.status === "Selesai"
+              ? "bg-green-100 text-green-700"
               : "bg-yellow-100 text-yellow-700"
           }`}
         >
-          {sesi.status}
+          {currentSesi.status}
         </span>
 
         {/* Buttons for Mentor */}
-        {loggedInUser?.id === sesi.mentor_id &&
-          sesi.status === "Menunggu Konfirmasi" && (
+        {loggedInUser?.id === currentSesi.mentor_id &&
+          currentSesi.status === "Menunggu Konfirmasi" && (
             <div className="flex w-full gap-2 mt-4">
               <button
                 className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
