@@ -33,7 +33,7 @@ export default function AboutPage() {
         ease: "none",
       });
 
-      // Animate the centered text content to fade in
+      // Animate the centered text content to fade 
       gsap.from(contentRef.current, {
         opacity: 0,
         y: 50,
