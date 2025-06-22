@@ -131,11 +131,11 @@ export async function UpdateTotalRating(mentor_id: number) {
   // Bulatkan ke bilangan bulat terdekat (≥ 0.5 dibulatkan ke atas, < 0.5 dibulatkan ke bawah)
   const roundedRating = Math.round(averageRating);
   
-  // Update mentor dengan nilai rata-rata yang telah dibulatkan
+  // PERBAIKAN: Gunakan user_id, bukan id, untuk mencari mentor
   const { error: updateError } = await supabase
     .from("mentors")
     .update({ total_rating: roundedRating })
-    .eq("id", mentor_id);
+    .eq("user_id", mentor_id); // Diubah dari .eq("id", mentor_id)
   
   if (updateError) {
     console.error("Error updating mentor rating:", updateError);
