@@ -4,8 +4,8 @@ import { IUser } from "@/types/user.md";
 import React, { useState, useEffect } from "react";
 import supabase from "@/lib/db";
 import { useUser } from "@/context/UserContext";
-import { CheckForFreeTrial } from "@/lib/sesi";
 import { ISesi } from "@/types/sesi.md";
+import * as transaction from "@/lib/transaction";
 
 export default function BookMentorButton({
   mentor,
@@ -21,6 +21,7 @@ export default function BookMentorButton({
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [isEligibleForFreeTrial, setIsEligibleForFreeTrial] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false); // State for payment processing
   const { loggedInUser } = useUser();
 
   useEffect(() => {
@@ -49,22 +50,24 @@ export default function BookMentorButton({
 
   useEffect(() => {
     const checkFreeTrial = async () => {
-      if (
-        typeof mentor.user.id === "number" &&
-        typeof loggedInUser?.id === "number"
-      ) {
-        const freeTrialStatus = await CheckForFreeTrial(
-          mentor.user.id,
-          loggedInUser.id
+      if (!loggedInUser?.id) return;
+
+      try {
+        // Check if user is eligible for free trial with this specific mentor
+        const isEligible = await CheckForFreeTrial(
+          mentor.id, // Use mentor.id, not mentor.user.id
+          Number(loggedInUser.id)
         );
-        // User is eligible for a free trial if they have no prior session (status is null)
-        if (freeTrialStatus === null) {
-          setIsEligibleForFreeTrial(true);
-        }
+
+        setIsEligibleForFreeTrial(isEligible);
+      } catch (error) {
+        console.error("Error checking free trial eligibility:", error);
+        setIsEligibleForFreeTrial(false);
       }
     };
+
     checkFreeTrial();
-  }, [mentor.user.id, loggedInUser?.id]);
+  }, [mentor.id, loggedInUser?.id]);
 
   const handleClick = () => {
     if (!loggedInUser) {
@@ -91,41 +94,88 @@ export default function BookMentorButton({
     }
 
     try {
-      // Create a date object from the user's selection in their local timezone.
-      const localDateTime = new Date(`${selectedDate}T${selectedTime}:00:00`);
+      setProcessingPayment(true);
 
-      // Check if the created date is valid
+      // Create date object from selection
+      const localDateTime = new Date(`${selectedDate}T${selectedTime}:00:00`);
       if (isNaN(localDateTime.getTime())) {
         alert("Tanggal atau jam yang dipilih tidak valid.");
         return;
       }
 
-      // Convert to ISO string (UTC) for storage in the database.
+      // Convert to ISO string for database
       const jamMulai = localDateTime.toISOString();
       const jamSelesai = new Date(
         localDateTime.getTime() + 60 * 60 * 1000
       ).toISOString(); // Add 1 hour
 
-      const { error } = await supabase.from("sesi").insert([
-        {
-          mentor_id: mentor.user.id,
-          mentee_id: loggedInUser?.id,
-          jam_mulai: jamMulai,
-          jam_selesai: jamSelesai,
-          status: "Menunggu Konfirmasi",
-          isFreeTrial: isEligibleForFreeTrial, // Set based on eligibility
-        },
-      ]);
+      if (isEligibleForFreeTrial) {
+        // For free trial, just create the session
+        try {
+          const { error } = await supabase.from("sesi").insert([
+            {
+              mentor_id: mentor.id,
+              mentee_id: loggedInUser?.id,
+              jam_mulai: jamMulai,
+              jam_selesai: jamSelesai,
+              status: "Menunggu Konfirmasi",
+              isFreeTrial: true,
+            },
+          ]);
 
-      if (error) {
-        console.error("Error inserting jadwal:", error);
-        return;
+          if (error) {
+            console.error("Error inserting free trial session:", error.message, error.details);
+            alert(`Gagal membuat sesi gratis: ${error.message}`);
+            return;
+          }
+
+          alert("Sesi percobaan gratis berhasil dijadwalkan!");
+        } catch (errorObj) {
+          console.error("Unexpected exception:", errorObj);
+          alert("Terjadi kesalahan saat membuat sesi gratis.");
+          return;
+        }
+      } else {
+        // For paid sessions, use buyMentoringSession
+        try {
+          // First process the payment
+          const result = await transaction.BuyMentoringSession(
+            Number(loggedInUser?.id),
+            mentor.harga_per_sesi
+          );
+
+          // Then create the session record
+          const { error } = await supabase.from("sesi").insert([
+            {
+              mentor_id: mentor.id,
+              mentee_id: loggedInUser?.id,
+              jam_mulai: jamMulai,
+              jam_selesai: jamSelesai,
+              status: "Menunggu Konfirmasi",
+              isFreeTrial: false,
+            },
+          ]);
+
+          if (error) {
+            console.error("Error creating paid session:", error.message, error.details);
+            alert(`Pembayaran berhasil, tetapi gagal membuat jadwal: ${error.message}`);
+            return;
+          }
+
+          alert("Pembelian sesi berhasil! Jadwal telah dibuat.");
+        } catch (errorObj) {
+          console.error("Unexpected exception:", errorObj);
+          alert("Terjadi kesalahan saat membuat sesi berbayar.");
+          return;
+        }
       }
 
-      alert("Jadwal berhasil dipilih!");
       handleSchedulePanelClose();
     } catch (error) {
-      console.error("Unexpected error:", error);
+      console.error("Unexpected error during session booking:", error);
+      alert("Terjadi kesalahan saat membuat sesi. Silakan coba lagi.");
+    } finally {
+      setProcessingPayment(false);
     }
   };
 
@@ -145,15 +195,15 @@ export default function BookMentorButton({
       >
         {hovered ? (
           <>
-          {isEligibleForFreeTrial ? (
-            <>
-              <i className="bi bi-wallet2"></i> Gratis
-            </>
-          ) : (
-            <>
-              <i className="bi bi-credit-card"></i> Rp{mentor.harga_per_sesi}
-            </>
-          )}
+            {isEligibleForFreeTrial ? (
+              <>
+                <i className="bi bi-wallet2"></i> Gratis
+              </>
+            ) : (
+              <>
+                <i className="bi bi-credit-card"></i> Rp{mentor.harga_per_sesi}
+              </>
+            )}
           </>
         ) : (
           <>
@@ -166,7 +216,9 @@ export default function BookMentorButton({
       {showLoginPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-lg">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h1 className="text-xl font-bold text-center mb-4 text-black">Login Diperlukan</h1>
+            <h1 className="text-xl font-bold text-center mb-4 text-black">
+              Login Diperlukan
+            </h1>
             <p className="text-gray-600 text-center mb-4">
               Anda harus login terlebih dahulu untuk membuat jadwal dengan mentor.
             </p>
@@ -309,3 +361,29 @@ export default function BookMentorButton({
     </>
   );
 }
+
+// Update the CheckForFreeTrial function in lib/sesi.ts
+export async function CheckForFreeTrial(mentor_id: number, user_id: number) {
+  try {
+    // Check if user has already used a free trial with this specific mentor
+    const { data, error } = await supabase
+      .from("sesi")
+      .select("id")
+      .eq("mentor_id", mentor_id)
+      .eq("mentee_id", user_id)
+      .eq("isFreeTrial", true)
+      .limit(1);
+
+    if (error) {
+      console.error("Error checking free trial:", error);
+      return false; // If error, assume not eligible
+    }
+
+    // Return true (eligible) only if no free trial sessions exist with this mentor
+    return data.length === 0;
+  } catch (error) {
+    console.error("Unexpected error in CheckForFreeTrial:", error);
+    return false;
+  }
+}
+

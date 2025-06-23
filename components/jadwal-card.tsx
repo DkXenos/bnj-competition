@@ -23,6 +23,7 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
   const [reportReason, setReportReason] = useState("");
   const [reportFiles, setReportFiles] = useState<File[]>([]);
   const [reportFilePreviews, setReportFilePreviews] = useState<string[]>([]);
+  const [isUserMentor, setIsUserMentor] = useState(false);
 
   useEffect(() => {
     const checkAndUpdateStatus = async () => {
@@ -63,15 +64,40 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
   useEffect(() => {
     const fetchName = async () => {
       try {
+        // First check if the logged-in user is the mentor for this session
+        const { data: mentorData, error: mentorError } = await supabase
+          .from("mentors")
+          .select("user_id")
+          .eq("id", currentSesi.mentor_id)
+          .single();
+        
+        if (mentorError) {
+          console.error("Error fetching mentor data:", mentorError);
+          setName("Unknown");
+          return;
+        }
+        
+        // Determine if the logged-in user is the mentor
+        const isUserMentor = mentorData.user_id === loggedInUser?.id;
+        
+        // Now fetch the name of the other person
+        let targetUserId;
+        if (isUserMentor) {
+          // User is the mentor, show mentee name
+          targetUserId = currentSesi.mentee_id;
+          
+          // This will be displayed as "Mentee: [name]"
+        } else {
+          // User is the mentee, show mentor name
+          targetUserId = mentorData.user_id;
+          
+          // This will be displayed as "Mentor: [name]"
+        }
+        
         const { data, error } = await supabase
           .from("users")
           .select("username")
-          .eq(
-            loggedInUser?.id === currentSesi.mentor_id ? "id" : "id",
-            loggedInUser?.id === currentSesi.mentor_id
-              ? currentSesi.mentee_id
-              : currentSesi.mentor_id
-          )
+          .eq("id", targetUserId)
           .single();
 
         if (error) {
@@ -81,6 +107,9 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         }
 
         setName(data?.username || "Unknown");
+        
+        // Set a state to track if user is mentor (for conditional rendering)
+        setIsUserMentor(isUserMentor);
       } catch (error) {
         console.error("Unexpected error:", error);
         setName("Unknown");
@@ -288,8 +317,7 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
     }
   };
 
-  const label =
-    loggedInUser?.id === currentSesi.mentor_id ? "Mentee" : "Mentor";
+  const label = isUserMentor ? "Mentee" : "Mentor";
 
   return (
     <div className="relative flex flex-col justify-center items-center min-w-[300px] bg-white border-1 rounded-lg shadow-lg p-6">
@@ -413,7 +441,7 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         {/* Tombol Report */}
         {(loggedInUser?.id === currentSesi.mentor_id || 
           loggedInUser?.id === currentSesi.mentee_id) &&
-          ["Terkonfirmasi", "Dilaksanakan", "Selesai"].includes(currentSesi.status) && (
+          [ "Dilaksanakan", "Selesai"].includes(currentSesi.status) && (
             <button
               onClick={() => setShowReportPopup(true)}
               className="text-red-500 text-sm hover:underline hover:cursor-pointer flex items-center gap-1 justify-center"
@@ -426,23 +454,22 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         )}
         
         {/* Buttons for Mentor */}
-        {loggedInUser?.id === currentSesi.mentor_id &&
-          currentSesi.status === "Menunggu Konfirmasi" && (
-            <div className="flex w-full gap-2 mt-4">
-              <button
-                className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                onClick={handleAccept}
-              >
-                Terima
-              </button>
-              <button
-                className="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                onClick={handleReject}
-              >
-                Tolak
-              </button>
-            </div>
-          )}
+        {isUserMentor && currentSesi.status === "Menunggu Konfirmasi" && (
+          <div className="flex w-full gap-2 mt-4">
+            <button
+              className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              onClick={handleAccept}
+            >
+              Terima
+            </button>
+            <button
+              className="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              onClick={handleReject}
+            >
+              Tolak
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Acceptance Confirmation Popup */}

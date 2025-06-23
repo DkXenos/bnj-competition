@@ -74,18 +74,43 @@ export default function UserDashboard() {
     const fetchJadwal = async () => {
       if (!loggedInUser) return;
       setLoading(true);
-      const { data, error } = await supabase
-        .from("sesi")
-        .select("*")
-        .or(`mentee_id.eq.${loggedInUser.id},mentor_id.eq.${loggedInUser.id}`);
-      if (error) {
-        console.error("Error fetching jadwal:", error);
+      
+      try {
+        // First check if this user is a mentor
+        const { data: mentorData } = await supabase
+          .from("mentors")
+          .select("id")
+          .eq("user_id", loggedInUser.id)
+          .maybeSingle();
+          
+        const mentorId = mentorData?.id;
+        
+        // Construct query based on whether user is a mentor or not
+        let query = supabase.from("sesi").select("*");
+        
+        if (mentorId) {
+          // User is a mentor, find all sessions where they're the mentor OR mentee
+          query = query.or(`mentee_id.eq.${loggedInUser.id},mentor_id.eq.${mentorId}`);
+        } else {
+          // User is only a mentee
+          query = query.eq("mentee_id", loggedInUser.id);
+        }
+        
+        const { data, error } = await query;
+        
+        if (error) {
+          console.error("Error fetching jadwal:", error);
+          setLoading(false);
+          return;
+        }
+        
+        setJadwal(data || []);
+        setFilteredJadwal(data || []);
+      } catch (error) {
+        console.error("Unexpected error:", error);
+      } finally {
         setLoading(false);
-        return;
       }
-      setJadwal(data || []);
-      setFilteredJadwal(data || []);
-      setLoading(false);
     };
 
     const fetchMentorStatus = async () => {

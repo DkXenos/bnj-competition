@@ -110,7 +110,7 @@ function AdminMentorConfirmationContent() {
     try {
       const { error } = await supabase
         .from("mentors")
-        .update({ alasan_ditolak: rejectReason })
+        .update({ alasan_ditolak: rejectReason, is_confirmed: false })
         .eq("id", mentor.id);
 
       if (error) {

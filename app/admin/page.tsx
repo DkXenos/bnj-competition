@@ -9,7 +9,7 @@ interface IMentor {
   deskripsi: string;
   link_video: string;
   harga_per_sesi: number;
-  is_confirmed: boolean;
+  is_confirmed: boolean | null;
   alasan_ditolak: string | null;
   foto_ktp: string; // URL for KTP image
   foto_kk: string; // URL for KK image
@@ -30,7 +30,7 @@ export default function AdminPage() {
         const { data: mentors, error: mentorError } = await supabase
           .from("mentors")
           .select("*")
-          .eq("is_confirmed", false);
+          .is("is_confirmed", null)
 
         if (mentorError) {
           console.error("Error fetching unconfirmed mentors:", mentorError);

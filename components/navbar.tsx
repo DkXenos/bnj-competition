@@ -78,27 +78,29 @@ export default function Navbar() {
 
       // Then fetch user data for each mentor and filter by username
       const mentorsWithUsers = await Promise.all(
-        mentors.map(async (mentor) => {
-          const { data: userData, error: userError } = await supabase
-            .from("users")
-            .select("*")
-            .eq("id", mentor.user_id)
-            .single();
+        mentors
+          .filter((mentor) => mentor.is_confirmed === true)
+          .map(async (mentor) => {
+        const { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", mentor.user_id)
+          .single();
 
-          if (userError || !userData) {
-            console.error(
-              "Error fetching user for mentor:",
-              mentor.id,
-              userError
-            );
-            return null;
-          }
+        if (userError || !userData) {
+          console.error(
+            "Error fetching user for mentor:",
+            mentor.id,
+            userError
+          );
+          return null;
+        }
 
-          return {
-            ...mentor,
-            user: userData,
-          };
-        })
+        return {
+          ...mentor,
+          user: userData,
+        };
+          })
       );
 
       // Filter out null results and search by username

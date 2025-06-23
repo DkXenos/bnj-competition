@@ -85,34 +85,89 @@ export default function RegisterMentorPage() {
     setLoading(true);
 
     try {
+      // Define a consistent result type
+      type MentorResult = {
+        success: boolean;
+        error?: string;
+        isUpdate: boolean;
+      };
+
+      // Check if user already has a mentor record
+      const { data: existingMentor, error: checkError } = await supabase
+        .from("mentors")
+        .select("id")
+        .eq("user_id", Number(loggedInUser?.id))
+        .single();
+      
+      if (checkError && checkError.code !== "PGRST116") { // Not found error is expected
+        console.error("Error checking existing mentor record:", checkError);
+        alert("Terjadi kesalahan saat memeriksa data mentor.");
+        setLoading(false);
+        return;
+      }
+
       // Upload files to Supabase
       const fotoKtpPath = `ktp/${Date.now()}-${form.foto_ktp?.name}`;
       const fotoKkPath = `kk/${Date.now()}-${form.foto_kk?.name}`;
       const fotoKtpUrl = await uploadFileToSupabase(form.foto_ktp!, fotoKtpPath);
       const fotoKkUrl = await uploadFileToSupabase(form.foto_kk!, fotoKkPath);
 
-      // Register mentor with uploaded file URLs
-      const { success, error } = await registerMentor({
-        userId: Number(loggedInUser?.id),
-        deskripsi: form.deskripsi,
-        link_video: form.link_video,
-        harga_per_sesi: parseInt(form.harga_per_sesi, 10),
-        foto_ktp: fotoKtpUrl,
-        foto_kk: fotoKkUrl,
-      });
+      let result: MentorResult;
+      
+      if (existingMentor) {
+        // Update existing record
+        const { error: updateError } = await supabase
+          .from("mentors")
+          .update({
+            deskripsi: form.deskripsi,
+            link_video: form.link_video,
+            harga_per_sesi: parseInt(form.harga_per_sesi, 10),
+            foto_ktp: fotoKtpUrl,
+            foto_kk: fotoKkUrl,
+            is_confirmed: false, // Reset confirmation status when updating
+            alasan_ditolak: null // Clear any previous rejection reason
+          })
+          .eq("user_id", Number(loggedInUser?.id))
+          .select();
+        
+        result = {
+          success: !updateError,
+          error: updateError?.message,
+          isUpdate: true
+        };
+      } else {
+        // Insert new record
+        const registerResult = await registerMentor({
+          userId: Number(loggedInUser?.id),
+          deskripsi: form.deskripsi,
+          link_video: form.link_video,
+          harga_per_sesi: parseInt(form.harga_per_sesi, 10),
+          foto_ktp: fotoKtpUrl,
+          foto_kk: fotoKkUrl,
+        });
+        result = {
+          success: registerResult.success,
+          error: registerResult.error,
+          isUpdate: false
+        };
+      }
 
-      if (!success) {
-        console.error("Mentor registration failed:", error);
-        alert("Gagal mendaftar sebagai mentor. Silakan coba lagi.");
+      if (!result.success) {
+        console.error(result.isUpdate ? "Mentor update failed:" : "Mentor registration failed:", result.error);
+        alert(result.isUpdate ? 
+          "Gagal memperbarui data mentor. Silakan coba lagi." : 
+          "Gagal mendaftar sebagai mentor. Silakan coba lagi.");
         setLoading(false);
         return;
       }
 
-      alert("Pendaftaran mentor berhasil!");
-      window.location.href = "/user_dashboard"; // Redirect to user dashboard after successful registration
+      alert(result.isUpdate ? 
+        "Data mentor berhasil diperbarui!" : 
+        "Pendaftaran mentor berhasil!");
+      window.location.href = "/user_dashboard"; // Redirect to user dashboard after successful operation
     } catch (error) {
-      console.error("Error during mentor registration:", error);
-      alert("Terjadi kesalahan saat mendaftar sebagai mentor. Silakan coba lagi.");
+      console.error("Error during mentor registration/update:", error);
+      alert("Terjadi kesalahan saat mengelola data mentor. Silakan coba lagi.");
     } finally {
       setLoading(false);
     }
