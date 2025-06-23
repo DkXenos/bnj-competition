@@ -50,6 +50,10 @@ export default function DompetPage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-sky-100">
         <div className="min-h-[0vh] md:min-h-[6vh]"></div>
         <div className="flex flex-col gap-4 bg-white p-2 sm:p-4 w-[70%] min-h-[35rem] rounded-lg shadow-lg">
+            <Link href="/user_dashboard" className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors mb-2">
+                <i className="bi bi-arrow-left"></i>
+                <span>Kembali ke Dashboard</span>
+            </Link>
             <div className="flex gap-2 sm:gap-4 items-center">
                 <i className="text-2xl sm:text-3xl lg:text-4xl text-gray-600 text-center bi bi-wallet2"></i>
                 <h1 className="text-black text-xl font-bold">Dompetku</h1>

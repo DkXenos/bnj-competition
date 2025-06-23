@@ -31,20 +31,15 @@ export default function AboutPage() {
         rotation: 180,
         scale: 1.8,
         ease: "none",
-      });
-
-      // Animate the centered text content to fade 
-      gsap.from(contentRef.current, {
-        opacity: 0,
-        y: 50,
-        duration: 1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: contentRef.current,
-          start: "top 80%",
-          toggleActions: "play none none reverse",
+      }).to(
+        contentRef.current,
+        {
+          yPercent: -150,
+          opacity: 0,
+          ease: "power1.in",
         },
-      });
+        0
+      );
 
       // Animate squares to fall in a paired cascade
       const squareTl = gsap.timeline({
@@ -190,7 +185,7 @@ export default function AboutPage() {
         {/* Centered Content with Glassmorphism */}
         <div
           ref={contentRef}
-          className="absolute top-[55vh] left-1/2 w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 z-20 text-center bg-white/10 backdrop-blur-md rounded-xl p-8 md:p-12 border border-white/20 shadow-lg"
+          className="absolute top-[55vh] left-1/2 w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 z-20 text-center bg-white/25 backdrop-blur-md rounded-xl p-8 md:p-12 border border-white/20 shadow-lg"
         >
           <h1 className="text-4xl font-bold text-white mb-6">
             Apa itu MentorPact?
@@ -219,7 +214,7 @@ export default function AboutPage() {
             Kenapa MentorPact?
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl">
-            Kami menawarkan bimbingan personal dari mentor ahli, penjadwalan yang fleksibel, dan wawasan dunia nyata untuk mempercepat pertumbuhan karir Anda.
+            Kami menawarkan bimbingan personal dari mentor ahli, penjadwalan yang fleksibel, dan wawasan dunia nyata untuk mempercepat
           </p>
         </div>
       </div>

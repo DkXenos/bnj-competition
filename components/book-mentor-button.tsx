@@ -100,6 +100,7 @@ export default function BookMentorButton({
       const localDateTime = new Date(`${selectedDate}T${selectedTime}:00:00`);
       if (isNaN(localDateTime.getTime())) {
         alert("Tanggal atau jam yang dipilih tidak valid.");
+        setProcessingPayment(false);
         return;
       }
 
@@ -143,6 +144,11 @@ export default function BookMentorButton({
             Number(loggedInUser?.id),
             mentor.harga_per_sesi
           );
+
+          if (!result) {
+            // This handles cases like insufficient funds where BuyMentoringSession returns undefined.
+            return;
+          }
 
           // Then create the session record
           const { error } = await supabase.from("sesi").insert([
@@ -345,14 +351,18 @@ export default function BookMentorButton({
               </button>
               <button
                 className={`px-4 py-2 ${
-                  selectedDate && selectedTime
+                  selectedDate && selectedTime && !processingPayment
                     ? "bg-sky-500 text-white hover:bg-sky-600"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 } rounded`}
                 onClick={handleBayar}
-                disabled={!selectedDate || !selectedTime}
+                disabled={!selectedDate || !selectedTime || processingPayment}
               >
-                {isEligibleForFreeTrial ? "Ambil Sesi Gratis" : "Bayar"}
+                {processingPayment
+                  ? "Memproses..."
+                  : isEligibleForFreeTrial
+                  ? "Ambil Sesi Gratis"
+                  : "Bayar"}
               </button>
             </div>
           </div>

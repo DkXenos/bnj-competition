@@ -8,25 +8,26 @@ export async function loginUser(usernameOrEmail: string, password: string) {
     .or(`email.eq.${usernameOrEmail},username.eq.${usernameOrEmail}`)
     .single();
 
-  if (
-    error ||
-    !user ||
-    user.password !== password ||
-    (user.email !== usernameOrEmail && user.username !== usernameOrEmail)
-  ) {
+  if (error || !user) {
     return {
       success: false,
       user: null,
-      error: "Invalid username/email or password",
+      error: "Pengguna dengan username atau email tersebut tidak ditemukan.",
+    };
+  }
+
+  if (user.password !== password) {
+    return {
+      success: false,
+      user: null,
+      error: "Password yang Anda masukkan salah.",
     };
   }
 
   // Save the logged-in user to local storage
   localStorage.setItem("loggedInUser", JSON.stringify(user));
-  return { success: true, user };
+  return { success: true, user, error: null };
 }
-
-
 
 export async function registerUser(form: { username: string; email: string; no_telpon: string; password: string; }) {
     const now = new Date();

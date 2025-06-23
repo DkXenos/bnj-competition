@@ -16,6 +16,8 @@ const sampleUsers: IUser[] = [
 		isMentor: true,
 		profile_image: "/mentor-1.jpg", // Example of a user with a profile image
 		isAdmin: false, // Assuming this field is part of IUser
+		saldo: 0,
+		saldo_ditahan: 0,
 	},
 	{
 		id: 2,
@@ -27,17 +29,21 @@ const sampleUsers: IUser[] = [
 		isMentor: true,
 		profile_image: "/mentor-2.jpg", // Example of a user with a profile image
 		isAdmin: false, // Assuming this field is part of IUser
+		saldo: 0,
+		saldo_ditahan: 0,
 	},
 	{
 		id: 3,
 		username: "Tjoh Anna San",
-		email: "Tjoh@gmail.com",
+		email: "tjoh@gmail.com",
 		no_telpon: "+1234567892",
 		password: "",
 		tanggal_join: "2024-01-17T09:15:00Z",
 		isMentor: true,
 		profile_image: null, // Example of a user without a profile image
 		isAdmin: false, // Assuming this field is part of IUser
+		saldo: 0,
+		saldo_ditahan: 0,
 	},
 ];
 

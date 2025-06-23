@@ -186,7 +186,7 @@ export default function MentorSection() {
           return;
         }
 
-        setMentors(mentorData.slice(0, 3)); // Limit to 3 mentors
+        setMentors(mentorData.slice(0, 4)); // Limit to 4 mentors
       } catch (error) {
         console.error("Unexpected error fetching mentors:", error);
       } finally {
@@ -293,8 +293,8 @@ export default function MentorSection() {
               Sedang memuat mentor kami, harap tunggu sebentar...
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {[1, 2, 3].map((i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
                 className="bg-gray-200 animate-pulse rounded-lg h-96"
@@ -321,7 +321,7 @@ export default function MentorSection() {
         </div>
 
         {/* Mentor Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {mentors.map((mentor, index) => (
             <MentorCard key={mentor.id} mentor={mentor} index={index} />
           ))}
@@ -341,5 +341,3 @@ export default function MentorSection() {
     </div>
   );
 }
-
-
