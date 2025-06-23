@@ -8,5 +8,7 @@ type IUser = {
     isMentor: boolean;
     profile_image: string | null;
     isAdmin: boolean;
+    saldo : number;
+    saldo_ditahan: number
 };
 export type { IUser };

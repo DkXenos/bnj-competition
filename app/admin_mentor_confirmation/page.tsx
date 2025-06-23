@@ -97,6 +97,7 @@ function AdminMentorConfirmationContent() {
 
       alert(`Mentor "${mentor.username}" confirmed successfully!`);
       setShowConfirmPanel(false);
+      window.location.href = "/admin";
     } catch (error) {
       console.error("Unexpected error confirming mentor:", error);
       alert("An error occurred while confirming the mentor.");
@@ -122,6 +123,7 @@ function AdminMentorConfirmationContent() {
       );
       setShowRejectPanel(false);
       setRejectReason("");
+      window.location.href = "/admin";
     } catch (error) {
       console.error("Unexpected error rejecting mentor:", error);
       alert("An error occurred while rejecting the mentor.");

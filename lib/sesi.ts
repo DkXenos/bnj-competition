@@ -118,6 +118,25 @@ export async function SubmitReview(
   }
 }
 
+export async function GetUserTotalSesi(userId: number) {
+  if (!userId || isNaN(userId)) {
+    throw new Error("Invalid user ID");
+  }
+  const { data, error } = await supabase
+    .from("sesi")
+    .select("*")
+    .eq("mentee_id", userId);
+
+  if (error) {
+    console.error("Error fetching sesi:", error);
+    throw error;
+  }
+
+  const totalSesi = data ? data.length : 0;
+  return totalSesi;
+}
+
+
 export async function UpdateTotalRating(mentor_id: number) {
   const { data, error } = await supabase
     .from("sesi")

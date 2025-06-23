@@ -391,7 +391,7 @@ export default function Navbar() {
                     </Link>
                     <Link href="/all_chats_page" className="block">
                       <div className="hover:bg-blue-50 w-full text-black text-md p-2 text-center transition-colors duration-200 hover:text-blue-700">
-                        Chats
+                        Pesan
                       </div>
                     </Link>
                     <LogoutButton />
@@ -520,7 +520,7 @@ export default function Navbar() {
                     className="block py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 rounded-lg"
                     onClick={() => setMobileMenuVisible(false)}
                   >
-                    Chats
+                    Pesan
                   </Link>
                   <div className="py-2">
                     <LogoutButton />

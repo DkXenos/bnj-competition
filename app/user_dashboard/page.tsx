@@ -39,6 +39,10 @@ export default function UserDashboard() {
     alasan_ditolak: string | null;
   }>({ is_confirmed: null, alasan_ditolak: null });
 
+  // State for total sesi
+  const [totalSesi, setTotalSesi] = useState<number>(0);
+  const [uniqueMentorCount, setUniqueMentorCount] = useState<number>(0);
+
   // --- Effect for device detection ---
   useEffect(() => {
     const checkIsMobile = () => {
@@ -86,30 +90,95 @@ export default function UserDashboard() {
 
     const fetchMentorStatus = async () => {
       if (!loggedInUser) return;
-      const { data, error } = await supabase
+      const { data: isUserInMentorTable, error: mentorError } = await supabase
         .from("mentors")
-        .select("is_confirmed, alasan_ditolak")
-        .eq("user_id", loggedInUser.id)
-        .single();
-      if (error) {
-        console.error("Error fetching mentor status:", error);
+        .select("*")
+        .eq("user_id", Number(loggedInUser.id));
+
+      if (mentorError) {
+        console.error("Error checking mentor status:", mentorError);
         return;
       }
-      setMentorStatus({
-        is_confirmed: data?.is_confirmed ?? null,
-        alasan_ditolak: data?.alasan_ditolak ?? null,
-      });
+
+      if (isUserInMentorTable) {
+        const { data, error } = await supabase
+          .from("mentors")
+          .select("is_confirmed, alasan_ditolak")
+          .eq("user_id", loggedInUser.id)
+          .single();
+        if (error) {
+          console.error("Error fetching mentor status:", error);
+          return;
+        }
+
+        setMentorStatus({
+          is_confirmed: data?.is_confirmed,
+          alasan_ditolak: data?.alasan_ditolak,
+        });
+      }
+    };
+
+    const fetchTotalSesi = async () => {
+      if (!loggedInUser) return;
+
+      try {
+        // Count all sessions where the user is either a mentor or mentee
+        const { data, error } = await supabase
+          .from("sesi")
+          .select("id")
+          .or(`mentee_id.eq.${loggedInUser.id},mentor_id.eq.${loggedInUser.id}`);
+
+        if (error) {
+          console.error("Error fetching total sesi:", error);
+          return;
+        }
+
+        setTotalSesi(data?.length || 0);
+      } catch (error) {
+        console.error("Unexpected error fetching total sessions:", error);
+      }
+    };
+
+    const fetchUniqueMentorCount = async () => {
+      if (!loggedInUser) return;
+
+      try {
+        // Get all sessions where the user is a mentee
+        const { data, error } = await supabase
+          .from("sesi")
+          .select("mentor_id")
+          .eq("mentee_id", loggedInUser.id);
+
+        if (error) {
+          console.error("Error fetching mentor count:", error);
+          return;
+        }
+
+        // Extract unique mentor IDs
+        const uniqueMentorIds = new Set(data.map(session => session.mentor_id));
+        setUniqueMentorCount(uniqueMentorIds.size);
+      } catch (error) {
+        console.error("Unexpected error fetching unique mentors:", error);
+      }
     };
 
     fetchUserProfile();
     fetchJadwal();
     fetchMentorStatus();
+    fetchTotalSesi();
+    fetchUniqueMentorCount();
   }, [loggedInUser?.id, setLoggedInUser]);
 
   // --- Auto-scrolling logic for Desktop ---
   const isPaused = isHovering || isInteracting;
   useEffect(() => {
-    if (isMobile || isPaused || loading || !scrollContainerRef.current || filteredJadwal.length < 4) {
+    if (
+      isMobile ||
+      isPaused ||
+      loading ||
+      !scrollContainerRef.current ||
+      filteredJadwal.length < 4
+    ) {
       return;
     }
     const container = scrollContainerRef.current;
@@ -130,8 +199,10 @@ export default function UserDashboard() {
       setFilteredJadwal(jadwal);
     } else {
       const filtered = jadwal.filter((sesi) => {
-        if (filters.terkonfirmasi && sesi.status === "Terkonfirmasi") return true;
-        if (filters.menungguKonfirmasi && sesi.status === "Menunggu Konfirmasi") return true;
+        if (filters.terkonfirmasi && sesi.status === "Terkonfirmasi")
+          return true;
+        if (filters.menungguKonfirmasi && sesi.status === "Menunggu Konfirmasi")
+          return true;
         if (filters.ditolak && sesi.status === "Ditolak") return true;
         return false;
       });
@@ -159,7 +230,8 @@ export default function UserDashboard() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentJadwal = filteredJadwal.slice(startIndex, endIndex);
-  const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const goToNextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   return (
@@ -175,7 +247,7 @@ export default function UserDashboard() {
                 width={500}
                 height={500}
                 loading="lazy"
-                className="w-40 h-40 border-2 border-gray-300 shadow-lg rounded-full object-cover aspect-square"
+                className="w-30 h-30 md:w-40 md:h-40 border-2 border-gray-300 shadow-lg rounded-full object-cover aspect-square"
               />
               <div className="w-fit flex flex-col gap-2">
                 <h1 className="text-lg text-center xl:text-start sm:text-xl lg:text-2xl font-bold text-black mt-2">
@@ -190,26 +262,43 @@ export default function UserDashboard() {
                 <p className="text-sm text-center xl:text-start sm:text-base lg:text-lg text-gray-600">
                   No Telepon : {loggedInUser?.no_telpon || "Tidak tersedia"}
                 </p>
-                <Link href="/edit_profile_page" className="text-blue-500 hover:underline text-center xl:text-start">
+                <Link
+                  href="/edit_profile_page"
+                  className="text-blue-500 hover:underline text-center xl:text-start"
+                >
                   Edit profile
                 </Link>
               </div>
             </div>
             <div className="w-full h-full grid grid-cols-1 md:grid-cols-3 gap-2">
-              <div className="bg-gray-100 min-h-[10rem] justify-between p-4 flex flex-col rounded-lg shadow-md">
-                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">Total Saldo</h1>
+              <Link href={"/dompet_page"}>
+              <div className="bg-gray-100 hover:bg-gray-200 min-h-[10rem] justify-between p-4 flex flex-col rounded-lg shadow-md">
+                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">
+                  Total Saldo
+                </h1>
                 <i className="text-2xl sm:text-3xl lg:text-4xl text-gray-600 text-center bi bi-wallet2"></i>
-                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">Rp.20,000</h1>
+                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">
+                  Rp.{loggedInUser?.saldo}
+                </h1>
               </div>
-              <div className="bg-gray-100 min-h-[10rem] justify-between p-4 flex flex-col rounded-lg shadow-md">
-                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">Total Sesi</h1>
+              </Link>
+              <div className="bg-gray-100 hover:bg-gray-200 min-h-[10rem] justify-between p-4 flex flex-col rounded-lg shadow-md">
+                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">
+                  Total Sesi
+                </h1>
                 <i className="text-2xl sm:text-3xl lg:text-4xl text-gray-600 text-center bi bi-hourglass"></i>
-                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">20 jam</h1>
+                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">
+                  {totalSesi} jam
+                </h1>
               </div>
-              <div className="bg-gray-100 min-h-[10rem] justify-between p-4 flex flex-col rounded-lg shadow-md">
-                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">Total Mentor</h1>
+              <div className="bg-gray-100 hover:bg-gray-200 min-h-[10rem] justify-between p-4 flex flex-col rounded-lg shadow-md">
+                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">
+                  Total Mentor
+                </h1>
                 <i className="text-2xl sm:text-3xl lg:text-4xl text-gray-600 text-center bi bi-people-fill"></i>
-                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">20</h1>
+                <h1 className="text-gray-600 text-xs sm:text-sm lg:text-base text-center">
+                  {uniqueMentorCount}
+                </h1>
               </div>
             </div>
           </div>
@@ -219,19 +308,45 @@ export default function UserDashboard() {
       <div className="relative z-10 flex flex-col items-center justify-start mt-16 sm:mt-20 lg:mt-24 h-[22.5rem] sm:h-[30rem] md:h-[10rem] lg:h-[17.5rem] xl:h-[2.5rem] w-full"></div>
 
       <div className="flex flex-col w-full max-w-[70%] mb-4 bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow-md mx-4 items-center lg:items-start">
-        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 lg:mb-4 text-black text-start">Filter Jadwal</h1>
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 lg:mb-4 text-black text-start">
+          Filter Jadwal
+        </h1>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-4">
           <label className="flex items-center gap-2">
-            <input type="checkbox" name="terkonfirmasi" checked={filters.terkonfirmasi} onChange={handleCheckboxChange} className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="text-sm sm:text-base lg:text-lg text-black">Terkonfirmasi</span>
+            <input
+              type="checkbox"
+              name="terkonfirmasi"
+              checked={filters.terkonfirmasi}
+              onChange={handleCheckboxChange}
+              className="w-3 h-3 sm:w-4 sm:h-4"
+            />
+            <span className="text-sm sm:text-base lg:text-lg text-black">
+              Terkonfirmasi
+            </span>
           </label>
           <label className="flex items-center gap-2">
-            <input type="checkbox" name="menungguKonfirmasi" checked={filters.menungguKonfirmasi} onChange={handleCheckboxChange} className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="text-sm sm:text-base lg:text-lg text-black">Menunggu Konfirmasi</span>
+            <input
+              type="checkbox"
+              name="menungguKonfirmasi"
+              checked={filters.menungguKonfirmasi}
+              onChange={handleCheckboxChange}
+              className="w-3 h-3 sm:w-4 sm:h-4"
+            />
+            <span className="text-sm sm:text-base lg:text-lg text-black">
+              Menunggu Konfirmasi
+            </span>
           </label>
           <label className="flex items-center gap-2">
-            <input type="checkbox" name="ditolak" checked={filters.ditolak} onChange={handleCheckboxChange} className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="text-sm sm:text-base lg:text-lg text-black">Ditolak</span>
+            <input
+              type="checkbox"
+              name="ditolak"
+              checked={filters.ditolak}
+              onChange={handleCheckboxChange}
+              className="w-3 h-3 sm:w-4 sm:h-4"
+            />
+            <span className="text-sm sm:text-base lg:text-lg text-black">
+              Ditolak
+            </span>
           </label>
         </div>
       </div>
@@ -244,24 +359,41 @@ export default function UserDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4 min-h-[20rem]">
               {loading ? (
                 Array.from({ length: itemsPerPage }).map((_, index) => (
-                  <div key={index} className="bg-gray-200 animate-pulse rounded-lg h-64"></div>
+                  <div
+                    key={index}
+                    className="bg-gray-200 animate-pulse rounded-lg h-64"
+                  ></div>
                 ))
               ) : currentJadwal.length > 0 ? (
-                currentJadwal.map((sesi) => <JadwalCard key={sesi.id} sesi={sesi} />)
+                currentJadwal.map((sesi) => (
+                  <JadwalCard key={sesi.id} sesi={sesi} />
+                ))
               ) : (
-                <div className="text-gray-500 text-base mt-4 text-center w-full col-span-full">
-                  Tidak ada jadwal yang sesuai dengan filter.
+                <div className="flex flex-col items-center justify-center h-full w-full bg-white rounded-lg shadow-lg">
+                  <div className="text-gray-500 text-base mt-4 text-center w-full col-span-full">
+                    Sayang sekali, kamu masih belum memiliki sesi yang terjadwal.
+                  </div>
                 </div>
               )}
             </div>
             {totalPages > 1 && (
               <div className="w-full flex justify-between items-center gap-4 mt-8">
-                <button onClick={goToPrevPage} disabled={currentPage === 1} className="px-4 py-2 bg-white text-black rounded-lg shadow-md hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                  {'<'}
+                <button
+                  onClick={goToPrevPage}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-white text-black rounded-lg shadow-md hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {"<"}
                 </button>
-                <span className="text-black font-medium">Halaman {currentPage} dari {totalPages}</span>
-                <button onClick={goToNextPage} disabled={currentPage === totalPages} className="px-4 py-2 bg-white text-black rounded-lg shadow-md hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                  {'>'}
+                <span className="text-black font-medium">
+                  Halaman {currentPage} dari {totalPages}
+                </span>
+                <button
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-white text-black rounded-lg shadow-md hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {">"}
                 </button>
               </div>
             )}
@@ -280,17 +412,25 @@ export default function UserDashboard() {
               {loading ? (
                 <div className="flex items-center justify-center h-full w-full py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-                  <span className="ml-4 text-gray-500 text-base">Loading jadwal...</span>
+                  <span className="ml-4 text-gray-500 text-base">
+                    Loading jadwal...
+                  </span>
                 </div>
               ) : filteredJadwal.length > 0 ? (
                 <>
-                  {filteredJadwal.map((sesi) => <JadwalCard key={sesi.id} sesi={sesi} />)}
+                  {filteredJadwal.map((sesi) => (
+                    <JadwalCard key={sesi.id} sesi={sesi} />
+                  ))}
                   {filteredJadwal.length >= 4 &&
-                    filteredJadwal.map((sesi) => <JadwalCard key={`${sesi.id}-clone`} sesi={sesi} />)}
+                    filteredJadwal.map((sesi) => (
+                      <JadwalCard key={`${sesi.id}-clone`} sesi={sesi} />
+                    ))}
                 </>
               ) : (
-                <div className="text-gray-500 text-lg mt-4 text-center w-full">
-                  Tidak ada jadwal yang sesuai dengan filter.
+                <div className="flex flex-col items-center justify-center min-h-[10rem] w-full bg-white rounded-lg shadow-lg">
+                  <div className="text-gray-500 text-base mt-4 text-center w-full col-span-full">
+                    Sayang sekali, kamu masih belum memiliki sesi yang terjadwal.
+                  </div>
                 </div>
               )}
             </div>
@@ -307,19 +447,39 @@ export default function UserDashboard() {
           <p className="text-gray-600 text-sm text-center lg:text-start w-full">
             Anda belum mendaftar sebagai mentor.
           </p>
-        ) : mentorStatus.is_confirmed ? (
+        ) : mentorStatus.is_confirmed === true ? (
           <div className="bg-green-100 text-green-700 p-3 sm:p-4 rounded-lg">
-            <h2 className="text-base sm:text-lg text-center lg:text-start font-bold">Pendaftaran Diterima</h2>
-            <p className="text-sm sm:text-base text-center lg:text-start">Selamat! Anda telah diterima sebagai mentor.</p>
+            <h2 className="text-base sm:text-lg text-center lg:text-start font-bold">
+              Pendaftaran Diterima
+            </h2>
+            <p className="text-sm sm:text-base text-center lg:text-start">
+              Selamat! Anda telah diterima sebagai mentor.
+            </p>
           </div>
-        ) : mentorStatus.is_confirmed === false && mentorStatus.alasan_ditolak != null ? (
+        ) : mentorStatus.is_confirmed === false && mentorStatus.alasan_ditolak !== null ? (
           <div className="bg-red-100 text-red-700 p-3 sm:p-4 rounded-lg text-center lg:text-start">
-            <h2 className="text-base sm:text-lg font-bold">Pendaftaran Ditolak</h2>
-            <p className="text-sm sm:text-base">Alasan: {mentorStatus.alasan_ditolak || "Tidak ada alasan yang diberikan."}</p>
+            <h2 className="text-base sm:text-lg font-bold">
+              Pendaftaran Ditolak
+            </h2>
+            <p className="text-sm sm:text-base">
+              Alasan:{" "}
+              {mentorStatus.alasan_ditolak || "Tidak ada alasan yang diberikan."}
+            </p>
+          </div>
+        ) : mentorStatus.is_confirmed === false && mentorStatus.alasan_ditolak === null ? (
+          <div className="bg-yellow-100 text-yellow-700 p-3 sm:p-4 rounded-lg">
+            <h2 className="text-base text-center lg:text-start w-full sm:text-lg font-bold">
+              Pendaftaran Menunggu Konfirmasi
+            </h2>
+            <p className="text-sm sm:text-base text-center lg:text-start w-full">
+              Pendaftaran Anda sedang dalam proses konfirmasi.
+            </p>
           </div>
         ) : (
           <div className="bg-yellow-100 text-yellow-700 p-3 sm:p-4 rounded-lg">
-            <h2 className="text-base text-center lg:text-start w-full sm:text-lg font-bold">Pendaftaran Menunggu Konfirmasi</h2>
+            <h2 className="text-base text-center lg:text-start w-full sm:text-lg font-bold">
+              Pendaftaran Menunggu Konfirmasi
+            </h2>
             <p className="text-sm sm:text-base text-center lg:text-start w-full">
               Pendaftaran Anda sedang dalam proses konfirmasi.
             </p>

@@ -60,7 +60,8 @@ export default function AllChatsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-sky-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-sky-100 flex flex-col items-center justify-center">
+      <div className="flex w-full h-[0vh] md:h-[8vh]"></div>
       <div className="w-full max-w-[70%] bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-[80vh]">
         {/* Header - Made responsive */}
         <div className="bg-white border-b border-sky-100 p-3 sm:p-6">
@@ -99,7 +100,7 @@ export default function AllChatsPage() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-sky-50">
+        <div className="flex-1 overflow-y-auto bg-slate-50">
           {chats.length > 0 ? (
             loggedInUser ? (
               <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
@@ -198,7 +199,7 @@ export default function AllChatsPage() {
                   href="/login"
                   className="mt-4 px-3 py-2 sm:px-4 sm:py-2 bg-sky-100 text-gray-700 rounded-lg hover:bg-sky-200 transition-colors text-sm sm:text-base"
                 >
-                  Masuk ke dalam akun untuk melihat chat
+                  Masuk ke dalam akun untuk melihat pesan
                 </Link>
               </div>
             )
@@ -220,16 +221,16 @@ export default function AllChatsPage() {
                 </svg>
               </div>
               <h3 className="text-gray-700 font-medium mb-2 text-sm sm:text-base">
-                Buka chat untuk melihat pesan
+                Buka pesan untuk melihat pesan
               </h3>
               <p className="text-gray-500 text-center mb-4 text-xs sm:text-sm">
-                Kamu belum memiliki chat. Silakan mulai percakapan dengan mentor.
+                Kamu belum memiliki pesan apapun. Silakan mulai percakapan dengan mentor.
               </p>
               <Link
                 href="/explore"
                 className="px-3 py-2 sm:px-4 sm:py-2 bg-white shadow-lg text-gray-700 rounded-lg hover:bg-sky-200 transition-colors text-sm sm:text-base"
               >
-                Find Mentors
+                Telusuri mentor
               </Link>
             </div>
           )}
