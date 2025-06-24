@@ -98,16 +98,16 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-1 w-[30vw] md:w-[40vw] md:bottom-[15vh] md:-left-[10vw] 
-            h-auto absolute -rotate-328 lg:-left-[10vw] lg:bottom-[30vh] z-9"
+            className="square-pair-1 w-[30vw] md:w-[40vw] md:bottom-[15vh] md:-left-[15vw] 
+            h-auto absolute -rotate-328 lg:-left-[10vw] lg:bottom-[20vh] z-9"
           />
            <Image
             src="/square.svg"
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-1 w-[30vw] md:w-[40vw] md:bottom-[15vh] md:-right-[10vw] 
-            h-auto absolute rotate-328 lg:-right-[10vw] lg:bottom-[30vh] z-9"
+            className="square-pair-1 w-[30vw] md:w-[40vw] md:bottom-[15vh] md:-right-[15vw] 
+            h-auto absolute rotate-328 lg:-right-[10vw] lg:bottom-[20vh] z-9"
           />
 
           <Image
@@ -115,8 +115,8 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-2 w-[40vw] md:-bottom-[20vh] md:-right-[10vw] 
-            h-auto absolute rotate-168 lg:-left-[5vw] lg:-bottom-[10vh] z-10"
+            className="square-pair-2 w-[40vw] md:-bottom-[20vh] md:-right-[25vw] 
+            h-auto absolute rotate-168 lg:-right-[15vw] lg:-bottom-[30vh] z-10"
           />
         
           <Image
@@ -124,8 +124,8 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-2 w-[30vw] md:w-[40vw] md:-bottom-[20vh] md:-left-[10vw] 
-            h-auto absolute -rotate-168 lg:-right-[5vw] lg:-bottom-[10vh] z-10"
+            className="square-pair-2 w-[30vw] md:w-[40vw] md:-bottom-[20vh] md:-left-[25vw] 
+            h-auto absolute -rotate-168 lg:-left-[15vw] lg:-bottom-[30vh] z-10"
           />
           <svg
             ref={circleRef}
@@ -163,7 +163,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-3 w-[30vw] lg:w-[35vw] md:w-[40vw] md:-bottom-[50vh] md:-right-[5vw] 
+            className="square-pair-3 w-[30vw] lg:w-[35vw] md:w-[40vw] md:-bottom-[50vh] md:-right-[15vw] 
             h-auto absolute lg:-rotate-48 lg:-right-[5vw] lg:-bottom-[50vh] z-10"
           />
           <Image
@@ -171,7 +171,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-3-left w-[30vw] lg:w-[35vw] md:w-[40vw] md:-bottom-[50vh] md:-left-[5vw] 
+            className="square-pair-3-left w-[30vw] lg:w-[35vw] md:w-[40vw] md:-bottom-[50vh] md:-left-[15vw] 
             h-auto absolute lg:rotate-48 lg:-left-[5vw] lg:-bottom-[50vh] z-10"
           />
           <Image
