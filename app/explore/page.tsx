@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import LoadingScreen from "@/components/loading-screen";
 //
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,12 +18,15 @@ interface MentorWithUser extends IMentor {
 
 function MentorCard({ mentor, user }: { mentor: IMentor; user: IUser }) {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleMentorClick = () => {
+    setIsLoading(true);
     router.push(`/mentor_detail/${mentor.id}`);
   };
 
   return (
+    <>{isLoading && <LoadingScreen message="Membuka profil mentor..." />}
     <div
       onClick={handleMentorClick}
       className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col cursor-pointer hover:shadow-md transition-shadow duration-200 min-h-[400px] mentor-card"
@@ -68,6 +72,7 @@ function MentorCard({ mentor, user }: { mentor: IMentor; user: IUser }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

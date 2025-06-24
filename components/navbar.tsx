@@ -7,6 +7,7 @@ import LogoutButton from "./logout-button";
 import { IMentor } from "@/types/mentor.md";
 import { IUser } from "@/types/user.md";
 import supabase from "@/lib/db";
+import LoadingScreen from "./loading-screen";
 
 interface MentorWithUser extends IMentor {
   user: IUser;
@@ -151,10 +152,12 @@ export default function Navbar() {
       setShowSearchResults(false);
     }, 200);
   };
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleMentorClick = (mentorId: number) => {
     setShowSearchResults(false);
     setSearchQuery("");
+    setIsLoading(true);
     // Navigate to mentor detail page
     window.location.href = `/mentor_detail/${mentorId}`;
   };
@@ -214,7 +217,7 @@ export default function Navbar() {
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black transition-all duration-200 hover:border-gray-400"
             />
           </div>
-
+          <>{isLoading && <LoadingScreen message="Membuka profil mentor..." />}
           {/* Search Results Popup */}
           {showSearchResults && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
@@ -297,6 +300,7 @@ export default function Navbar() {
               ) : null}
             </div>
           )}
+          </>
         </div>
 
         {/* Desktop Navigation Menu */}

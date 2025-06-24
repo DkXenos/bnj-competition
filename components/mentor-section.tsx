@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
+import LoadingScreen from "./loading-screen";
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -15,6 +16,7 @@ gsap.registerPlugin(ScrollTrigger);
 function MentorCard({ mentor, index }: { mentor: IMentor; index: number }) {
   const router = useRouter();
   const [mentorUser, setMentorUser] = useState<IUser | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -95,12 +97,14 @@ function MentorCard({ mentor, index }: { mentor: IMentor; index: number }) {
       duration: 0.1,
       ease: "power2.inOut",
       onComplete: () => {
+        setIsLoading(true);
         router.push(`/mentor_detail/${mentor.id}`);
       },
     });
   };
 
   return (
+    <>{isLoading && <LoadingScreen message="Membuka profil mentor..." />}
     <div
       ref={cardRef}
       onClick={handleMentorClick}
@@ -161,6 +165,7 @@ function MentorCard({ mentor, index }: { mentor: IMentor; index: number }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
