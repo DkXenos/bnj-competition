@@ -60,7 +60,8 @@ export default function AboutPage() {
 
       squareTl.to(".square-pair-1", { ...commonAnimProps }, 0);
       squareTl.to(".square-pair-2", { ...commonAnimProps }, 0.2);
-      squareTl.to(".square-pair-3", { ...commonAnimProps }, 0.4);
+      squareTl.to(".square-pair-3", { ...commonAnimProps, rotation: -360 }, 0.3);
+      squareTl.to(".square-pair-3-left", { ...commonAnimProps, rotation: 360 }, 0.3);
       squareTl.to(".square-pair-4", { ...commonAnimProps }, 0.6);
 
       // "Why Us" Section Animation
@@ -83,28 +84,48 @@ export default function AboutPage() {
   return (
     <div
       ref={mainRef}
-      className="relative bg-gradient-to-b from-[#414659] to-white overflow-hidden"
+      className="relative bg-gradient-to-b from-[#414659] to-white overflow-hidden min-h-screen"
     >
       {/* This container holds the main content and provides scroll space */}
       <div
-        ref={heroSectionRef} // Attach the ref to the hero section
-        className="relative min-h-screen px-6 overflow-hidden"
+        ref={heroSectionRef}
+        className="relative min-h-[80vh] md:min-h-screen px-4 md:px-8 overflow-hidden flex items-center"
       >
         {/* Decorative background elements */}
-        <div className="absolute inset-0 w-full h-full">
+        <div className="absolute inset-0 w-full h-[80%]">
           <Image
             src="/square.svg"
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-1 w-[35vw] h-auto absolute lg:-rotate-148 lg:-left-[15vw] lg:bottom-[30vh] z-9"
+            className="square-pair-1 w-[30vw] md:w-[40vw] md:bottom-[15vh] md:-left-[10vw] 
+            h-auto absolute -rotate-328 lg:-left-[10vw] lg:bottom-[30vh] z-9"
           />
+           <Image
+            src="/square.svg"
+            alt="Square icon"
+            width={100}
+            height={100}
+            className="square-pair-1 w-[30vw] md:w-[40vw] md:bottom-[15vh] md:-right-[10vw] 
+            h-auto absolute rotate-328 lg:-right-[10vw] lg:bottom-[30vh] z-9"
+          />
+
           <Image
             src="/square.svg"
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-2 w-[35vw] h-auto absolute lg:rotate-168 lg:-left-[10vw] lg:-bottom-[10vh] z-10"
+            className="square-pair-2 w-[40vw] md:-bottom-[20vh] md:-right-[10vw] 
+            h-auto absolute rotate-168 lg:-left-[5vw] lg:-bottom-[10vh] z-10"
+          />
+        
+          <Image
+            src="/square.svg"
+            alt="Square icon"
+            width={100}
+            height={100}
+            className="square-pair-2 w-[30vw] md:w-[40vw] md:-bottom-[20vh] md:-left-[10vw] 
+            h-auto absolute -rotate-168 lg:-right-[5vw] lg:-bottom-[10vh] z-10"
           />
           <svg
             ref={circleRef}
@@ -113,7 +134,8 @@ export default function AboutPage() {
             viewBox="0 0 1318 1278"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="w-[80vw] h-auto absolute lg:left-[10vw] lg:-bottom-[50vh] z-8"
+            className="lg:w-[70vw] md:w-[90vw] md:-bottom-[50vh] md:left-[5vw]
+            h-auto absolute lg:left-[15vw] lg:-bottom-[50vh] z-8"
           >
             <circle
               cx="659"
@@ -141,56 +163,44 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-1 w-[35vw] h-auto absolute lg:rotate-168 lg:-right-[15vw] lg:bottom-[30vh] z-9"
-          />
-
-          <Image
-            src="/square.svg"
-            alt="Square icon"
-            width={100}
-            height={100}
-            className="square-pair-2 w-[35vw] h-auto absolute lg:-rotate-168 lg:-right-[10vw] lg:-bottom-[10vh] z-10"
-          />
-
-          <Image
-            src="/square.svg"
-            alt="Square icon"
-            width={100}
-            height={100}
-            className="square-pair-3 w-[35vw] h-auto absolute lg:rotate-158 lg:-right-[5vw] lg:-bottom-[50vh] z-9"
+            className="square-pair-3 w-[30vw] lg:w-[35vw] md:w-[40vw] md:-bottom-[50vh] md:-right-[5vw] 
+            h-auto absolute lg:-rotate-48 lg:-right-[5vw] lg:-bottom-[50vh] z-10"
           />
           <Image
             src="/square.svg"
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-3 w-[35vw] h-auto absolute lg:-rotate-158 lg:-left-[5vw] lg:-bottom-[50vh] z-9"
+            className="square-pair-3-left w-[30vw] lg:w-[35vw] md:w-[40vw] md:-bottom-[50vh] md:-left-[5vw] 
+            h-auto absolute lg:rotate-48 lg:-left-[5vw] lg:-bottom-[50vh] z-10"
           />
           <Image
             src="/square.svg"
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-4 w-[35vw] h-auto absolute lg:-rotate-128 lg:-left-[10vw] lg:-bottom-[90vh] z-9"
+            className="square-pair-4 w-[30vw] md:w-[0vw] md:bottom-[60vh] md:-left-[5vw] 
+            h-auto absolute -rotate-128 lg:-left-[5vw] lg:-bottom-[90vh] z-9"
           />
           <Image
             src="/square.svg"
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-4 w-[35vw] h-auto absolute lg:rotate-128 lg:-right-[10vw] lg:-bottom-[90vh] z-9"
+            className="square-pair-4 w-[30vw] md:w-[0vw] md:bottom-[60vh] md:-right-[5vw] 
+            h-auto absolute rotate-128 lg:-right-[5vw] lg:-bottom-[90vh] z-9"
           />
         </div>
 
         {/* Centered Content with Glassmorphism */}
         <div
           ref={contentRef}
-          className="absolute top-[55vh] left-1/2 w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 z-20 text-center bg-white/25 backdrop-blur-md rounded-xl p-8 md:p-12 border border-white/20 shadow-lg"
+          className="absolute top-[55vh] left-1/2 w-[90vw] md:w-full max-w-2xl md:max-w-3xl -translate-x-1/2 -translate-y-1/2 z-20 text-center bg-grey/15 backdrop-blur-md rounded-xl p-6 md:p-12 border border-white/20 shadow-lg"
         >
-          <h1 className="text-4xl font-bold text-white mb-6">
+          <h1 className="text-2xl md:text-4xl font-bold text-white mb-6">
             Apa itu MentorPact?
           </h1>
-          <div className="space-y-4 text-gray-200">
+          <div className="space-y-4 text-gray-200 text-base md:text-lg">
             <p>
               MentorPact adalah platform pembelajaran dinamis yang dirancang untuk menjembatani kesenjangan antara ambisi dan keahlian. Kami percaya bahwa bimbingan yang tepat dapat membawa perubahan besar, oleh karena itu kami menciptakan ruang khusus bagi individu untuk terhubung dengan mentor berpengalaman di berbagai bidang. Misi kami adalah membuat bimbingan pribadi dapat diakses oleh semua orang, memberdayakan para pembelajar untuk mempercepat pertumbuhan mereka dan mencapai tujuan mereka.
             </p>
@@ -207,14 +217,14 @@ export default function AboutPage() {
       {/* Why Us Section */}
       <div
         ref={whyUsRef}
-        className="relative min-h-[60vh] flex flex-col items-center justify-center text-center px-6 bg-sky-100"
+        className="relative min-h-[60vh] flex flex-col items-center justify-center text-center px-4 md:px-8 bg-sky-100"
       >
-        <div className="bg-white/70 backdrop-blur-md rounded-xl p-8 md:p-12 border border-gray-200 shadow-lg max-w-3xl">
-          <h2 className="text-4xl font-bold text-gray-800 mb-6">
+        <div className="bg-white/70 backdrop-blur-md rounded-xl p-6 md:p-12 border border-gray-200 shadow-lg w-[90vw] md:w-full max-w-2xl md:max-w-3xl">
+          <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-6">
             Kenapa MentorPact?
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl">
-            Kami menawarkan bimbingan personal dari mentor ahli, penjadwalan yang fleksibel, dan wawasan dunia nyata untuk mempercepat
+          <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
+            Kami menawarkan bimbingan personal dari mentor ahli, penjadwalan yang fleksibel, dan wawasan dunia nyata untuk mempercepat pertumbuhan Anda.
           </p>
         </div>
       </div>
