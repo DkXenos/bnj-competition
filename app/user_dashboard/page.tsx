@@ -27,7 +27,7 @@ export default function UserDashboard() {
   const interactionTimer = useRef<NodeJS.Timeout | null>(null);
 
   // State for filter tabs
-  type FilterStatus = "Semua" | "Terkonfirmasi" | "Menunggu Konfirmasi" | "Ditolak";
+  type FilterStatus = "Semua" | "Terkonfirmasi" | "Menunggu Konfirmasi" | "Ditolak" | "Bermasalah" | "Selesai";
   const [activeFilterTab, setActiveFilterTab] = useState<FilterStatus>("Semua");
 
   // State for mentor registration status
@@ -148,7 +148,8 @@ export default function UserDashboard() {
         const { data, error } = await supabase
           .from("sesi")
           .select("id")
-          .or(`mentee_id.eq.${loggedInUser.id},mentor_id.eq.${loggedInUser.id}`);
+          .or(`mentee_id.eq.${loggedInUser.id},mentor_id.eq.${loggedInUser.id}`)
+          .eq("status", "Selesai");
 
         if (error) {
           console.error("Error fetching total sesi:", error);
@@ -169,7 +170,8 @@ export default function UserDashboard() {
         const { data, error } = await supabase
           .from("sesi")
           .select("mentor_id")
-          .eq("mentee_id", loggedInUser.id);
+          .eq("mentee_id", loggedInUser.id)
+          .eq("status", "Selesai");
 
         if (error) {
           console.error("Error fetching mentor count:", error);
@@ -325,11 +327,11 @@ export default function UserDashboard() {
 
         {/* Filter Section */}
         <div className="flex flex-col w-full mb-4 bg-white p-4 sm:p-6 rounded-lg shadow-md items-center">
-          <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-5 text-black">
+          <h1 className="text-lg sm:text-xl w-full text-center md:text-start lg:text-2xl font-bold mb-5 text-black">
             Jadwal Sesi Anda
           </h1>
-          <div className="bg-gray-100 p-1.5 rounded-lg flex flex-wrap justify-center items-center gap-2 sm:gap-1 shadow-inner w-full sm:w-auto">
-            {(["Semua", "Terkonfirmasi", "Menunggu Konfirmasi", "Ditolak"] as const).map((tab) => (
+          <div className="bg-gray-100 p-1.5 rounded-lg flex flex-wrap justify-center md:justify-start items-center gap-2 sm:gap-1 shadow-inner w-full">
+            {(["Semua", "Terkonfirmasi", "Menunggu Konfirmasi", "Ditolak", "Bermasalah", "Selesai"] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveFilterTab(tab)}

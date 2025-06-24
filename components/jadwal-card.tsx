@@ -423,20 +423,6 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
               )}
             </>
           )}
-        <span
-          className={`px-3 py-2 rounded-lg text-xs font-semibold ${
-            currentSesi.status === "Terkonfirmasi"
-              ? "bg-green-100 text-green-700"
-              : currentSesi.status === "Ditolak" ||
-                currentSesi.status === "Bermasalah"
-              ? "bg-red-100 text-red-700"
-              : currentSesi.status === "Selesai"
-              ? "bg-green-100 text-green-700"
-              : "bg-yellow-100 text-yellow-700"
-          }`}
-        >
-          {currentSesi.status}
-        </span>
 
         {/* Tombol Report */}
         {(loggedInUser?.id === currentSesi.mentor_id || 
@@ -452,6 +438,21 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
               </p>
             </button>
         )}
+
+        <span
+          className={`px-3 py-2 rounded-lg text-xs font-semibold ${
+            currentSesi.status === "Terkonfirmasi"
+              ? "bg-green-100 text-green-700"
+              : currentSesi.status === "Ditolak" ||
+                currentSesi.status === "Bermasalah"
+              ? "bg-red-100 text-red-700"
+              : currentSesi.status === "Selesai"
+              ? "bg-green-100 text-green-700"
+              : "bg-yellow-100 text-yellow-700"
+          }`}
+        >
+          {currentSesi.status}
+        </span>
         
         {/* Buttons for Mentor */}
         {isUserMentor && currentSesi.status === "Menunggu Konfirmasi" && (

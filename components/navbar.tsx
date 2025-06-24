@@ -309,6 +309,12 @@ export default function Navbar() {
               >
                 Beranda
               </Link>
+               <Link
+                href="/about"
+                className="text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
+              >
+                Tentang
+              </Link>
                 {!loggedInUser.isMentor && !loggedInUser.isAdmin && (
                 <Link
                   href="/register-mentor"
@@ -403,6 +409,12 @@ export default function Navbar() {
             </>
           ) : (
             <>
+            <Link
+                href="/"
+                className="text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"
+              >
+                Beranda
+              </Link>
               <Link
                 href="/about"
                 className="text-gray-600 hover:text-gray-900 hover:bg-sky-100 transition-all duration-200 px-3 py-2 rounded-lg hover:shadow-sm"

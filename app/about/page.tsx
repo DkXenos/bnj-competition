@@ -207,7 +207,7 @@ export default function AboutPage() {
       {/* Why Us Section */}
       <div
         ref={whyUsRef}
-        className="relative min-h-[60vh] flex flex-col items-center justify-center text-center px-6 bg-[#FBFBFD]"
+        className="relative min-h-[60vh] flex flex-col items-center justify-center text-center px-6 bg-sky-100"
       >
         <div className="bg-white/70 backdrop-blur-md rounded-xl p-8 md:p-12 border border-gray-200 shadow-lg max-w-3xl">
           <h2 className="text-4xl font-bold text-gray-800 mb-6">
@@ -218,9 +218,6 @@ export default function AboutPage() {
           </p>
         </div>
       </div>
-
-      {/* Ensure enough scroll space for the animation to complete */}
-      <div className="h-[500px] bg-white"></div>
     </div>
   );
 }
