@@ -63,9 +63,9 @@ export default function TopUpSaldoPage(){
 
     return(
         <div className="flex flex-col items-center justify-center min-h-screen bg-sky-100">
-            <div className="w-screen h-[0vh] md:h-[6vh]"></div>
-            <div className="w-fit bg-white rounded-xl shadow-lg
-                p-8 flex flex-col items-center">
+            <div className="w-screen h-[6vh]"></div>
+            <div className="w-[70%] md:w-fit bg-white rounded-xl shadow-lg
+                p-4 flex flex-col items-center">
                 <h1 className="text-lg md:text-2xl font-bold mb-4 text-black">Top Up Saldo</h1>
                 <p className="text-sm md:text-lg text-gray-600 mb-6">Silakan pilih nominal dan metode top up yang Anda inginkan.</p>
                 <div className="w-full max-w-lg">
