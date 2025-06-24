@@ -55,7 +55,7 @@ export default function ChatButton({
         disabled={loading}
       >
         <i className="bi bi-chat-left-dots-fill"></i>
-        {loading ? "Loading..." : "Kontak"}
+        {loading ? <p>Memuat...</p> : <p>Kontak</p>}
       </button>
 
       {/* Login Required Popup */}

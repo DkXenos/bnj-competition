@@ -118,7 +118,7 @@ export default async function MentorDetailPage({
 
               {/* Chat Button - Responsive container */}
               <div className="flex-shrink-0 w-full md:w-auto">
-                <div className="flex flex-col sm:flex-row gap-2 w-full justify-center md:justify-start">
+                <div className="flex gap-2 w-full justify-center md:justify-start">
                   <ChatButton
                     receiver_id={mentor.user_id}
                     reciever_name={data_lengkap_mentor.username}
