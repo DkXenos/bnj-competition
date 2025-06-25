@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ISesi } from "@/types/sesi.md";
 import { IUser } from "@/types/user.md";
+import { IMentor } from "@/types/mentor.md";
 
 // Create a client component for the expandable description
 function ExpandableDescription({ description }: { description: string }) {
@@ -51,7 +52,7 @@ function ExpandableDescription({ description }: { description: string }) {
 }
 
 interface MentorDetailClientProps {
-  mentor: any;
+  mentor: IMentor;
   data_lengkap_mentor: IUser;
   reviewsWithMentee: (ISesi & { mentee: Partial<IUser> })[];
 }

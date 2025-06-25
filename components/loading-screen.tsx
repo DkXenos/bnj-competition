@@ -99,7 +99,7 @@ export default function LoadingScreen({
             <img
               src="/MP-logo.svg"
               alt="MentorPact Logo"
-              className="h-14 w-14 ml-3 mt-6 flex items-center justify-center object-contain"
+              className="h-14 w-14 ml-3 mt-6 "
             />
           </div>
         ) : (
