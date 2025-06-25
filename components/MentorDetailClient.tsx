@@ -8,13 +8,10 @@ import { ISesi } from "@/types/sesi.md";
 import { IUser } from "@/types/user.md";
 import { IMentor } from "@/types/mentor.md";
 
-// Create a client component for the expandable description
 function ExpandableDescription({ description }: { description: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Check if description is long enough to need truncation
-  const shouldTruncate = description.length > 150; // Adjust threshold as needed
-
+  const shouldTruncate = description.length > 150;
   const formattedDescription = description
     .split(" ")
     .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -65,11 +62,8 @@ export default function MentorDetailClient({
   return (
     <div className="min-h-screen min-w-screen bg-sky-100  pb-16">
       <div className="min-h-[0vh] md:min-h-[8vh] w-screen"></div>
-      {/* Responsive container for the main content */}
       <div className="min-w-screen min-h-screen p-4 md:p-8 flex items-center">
-        {/* Main Content Card - Made responsive */}
         <div className="bg-white/70 mt-16 rounded-xl w-[95%] md:w-[80%] lg:w-[70%] mx-auto shadow-lg overflow-hidden">
-          {/* Mentor Profile Section */}
           <div className="bg-white p-4 sm:p-8 border-b border-sky-100">
             <Link
               href="/"
@@ -78,9 +72,8 @@ export default function MentorDetailClient({
               <i className="bi bi-arrow-return-left"></i>
               <span className="font-medium">Kembali ke beranda</span>
             </Link>
-            {/* Responsive flex container */}
+
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-              {/* Profile Avatar */}
               <div
                 style={{
                   backgroundImage: `url('${
@@ -90,9 +83,7 @@ export default function MentorDetailClient({
                 className="bg-cover bg-center w-24 h-24 md:w-28 md:h-28 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0"
               ></div>
 
-              {/* Mentor Information - Centered on mobile */}
               <div className="flex-1 min-w-0 text-center md:text-left">
-                {/* Mentor Name - Responsive font size */}
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
                   {data_lengkap_mentor.username
                     .split(" ")
@@ -103,7 +94,6 @@ export default function MentorDetailClient({
                     .join(" ")}
                 </h1>
 
-                {/* Mentor Stats - Justify center on mobile */}
                 <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4 justify-center md:justify-start">
                   <div className="flex items-center gap-1">
                     <i className="bi bi-star-fill text-yellow-500"></i>
@@ -117,11 +107,9 @@ export default function MentorDetailClient({
                   </div>
                 </div>
 
-                {/* Expandable Description */}
                 <ExpandableDescription description={mentor.deskripsi} />
               </div>
 
-              {/* Chat Button - Responsive container */}
               <div className="flex-shrink-0 w-full md:w-auto">
                 <div className="flex gap-2 w-full justify-center md:justify-start">
                   <ChatButton
@@ -139,9 +127,7 @@ export default function MentorDetailClient({
             </div>
           </div>
 
-          {/* Description Section */}
           <div className="p-4 sm:p-6 md:p-8">
-            {/* Video Section */}
             {mentor.link_video && (
               <div className="mb-6">
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -175,7 +161,7 @@ export default function MentorDetailClient({
           </div>
         </div>
       </div>
-      {/* Reviews Section - Responsive container */}
+
       {reviewsWithMentee && reviewsWithMentee.length > 0 && (
         <div className="w-[95%] md:w-[80%] lg:w-[70%] max-w-5xl mx-auto mt-8 bg-white/80 rounded-xl shadow p-4 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-bold mb-4 flex items-center gap-2">
