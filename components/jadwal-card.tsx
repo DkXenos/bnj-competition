@@ -639,7 +639,7 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
             
             {/* File upload section */}
             <div className="mt-4">
-              <label className="block text-gray-700 font-medium mb-2">Bukti Masalah (opsional)</label>
+              <label className="block text-gray-700 font-medium mb-2">Bukti Masalah (wajib)</label>
               <div className="border border-gray-300 rounded-lg p-4 flex items-center justify-center bg-gray-50">
                 <input
                   onChange={handleReportFileChange}

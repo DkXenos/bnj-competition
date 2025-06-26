@@ -40,7 +40,7 @@ const sampleUsers: IUser[] = [
 		password: "",
 		tanggal_join: "2024-01-17T09:15:00Z",
 		isMentor: true,
-		profile_image: null, // Example of a user without a profile image
+		profile_image: null, // Example of a user without a profile 
 		isAdmin: false, // Assuming this field is part of IUser
 		saldo: 0,
 		saldo_ditahan: 0,

@@ -146,7 +146,7 @@ export default function Footer() {
               <ul className="space-y-2 sm:space-y-3">
                 {[
                   { href: "/", label: "Beranda" },
-                  { href: "/explore", label: "Cari Mentor" },
+                  { href: "/explore", label: "Telusuri Mentor" },
                   { href: "/about", label: "Tentang Kami" },
                   { href: "/register-mentor", label: "Jadi Mentor" },
                 ].map((link, index) => (
