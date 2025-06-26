@@ -17,11 +17,15 @@ export default async function LaporanDetailPage({
     .select(`*`)
     .eq("id", id)
     .single();
-
+  const {data: mentor_user_id} = await supabase
+    .from("mentors")
+    .select(`*`)
+    .eq("id", sesi.mentor_id)
+    .single();
   const { data: data_lengkap_mentor } = await supabase
     .from("users")
     .select(`*`)
-    .eq("id", sesi.mentor_id)
+    .eq("id", mentor_user_id.user_id)
     .single();
 
   const { data: data_lengkap_mentee } = await supabase
