@@ -1,6 +1,4 @@
 import supabase from "@/lib/db";
-import Link from "next/link";
-import Image from "next/image";
 import TindakLanjutForm from "@/components/tindak-lanjut-form";
 import EvidenceSection from "@/components/evidence-section";
 

@@ -12,7 +12,6 @@ function AdminLaporanConfirmation() {
   const [laporanList, setLaporanList] = useState<ISesi[]>([]);
   const [loading, setLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
-  const [activeReportId, setActiveReportId] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchLaporan() {
@@ -58,7 +57,6 @@ function AdminLaporanConfirmation() {
 
   const handleDetailClick = (id: number) => {
     setIsNavigating(true);
-    setActiveReportId(id);
     // Use setTimeout to ensure loading screen is shown before navigation
     setTimeout(() => {
       router.push(`/laporan_detail/${id}`);
