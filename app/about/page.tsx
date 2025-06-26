@@ -62,7 +62,7 @@ export default function AboutPage() {
       squareTl.to(".square-pair-2", { ...commonAnimProps }, 0.2);
       squareTl.to(".square-pair-3", { ...commonAnimProps, rotation: -360 }, 0.3);
       squareTl.to(".square-pair-3-left", { ...commonAnimProps, rotation: 360 }, 0.3);
-      squareTl.to(".square-pair-4", { ...commonAnimProps }, 0.6);
+      squareTl.to(".square-pair-4", { ...commonAnimProps }, 0.5);
 
       // "Why Us" Section Animation
       gsap.from(whyUsRef.current, {
@@ -98,7 +98,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-1 w-[25vw] bottom-[10vh] -left-[20vw] md:w-[40vw] md:bottom-[15vh] md:-left-[15vw] 
+            className="square-pair-1 w-[55vw] bottom-[35vh] -left-[40vw] md:w-[40vw] md:bottom-[15vh] md:-left-[15vw] 
             h-auto absolute -rotate-[45deg] lg:-left-[10vw] lg:bottom-[20vh] z-9"
           />
           <Image
@@ -106,7 +106,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-1 w-[25vw] bottom-[10vh] -right-[20vw] md:w-[40vw] md:bottom-[15vh] md:-right-[15vw] 
+            className="square-pair-1 w-[55vw] bottom-[35vh] -right-[40vw] md:w-[40vw] md:bottom-[15vh] md:-right-[15vw] 
             h-auto absolute rotate-[45deg] lg:-right-[10vw] lg:bottom-[20vh] z-9"
           />
 
@@ -115,7 +115,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-2 w-[35vw] -bottom-[15vh] -right-[30vw] md:-bottom-[20vh] md:-right-[25vw] 
+            className="square-pair-2 w-[55vw] bottom-[15vh] -right-[25vw] md:-bottom-[20vh] md:-right-[25vw] 
             h-auto absolute rotate-[168deg] lg:-right-[15vw] lg:-bottom-[30vh] z-10"
           />
 
@@ -124,7 +124,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-2 w-[35vw] -bottom-[15vh] -left-[30vw] md:w-[40vw] md:-bottom-[20vh] md:-left-[25vw] 
+            className="square-pair-2 w-[55vw] bottom-[15vh] -left-[25vw] md:w-[40vw] md:-bottom-[20vh] md:-left-[25vw] 
             h-auto absolute -rotate-[168deg] lg:-left-[15vw] lg:-bottom-[30vh] z-10"
           />
           
@@ -135,7 +135,7 @@ export default function AboutPage() {
             viewBox="0 0 1318 1278"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="w-[80vw] -bottom-[40vh] left-[10vw] md:w-[90vw] md:-bottom-[50vh] md:left-[5vw]
+            className="w-[130vw] -bottom-[5vh] -left-[16vw] md:w-[90vw] md:-bottom-[50vh] md:left-[5vw]
             h-auto absolute lg:w-[70vw] lg:left-[15vw] lg:-bottom-[50vh] z-8"
           >
             <circle
@@ -164,7 +164,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-3 w-[30vw] -bottom-[45vh] -right-[20vw] lg:w-[35vw] md:w-[40vw] md:-bottom-[50vh] md:-right-[15vw] 
+            className="square-pair-3 w-[55vw] -bottom-[5vh] -right-[20vw] lg:w-[35vw] md:w-[40vw] md:-bottom-[50vh] md:-right-[15vw] 
             h-auto absolute -rotate-[30deg] lg:-rotate-48 lg:-right-[5vw] lg:-bottom-[50vh] z-10"
           />
           <Image
@@ -172,7 +172,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-3-left w-[30vw] -bottom-[45vh] -left-[20vw] lg:w-[35vw] md:w-[40vw] md:-bottom-[50vh] md:-left-[15vw] 
+            className="square-pair-3-left w-[55vw] -bottom-[5vh] -left-[20vw] lg:w-[35vw] md:w-[40vw] md:-bottom-[50vh] md:-left-[15vw] 
             h-auto absolute rotate-[30deg] lg:rotate-48 lg:-left-[5vw] lg:-bottom-[50vh] z-10"
           />
           <Image
@@ -180,7 +180,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-4 w-[25vw] -bottom-[80vh] -left-[15vw] md:w-[0vw] md:bottom-[60vh] md:-left-[5vw] 
+            className="square-pair-4 w-[55vw] -bottom-[10vh] -left-[15vw] md:w-[0vw] md:bottom-[60vh] md:-left-[5vw] 
             h-auto absolute -rotate-[128deg] lg:-left-[5vw] lg:-bottom-[90vh] z-9"
           />
           <Image
@@ -188,7 +188,7 @@ export default function AboutPage() {
             alt="Square icon"
             width={100}
             height={100}
-            className="square-pair-4 w-[25vw] -bottom-[80vh] -right-[15vw] md:w-[0vw] md:bottom-[60vh] md:-right-[5vw] 
+            className="square-pair-4 w-[55vw] -bottom-[10vh] -right-[15vw] md:w-[0vw] md:bottom-[60vh] md:-right-[5vw] 
             h-auto absolute rotate-[128deg] lg:-right-[5vw] lg:-bottom-[90vh] z-9"
           />
         </div>
