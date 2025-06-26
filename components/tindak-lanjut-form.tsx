@@ -1,6 +1,7 @@
 'use client';
 import { useState } from "react";
 import AdminLaporButton from "@/components/admin-lapor-button";
+import RemoveMentorButton from "@/components/remove-mentor-button";
 
 export default function TindakLanjutForm({ sesiId }: { sesiId: number }) {
   const [tindakLanjutDesc, setTindakLanjutDesc] = useState("");
@@ -19,7 +20,8 @@ export default function TindakLanjutForm({ sesiId }: { sesiId: number }) {
         rows={4}
         placeholder="Tulis tindak lanjut di sini..."
       />
-      <div className="flex justify-end w-full">
+      <div className="flex gap-4 justify-end w-full">
+        <RemoveMentorButton sesiId={sesiId} desc={tindakLanjutDesc} />
         <AdminLaporButton sesiId={sesiId} desc={tindakLanjutDesc} />
       </div>
     </div>

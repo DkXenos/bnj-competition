@@ -177,6 +177,38 @@ export async function TindakLanjutLaporan(id: number, desc: string) {
     return { success: false, error: "Terjadi kesalahan saat menindak lanjuti laporan." };
   }
 }
+export async function DemoteMentor(sesi_id:number, mentor_id: number, mentor_user_id:number, alasan_didemote: string) {
+  console.log("mentor_id:", mentor_id);
+  try {
+    await supabase .from("users").update({isMentor: false}).eq("id", mentor_user_id);
+    const { error } = await supabase
+      .from("mentors")
+      .update({ alasan_didemote: alasan_didemote, is_confirmed: false })
+      .eq("id", mentor_id);
+    
+      const { error:aaa } = await supabase
+      .from("sesi")
+      .update({
+        status_laporan: "Ditindak Lanjuti",
+        deskripsi_tindak_lanjut: alasan_didemote,
+      })
+      .eq("id", sesi_id);
+
+    if (aaa) {
+      console.error("Error updating report status:", error);
+      return { success: false, error: aaa.message };
+    }
+    if (error) {
+      console.error("Error demoting mentor:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, message: "Mentor berhasil diturunkan." };
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return { success: false, error: "Terjadi kesalahan saat menurunkan mentor." };
+  }
+}
 export async function CheckForFreeTrial(mentor_id : number, user_id : number){
   const { data, error } = await supabase
     .from("sesi")
@@ -195,4 +227,19 @@ export async function CheckForFreeTrial(mentor_id : number, user_id : number){
   }
 
   return data?.isFreeTrial || false;
+}
+
+export function GetMentorData(sesiId: number) {
+  return supabase
+    .from("sesi")
+    .select("*")
+    .eq("id", sesiId)
+    .single()
+    .then(({ data, error }) => {
+      if (error) {
+        console.error("Error fetching mentor data:", error);
+        throw error;
+      }
+      return data?.mentor_id || null;
+    });
 }

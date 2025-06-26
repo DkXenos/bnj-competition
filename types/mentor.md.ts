@@ -10,5 +10,6 @@ type IMentor = {
     foto_kk: string;
     is_verified: boolean;
     alasan_ditolak: string | null;
+    alasan_didemote: string | null;
 };
 export type { IMentor };
