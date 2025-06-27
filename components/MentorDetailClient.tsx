@@ -60,7 +60,7 @@ export default function MentorDetailClient({
   reviewsWithMentee,
 }: MentorDetailClientProps) {
   return (
-    <div className="min-h-screen min-w-screen bg-sky-100  pb-16">
+    <div className="min-h-screen min-w-screen bg-sky-100 pb-16">
       <div className="min-h-[0vh] md:min-h-[8vh] w-screen"></div>
       <div className="min-w-screen min-h-screen p-4 md:p-8 flex items-center">
         <div className="bg-white/70 mt-16 rounded-xl w-[95%] md:w-[80%] lg:w-[70%] mx-auto shadow-lg overflow-hidden">
@@ -163,7 +163,7 @@ export default function MentorDetailClient({
       </div>
 
       {reviewsWithMentee && reviewsWithMentee.length > 0 && (
-        <div className="w-[95%] md:w-[80%] lg:w-[70%] max-w-5xl mx-auto mt-8 bg-white/80 rounded-xl shadow p-4 sm:p-6">
+        <div className="w-[68%] mx-auto mt-8 bg-white/80 rounded-xl shadow p-4 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-bold mb-4 flex items-center gap-2">
             <i className="bi bi-chat-left-text-fill text-sky-500"></i>
             <p className="text-black">Ulasan Mentor</p>

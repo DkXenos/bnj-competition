@@ -427,14 +427,15 @@ export default function JadwalCard({ sesi }: { sesi: ISesi }) {
         {/* Tombol Report */}
         {(loggedInUser?.id === currentSesi.mentor_id || 
           loggedInUser?.id === currentSesi.mentee_id) &&
-          [ "Dilaksanakan", "Selesai"].includes(currentSesi.status) && (
+          ["Dilaksanakan", "Selesai"].includes(currentSesi.status) &&
+          currentSesi.rating_ulasan === null && (
             <button
               onClick={() => setShowReportPopup(true)}
               className="text-red-500 text-sm hover:underline hover:cursor-pointer flex items-center gap-1 justify-center"
             >
               <i className="bi bi-exclamation-triangle-fill"></i>
               <p className="text-center">
-              Laporkan Masalah
+          Laporkan Masalah
               </p>
             </button>
         )}

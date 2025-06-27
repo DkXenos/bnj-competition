@@ -497,13 +497,31 @@ export default function Navbar() {
             >
               Tentang
             </Link>
-            <Link
+            {!loggedInUser?.isMentor && (
+              <Link
               href="/register-mentor"
               className="block py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 rounded-lg"
               onClick={() => setMobileMenuVisible(false)}
-            >
+              >
               Jadi Mentor
-            </Link>
+              </Link>
+            )}
+            {loggedInUser?.isAdmin && (
+                  <>
+                <Link
+                  href="/admin"
+                  className="block py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 rounded-lg"
+                >
+                  Konfirmasi Mentor
+                </Link>
+                <Link
+                  href="/konfirmasi_laporan"
+                  className="block py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 px-3 rounded-lg"
+                >
+                  Konfirmasi Laporan
+                </Link>
+                  </>
+                )}
 
             {loggedInUser ? (
               <>

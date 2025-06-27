@@ -120,41 +120,50 @@ export async function SubmitReview(
 
 
 export async function UpdateTotalRating(mentor_id: number) {
+  // Pastikan mentor_user_id adalah user_id dari mentor, bukan id dari tabel mentors
   const { data, error } = await supabase
     .from("sesi")
     .select("rating_ulasan")
     .eq("mentor_id", mentor_id)
-    .not("rating_ulasan", "is", null);  
-  
+    .not("rating_ulasan", "is", null);
+
   if (error) {
     console.error("Error fetching ratings:", error);
     return null;
   }
-  
+
   if (!data || data.length === 0) {
-    return 0; // No ratings found
+    // Tetap update ke 0 jika tidak ada rating
+    const { error: updateError } = await supabase
+      .from("mentors")
+      .update({ total_rating: 0 })
+      .eq("id", mentor_id);
+    if (updateError) {
+      console.error("Error updating mentor rating to 0:", updateError);
+    }
+    return 0;
   }
-  
+
   // Hitung jumlah total rating
-  const totalRating = data.reduce((sum, sesi) => sum + sesi.rating_ulasan, 0);
-  
+  const totalRating = data.reduce((sum, sesi) => sum + (sesi.rating_ulasan ?? 0), 0);
+
   // Hitung rata-rata
   const averageRating = totalRating / data.length;
-  
-  // Bulatkan ke bilangan bulat terdekat (≥ 0.5 dibulatkan ke atas, < 0.5 dibulatkan ke bawah)
+
+  // Bulatkan ke bilangan bulat terdekat
   const roundedRating = Math.round(averageRating);
-  
-  // PERBAIKAN: Gunakan user_id, bukan id, untuk mencari mentor
+
+  // Update total_rating di tabel mentors berdasarkan user_id
   const { error: updateError } = await supabase
     .from("mentors")
     .update({ total_rating: roundedRating })
-    .eq("user_id", mentor_id); // Diubah dari .eq("id", mentor_id)
-  
+    .eq("id", mentor_id);
+
   if (updateError) {
     console.error("Error updating mentor rating:", updateError);
   }
-  
-  return roundedRating; // Kembalikan nilai rata-rata yang sudah dibulatkan
+
+  return roundedRating;
 }
 export async function TindakLanjutLaporan(id: number, desc: string) {
   try {
