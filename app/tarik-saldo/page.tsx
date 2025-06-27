@@ -92,9 +92,9 @@ export default function TarikSaldoPage() {
             setTimeout(() => {
                 window.location.href = "/user_dashboard";
             }, 3000);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error during withdrawal:", error);
-            if (error.message === "Saldo tidak mencukupi") {
+            if (error instanceof Error && error.message === "Saldo tidak mencukupi") {
                 alert("Saldo tidak mencukupi untuk penarikan ini.");
             } else {
                 alert("Terjadi kesalahan saat melakukan penarikan.");
