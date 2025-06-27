@@ -175,3 +175,52 @@ export async function BuyMentoringSession(userId: number, amount: number) {
         
     return data || null;
 }
+
+export async function TarikSaldo(userId: number, amount: number, type: string) {
+    if (!userId || isNaN(userId)) {
+        throw new Error("Invalid user ID");
+    }
+
+    // Check if user has enough balance
+    const { data: userSaldo, error: saldoError } = await supabase
+        .from("users")
+        .select("saldo")
+        .eq("id", userId)
+        .single();
+
+    if (saldoError) {
+        console.error("Error fetching user balance:", saldoError);
+        throw saldoError;
+    }
+
+    if (userSaldo.saldo < amount) {
+        throw new Error("Saldo tidak mencukupi");
+    }
+
+    // Create withdrawal transaction
+    const { data, error } = await supabase
+        .from("transactions")
+        .insert({
+            user_id: userId,
+            amount: -amount, // Negative amount for withdrawal
+            transaction_date: new Date().toISOString(),
+            transaction_status: "Berhasil",
+            payment_method: type,
+        })
+        .select("*")
+        .single();
+
+    if (error) {
+        console.error("Error creating withdrawal transaction:", error);
+        throw error;
+    }
+
+    // Update user's balance
+    await supabase
+        .from("users")
+        .update({ saldo: userSaldo.saldo - amount })
+        .eq("id", userId)
+        .single();
+
+    return data || null;
+}
